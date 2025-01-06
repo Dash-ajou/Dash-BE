@@ -1,0 +1,5 @@
+DB_URL=jdbc:mysql://localhost:3306/dash
+DB_USERNAME=dash_server
+DB_PASSWORD=dash-server-123!@#
+
+JWT_SECRET=918df7fbfc4d04fdde794e9c1e1seisqq0dkddb620e9104e133b59c7758d94
