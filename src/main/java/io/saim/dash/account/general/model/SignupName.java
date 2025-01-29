@@ -16,6 +16,7 @@ public class SignupName {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long generalId; //PK
+	private String generalType;
 	private String generalName;
 	private String generalEmail;
 	private String generalPhone;
