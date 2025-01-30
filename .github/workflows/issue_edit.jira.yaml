@@ -51,20 +51,14 @@ jobs:
           mode: md2jira
 
       - name: Update Issue
-        id: create
+        id: update
         uses: Dash-ajou/gajira-edit@main
         with:
           issue: ${{ env.JIRA_KEY }}
-          project: DASH
-          issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
-          fields: |
-            {
-              "parent": {
-                "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
-              }
-            }
+          project: 'DASH'
+          issuetype: 'Task'
 
       - name: Add comment with Jira issue link
         uses: actions-cool/issues-helper@v3
