@@ -52,7 +52,7 @@ jobs:
 
       - name: Update Issue
         id: create
-        uses: Dash-ajou/gajira-edit@v1.0.0
+        uses: Dash-ajou/gajira-edit@main
         with:
           issue: ${{ env.JIRA_KEY }}
           project: DASH
