@@ -18,6 +18,6 @@ public class SignupPasswordController {
 	@PostMapping
 	public ResponseEntity<GeneralPasswordResponseDTO> setPassword(@Valid @RequestBody GeneralPasswordRequestDTO requestDto) {
 		GeneralPasswordResponseDTO response = userService.setPassword(requestDto);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.status(201).body(response);
 	}
 }

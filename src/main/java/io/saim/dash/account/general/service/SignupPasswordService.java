@@ -7,7 +7,7 @@ import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,29 +17,33 @@ public class SignupPasswordService {
 
 	private final SignupNameRepository signupNameRepository;
 	private final GeneralPasswordRepository passwordRepository;
-	private final BCryptPasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder; // ✅ SecurityConfig에서 등록된 빈 사용
 
 	@Transactional
 	public GeneralPasswordResponseDTO setPassword(GeneralPasswordRequestDTO requestDto) {
-		//비밀번호 확인 일치 여부 검증
+
+		System.out.println("🔹 Password: " + requestDto.getPassword());
+		System.out.println("🔹 Password Confirm: " + requestDto.getPasswordConfirm());
+
+		// 비밀번호 확인 일치 여부 검증
 		if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		//사용자 확인 (없으면 예외 발생)
+		// 사용자 확인 (없으면 예외 발생)
 		SignupName user = signupNameRepository.findById(requestDto.getGeneralId())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		//비밀번호 암호화
-		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+		// 기존 비밀번호가 있는지 확인하고 업데이트 처리
+		Password password = passwordRepository.findByUser(user)
+			.orElse(new Password()); // 기존 없으면 새 객체 생성
 
-		//비밀번호 저장
-		Password password = new Password();
+		// 비밀번호 암호화 후 저장
 		password.setUser(user);
-		password.setHashedPassword(encodedPassword);
+		password.setHashedPassword(passwordEncoder.encode(requestDto.getPassword()));
 		passwordRepository.save(password);
 
-		//응답 반환
+		// 응답 반환
 		return new GeneralPasswordResponseDTO("SUCCESS", "비밀번호가 설정되었습니다.",
 			new GeneralPasswordResponseDTO.Data(user.getGeneralId()));
 	}

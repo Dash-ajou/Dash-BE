@@ -10,7 +10,9 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "user")
+@Table(name = "user", uniqueConstraints = {
+	@UniqueConstraint(name = "UK_general_phone", columnNames = "general_phone")
+})
 public class SignupName {
 
 	@Id
@@ -19,6 +21,8 @@ public class SignupName {
 	private String generalType;
 	private String generalName;
 	private String generalEmail;
+
+	@Column(unique = true, nullable = false)
 	private String generalPhone;
 	private LocalDateTime joinedAt;
 	private Long vendorGroupId;

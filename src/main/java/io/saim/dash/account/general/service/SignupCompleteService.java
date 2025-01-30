@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,13 +19,14 @@ public class SignupCompleteService {
 
 	@Transactional
 	public SignupCompleteResponseDTO completeSignup(SignupCompleteRequestDTO requestDTO) {
-		// 기존 유저 확인 (일치하는 general_id가 있으면 업데이트)
-		SignupName user;
+		SignupName user = null;
+
+		// 📌 1️⃣ general_id로 기존 사용자 조회 (없으면 예외 발생)
 		if (requestDTO.getGeneralId() != null && !requestDTO.getGeneralId().isBlank()) {
-			user = signupNameRepository.findByGeneralId(Long.parseLong(requestDTO.getGeneralId()))
-				.orElse(new SignupName()); // 기존 유저 없으면 새로 생성
+			user = signupNameRepository.findById(Long.parseLong(requestDTO.getGeneralId()))
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 		} else {
-			user = new SignupName();
+			throw new IllegalArgumentException("general_id가 필요합니다.");
 		}
 
 		// DTO 데이터를 엔티티에 매핑 (널 값 방지)
