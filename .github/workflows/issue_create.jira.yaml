@@ -24,7 +24,7 @@ jobs:
         uses: stefanbuck/github-issue-praser@v3
         id: issue-parser
         with:
-          template-path: .github/ISSUE_TEMPLATE/custom_template.yml
+          template-path: .github/ISSUE_TEMPLATE/template.task.yml
 
       - name: Log Issue Parser
         run: |
@@ -45,7 +45,7 @@ jobs:
 
       - name: Create Issue
         id: create
-        uses: atlassian/gajira-create@v3
+        uses: Dash-ajou/gajira-create@main
         with:
           project: DASH
           issuetype: Task
