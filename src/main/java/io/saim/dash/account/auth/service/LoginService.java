@@ -28,8 +28,15 @@ public class LoginService {
 		Password userPassword = passwordRepository.findByUser(user)
 			.orElseThrow(() -> new IllegalArgumentException("비밀번호가 설정되지 않았습니다."));
 
-		//입력한 비밀번호와 DB의 해싱된 비밀번호 비교
-		if (!passwordEncoder.matches(rawPassword, userPassword.getHashedPassword())) {
+		//비밀번호 비교 (비교 전 `trim()` 적용)
+		String inputPassword = rawPassword.trim();  // 🚀 공백 문제 방지
+		String storedPassword = userPassword.getHashedPassword();
+
+		System.out.println("입력된 비밀번호: " + inputPassword);
+		System.out.println("DB에 저장된 해시 비밀번호: " + storedPassword);
+		System.out.println("비밀번호 일치 여부: " + passwordEncoder.matches(inputPassword, storedPassword));
+
+		if (!passwordEncoder.matches(inputPassword, storedPassword)) {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
