@@ -59,11 +59,3 @@ jobs:
           description: '${{ steps.md2jira.outputs.output-text }}'
           project: 'DASH'
           issuetype: 'Task'
-
-      - name: Add comment with Jira issue link
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: 'create-comment'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
-          body: 'Jira Issue Updated: [${{ env.JIRA_KEY }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ env.JIRA_KEY }})'
