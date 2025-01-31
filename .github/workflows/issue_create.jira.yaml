@@ -24,7 +24,7 @@ jobs:
         uses: stefanbuck/github-issue-praser@v3
         id: issue-parser
         with:
-          template-path: .github/ISSUE_TEMPLATE/custom_template.yml
+          template-path: .github/ISSUE_TEMPLATE/template.task.yml
 
       - name: Log Issue Parser
         run: |
@@ -45,7 +45,7 @@ jobs:
 
       - name: Create Issue
         id: create
-        uses: atlassian/gajira-create@v3
+        uses: Dash-ajou/gajira-create@main
         with:
           project: DASH
           issuetype: Task
@@ -74,4 +74,4 @@ jobs:
           actions: 'create-comment'
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          body: 'Jira Issue Created: [${{ steps.create.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue }})'
+          body: 'Issue가 Jira에 정상적으로 연동되었습니다: [${{ steps.create.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue }})\n앞으로 Issue State와 Checklist 항목에 대한 변경사항이 Jira Task로 실시간 연동됩니다.'

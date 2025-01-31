@@ -1,5 +1,5 @@
-name: '프로젝트 이슈 생성 - 개발'
-description: '프로젝트 이슈를 생성합니다. Jira와 Github에 모두 기록됩니다'
+name: '프로젝트 이슈 생성 - 개발 Task'
+description: 'Issue를 Task 유형으로 생성합니다. Jira와 Github에 모두 기록됩니다'
 labels: [feat]
 title: '이슈의 제목을 입력해주세요!'
 body:
