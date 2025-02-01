@@ -1,11 +1,14 @@
 package io.saim.dash.account.general.service;
 
+import io.saim.dash.account.auth.service.PhoneVerificationService;
 import io.saim.dash.account.general.dto.GeneralAccountResponseDTO;
+import io.saim.dash.account.general.dto.GeneralPhoneUpdateDTO;
 import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import io.saim.dash.account.auth.session.SessionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +16,7 @@ public class GeneralAccountService {
 
 	private final SignupNameRepository signupNameRepository;
 	private final SessionManager sessionManager;
+	private final PhoneVerificationService phoneVerificationService;
 
 	public GeneralAccountResponseDTO getGeneralAccountDetails(String sessionId) {
 		//세션 ID를 통해 사용자 ID 조회
@@ -31,5 +35,32 @@ public class GeneralAccountService {
 
 		return new GeneralAccountResponseDTO("SUCCESS", "계정 상세 정보를 성공적으로 가져왔습니다.",
 			new GeneralAccountResponseDTO.Data(user.getGeneralName(), email, user.getGeneralPhone()));
+	}
+
+	@Transactional
+	public boolean updatePhoneNumber(String sessionId, GeneralPhoneUpdateDTO updateDTO) {
+		//세션에서 사용자 찾기
+		String userId = sessionManager.getUserIdFromSession(sessionId);
+		if (userId == null) {
+			throw new IllegalArgumentException("유효하지 않은 세션입니다.");
+		}
+
+		SignupName user = signupNameRepository.findById(Long.parseLong(userId))
+			.orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
+
+		String newPhone = updateDTO.getGeneralNewPhone();
+		String verifyCode = updateDTO.getGeneralVerifyCode();
+
+		//새로운 전화번호 인증 확인
+		boolean isVerified = phoneVerificationService.verifyCode(newPhone, verifyCode);
+		if (!isVerified) {
+			return false; //인증 실패 시 변경하지 않음
+		}
+
+		//전화번호 업데이트
+		user.setGeneralPhone(newPhone);
+		signupNameRepository.save(user);
+
+		return true;
 	}
 }

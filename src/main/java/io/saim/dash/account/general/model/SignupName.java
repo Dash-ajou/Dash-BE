@@ -24,6 +24,10 @@ public class SignupName {
 
 	@Column(unique = true, nullable = false)
 	private String generalPhone;
+
+	@Column(unique = true)
+	private String sessionId;
+
 	private LocalDateTime joinedAt;
 	private Long vendorGroupId;
 	private Long departmentId;
