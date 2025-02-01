@@ -1,6 +1,7 @@
 package io.saim.dash.account.auth.service;
 
 import io.saim.dash.account.auth.dto.LoginResponseDTO;
+import io.saim.dash.account.auth.session.SessionManager;
 import io.saim.dash.account.general.model.Password;
 import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
@@ -17,6 +18,7 @@ public class LoginService {
 	private final SignupNameRepository signupNameRepository;
 	private final GeneralPasswordRepository passwordRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
+	private final SessionManager sessionManager;
 
 	public LoginResponseDTO login(String generalPhone, String rawPassword) {
 		//사용자 정보 조회 (전화번호 기반)
@@ -41,6 +43,11 @@ public class LoginService {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
+		//세션 생성 및 저장
+		String sessionId = generateSessionId();
+		sessionManager.createSession(sessionId, user.getGeneralId().toString()); //세션 저장
+		System.out.println("✅ 로그인 성공: 세션 생성됨 → " + sessionId);
+
 		return new LoginResponseDTO(
 			"success",
 			"로그인 성공",
@@ -51,7 +58,7 @@ public class LoginService {
 					user.getGeneralPhone(),
 					user.getGeneralType()
 				),
-				generateSessionId() //세션 ID 생성
+				sessionId //세션 ID 생성
 			)
 		);
 	}
