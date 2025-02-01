@@ -1,0 +1,35 @@
+package io.saim.dash.account.general.service;
+
+import io.saim.dash.account.general.dto.GeneralAccountResponseDTO;
+import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.auth.session.SessionManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class GeneralAccountService {
+
+	private final SignupNameRepository signupNameRepository;
+	private final SessionManager sessionManager;
+
+	public GeneralAccountResponseDTO getGeneralAccountDetails(String sessionId) {
+		//세션 ID를 통해 사용자 ID 조회
+		String userId = sessionManager.getUserIdFromSession(sessionId);
+		if (userId == null) {
+			throw new IllegalArgumentException("유효하지 않은 세션입니다.");
+		}
+
+		//사용자 정보 조회
+		SignupName user = signupNameRepository.findById(Long.parseLong(userId))
+			.orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
+
+		//이메일이 없을 경우 "등록된 이메일이 없습니다."로 설정
+		String email = (user.getGeneralEmail() == null || user.getGeneralEmail().isBlank())
+			? "등록된 이메일이 없습니다." : user.getGeneralEmail();
+
+		return new GeneralAccountResponseDTO("SUCCESS", "계정 상세 정보를 성공적으로 가져왔습니다.",
+			new GeneralAccountResponseDTO.Data(user.getGeneralName(), email, user.getGeneralPhone()));
+	}
+}
