@@ -25,7 +25,7 @@ public class SignupNameService {
 		return signupNameRepository.save(user);
 	}
 
-	// 랜덤한 전화번호를 생성하고 중복 체크 후 반환
+	//랜덤한 전화번호를 생성하고 중복 체크 후 반환
 	private String generateUniquePhone() {
 		Random random = new Random();
 		String phone;

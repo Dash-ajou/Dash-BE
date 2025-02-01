@@ -18,7 +18,7 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/public/**", "/auth/google", "/auth/google/callback").permitAll() //OAuth2 관련 허용
-				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify").permitAll()
+				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify", "/auth/password-reset/complete").permitAll()
 				.anyRequest().authenticated()  //그 외 요청은 인증 필요
 			)
 			.oauth2Login(oauth2 -> oauth2
@@ -27,7 +27,7 @@ public class SecurityConfig {
 				.failureUrl("/auth/google?error=true") //로그인 실패 시 이동할 경로
 			)
 			.logout(logout -> logout
-				.logoutSuccessUrl("/") // 로그아웃 후 이동할 URL
+				.logoutSuccessUrl("/") //로그아웃 후 이동할 URL
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 			);
