@@ -6,7 +6,6 @@ import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
@@ -24,12 +23,14 @@ public class LoginService {
 		SignupName user = signupNameRepository.findByGeneralPhone(generalPhone)
 			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 전화번호입니다."));
 
-		//비밀번호 조회 (해당 사용자 ID를 기반으로)
+		//가장 최근 비밀번호 가져오기 (최신 createdAt 기준 정렬)
 		Password userPassword = passwordRepository.findByUser(user)
+			.stream()
+			.max((p1, p2) -> p1.getCreatedAt().compareTo(p2.getCreatedAt())) //최신 비밀번호 가져오기
 			.orElseThrow(() -> new IllegalArgumentException("비밀번호가 설정되지 않았습니다."));
 
 		//비밀번호 비교 (비교 전 `trim()` 적용)
-		String inputPassword = rawPassword.trim();  // 🚀 공백 문제 방지
+		String inputPassword = rawPassword.trim();
 		String storedPassword = userPassword.getHashedPassword();
 
 		System.out.println("입력된 비밀번호: " + inputPassword);
@@ -50,11 +51,12 @@ public class LoginService {
 					user.getGeneralPhone(),
 					user.getGeneralType()
 				),
-				generateSessionId()
+				generateSessionId() //세션 ID 생성
 			)
 		);
 	}
 
+	//세션 ID 생성 로직
 	private String generateSessionId() {
 		return UUID.randomUUID().toString();
 	}
