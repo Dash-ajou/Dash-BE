@@ -24,4 +24,8 @@ public class SessionManager {
 		System.out.println("세션 삭제: " + sessionId);
 		sessionStore.remove(sessionId);
 	}
+
+	public String getUserIdFromSession(String sessionId) {
+		return sessionStore.get(sessionId);
+	}
 }
