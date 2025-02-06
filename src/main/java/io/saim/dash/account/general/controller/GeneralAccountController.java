@@ -3,6 +3,7 @@ package io.saim.dash.account.general.controller;
 import java.util.Map;
 
 import io.saim.dash.account.general.dto.GeneralAccountResponseDTO;
+import io.saim.dash.account.general.dto.GeneralEmailVerifyConfirmDTO;
 import io.saim.dash.account.general.dto.GeneralEmailVerifyRequestDTO;
 import io.saim.dash.account.general.dto.GeneralPhoneUpdateDTO;
 import io.saim.dash.account.general.service.GeneralAccountService;
@@ -72,6 +73,27 @@ public class GeneralAccountController {
 			return ResponseEntity.status(400).body(Map.of(
 				"status", "failure",
 				"message", "이메일 인증 요청을 실패했습니다."
+			));
+		}
+	}
+
+	//이메일 변경 인증 코드 확인
+	@PostMapping("/account/email-verify/confirm")
+	public ResponseEntity<?> confirmEmailVerification(
+		@RequestHeader("Authorization") String sessionId,
+		@RequestBody GeneralEmailVerifyConfirmDTO confirmDTO) {
+
+		boolean isConfirmed = generalAccountService.confirmEmailVerification(sessionId, confirmDTO);
+
+		if (isConfirmed) {
+			return ResponseEntity.ok(Map.of(
+				"status", "SUCCESS",
+				"message", "인증이 완료되었습니다."
+			));
+		} else {
+			return ResponseEntity.status(400).body(Map.of(
+				"status", "failure",
+				"message", "인증 코드가 올바르지 않거나 만료되었습니다."
 			));
 		}
 	}
