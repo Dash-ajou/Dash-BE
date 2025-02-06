@@ -17,6 +17,7 @@ public class GeneralAccountService {
 	private final SignupNameRepository signupNameRepository;
 	private final SessionManager sessionManager;
 	private final PhoneVerificationService phoneVerificationService;
+	private final EmailVerifyService emailVerificationService;
 
 	public GeneralAccountResponseDTO getGeneralAccountDetails(String sessionId) {
 		//세션 ID를 통해 사용자 ID 조회
@@ -60,7 +61,21 @@ public class GeneralAccountService {
 		//전화번호 업데이트
 		user.setGeneralPhone(newPhone);
 		signupNameRepository.save(user);
-
 		return true;
+	}
+
+	public boolean requestEmailVerification(String sessionId, String newEmail) {
+		//세션 ID를 통해 사용자 찾기
+		String userId = sessionManager.getUserIdFromSession(sessionId);
+		if (userId == null) {
+			throw new IllegalArgumentException("유효하지 않은 세션입니다.");
+		}
+
+		//기존 사용자 정보 가져오기
+		SignupName user = signupNameRepository.findById(Long.parseLong(userId))
+			.orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
+
+		//이메일 인증 요청 수행
+		return emailVerificationService.sendVerificationCode(newEmail);
 	}
 }

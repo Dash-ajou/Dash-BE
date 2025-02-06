@@ -3,6 +3,7 @@ package io.saim.dash.account.general.controller;
 import java.util.Map;
 
 import io.saim.dash.account.general.dto.GeneralAccountResponseDTO;
+import io.saim.dash.account.general.dto.GeneralEmailVerifyRequestDTO;
 import io.saim.dash.account.general.dto.GeneralPhoneUpdateDTO;
 import io.saim.dash.account.general.service.GeneralAccountService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,37 @@ public class GeneralAccountController {
 			return ResponseEntity.status(400).body(Map.of(
 				"status", "failure",
 				"message", "전화번호 변경에 실패했습니다. 인증 코드를 확인하세요."
+			));
+		}
+	}
+
+	//이메일 변경 인증 요청
+	@PostMapping("/account/email-verify/request")
+	public ResponseEntity<?> requestEmailVerification(
+		@RequestHeader("Authorization") String sessionId,
+		@RequestBody Map<String, String> requestBody) {
+
+		String newEmail = requestBody.get("new_email");
+
+		if (newEmail == null || newEmail.isBlank()) {
+			return ResponseEntity.badRequest().body(Map.of(
+				"status", "failure",
+				"message", "새로운 이메일을 입력해야 합니다."
+			));
+		}
+
+		boolean isSent = generalAccountService.requestEmailVerification(sessionId, newEmail);
+
+		if (isSent) {
+			return ResponseEntity.ok(Map.of(
+				"status", "SUCCESS",
+				"message", "인증 코드가 이메일로 전송되었습니다.",
+				"data", Map.of("expires_in", 180)
+			));
+		} else {
+			return ResponseEntity.status(400).body(Map.of(
+				"status", "failure",
+				"message", "이메일 인증 요청을 실패했습니다."
 			));
 		}
 	}
