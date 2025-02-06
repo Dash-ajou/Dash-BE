@@ -101,7 +101,7 @@ public class GeneralAccountService {
 		EmailVerification verification = emailVerifyRepository.findByEmail(confirmDTO.getNewEmail())
 			.orElseThrow(() -> new IllegalArgumentException("이메일 인증 요청을 찾을 수 없습니다."));
 
-		//인증 코드 검증
+		//인증 코드 확인
 		if (!verification.getVerificationCode().equals(confirmDTO.getEmailVerifyCode())) {
 			return false;
 		}
@@ -115,8 +115,34 @@ public class GeneralAccountService {
 		user.setGeneralEmail(confirmDTO.getNewEmail());
 		signupNameRepository.save(user);
 
-		// 인증 정보 삭제 (사용 완료된 인증 코드)
+		//인증 정보 삭제 (사용 완료된 인증 코드)
 		emailVerifyRepository.delete(verification);
+
+		return true;
+	}
+
+	//회원 탈퇴 로직
+	@Transactional
+	public boolean deleteAccount(String sessionId) {
+		//세션 ID로 사용자 조회
+		String userId = sessionManager.getUserIdFromSession(sessionId);
+		if (userId == null) {
+			return false; // 유효하지 않은 세션
+		}
+
+		//사용자 정보 조회
+		SignupName user = signupNameRepository.findById(Long.parseLong(userId))
+			.orElse(null);
+
+		if (user == null) {
+			return false; //이미 탈퇴했거나 존재하지 않는 사용자
+		}
+
+		//사용자 계정 삭제
+		signupNameRepository.delete(user);
+
+		//세션 무효화
+		sessionManager.invalidateSession(sessionId);
 
 		return true;
 	}

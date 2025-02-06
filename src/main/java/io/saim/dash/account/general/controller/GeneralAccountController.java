@@ -97,4 +97,22 @@ public class GeneralAccountController {
 			));
 		}
 	}
+
+	//회원 탈퇴
+	@DeleteMapping("/account/delete")
+	public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String sessionId) {
+		boolean isDeleted = generalAccountService.deleteAccount(sessionId);
+
+		if (isDeleted) {
+			return ResponseEntity.ok(Map.of(
+				"status", "SUCCESS",
+				"message", "회원 탈퇴가 완료되었습니다."
+			));
+		} else {
+			return ResponseEntity.status(403).body(Map.of(
+				"status", "FAILED",
+				"message", "회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다."
+			));
+		}
+	}
 }
