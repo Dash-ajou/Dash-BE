@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SignupPasswordService {
@@ -30,13 +32,15 @@ public class SignupPasswordService {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		//사용자 확인 (없으면 예외 발생)
+		//사용자 확인
 		SignupName user = signupNameRepository.findById(requestDto.getGeneralId())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		//기존 비밀번호가 있는지 확인하고 업데이트 처리
-		Password password = passwordRepository.findByUser(user)
-			.orElse(new Password()); // 기존 없으면 새 객체 생성
+		//기존 비밀번호가 있는 경우 최신 비밀번호 가져오기
+		List<Password> userPasswords = passwordRepository.findByUser(user);
+		Password password = userPasswords.stream()
+			.max((p1, p2) -> p1.getCreatedAt().compareTo(p2.getCreatedAt())) //최신 비밀번호 찾기
+			.orElse(new Password()); //기존 비밀번호 없으면 새 객체 생성
 
 		//비밀번호 암호화 후 저장
 		password.setUser(user);

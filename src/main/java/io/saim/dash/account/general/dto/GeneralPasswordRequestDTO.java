@@ -2,6 +2,7 @@ package io.saim.dash.account.general.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class GeneralPasswordRequestDTO {
 
-	@NotBlank(message = "사용자 ID는 필수입니다.")
+	@NotNull(message = "사용자 ID는 필수입니다.")
 	@JsonProperty("general_id")
 	private Long generalId;
 

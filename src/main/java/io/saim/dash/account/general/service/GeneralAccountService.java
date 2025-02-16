@@ -11,6 +11,7 @@ import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.account.general.repository.EmailVerifyRepository;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import io.saim.dash.account.auth.session.SessionManager;
+import io.saim.dash.global.dto.APIStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class GeneralAccountService {
 		String email = (user.getGeneralEmail() == null || user.getGeneralEmail().isBlank())
 			? "등록된 이메일이 없습니다." : user.getGeneralEmail();
 
-		return new GeneralAccountResponseDTO("SUCCESS", "계정 상세 정보를 성공적으로 가져왔습니다.",
+		return new GeneralAccountResponseDTO("1.0", "1.0",  APIStatus.SUCCESS, "계정 상세 정보를 성공적으로 가져왔습니다.",
 			new GeneralAccountResponseDTO.Data(user.getGeneralName(), email, user.getGeneralPhone()));
 	}
 
@@ -127,7 +128,7 @@ public class GeneralAccountService {
 		//세션 ID로 사용자 조회
 		String userId = sessionManager.getUserIdFromSession(sessionId);
 		if (userId == null) {
-			return false; // 유효하지 않은 세션
+			return false; //유효하지 않은 세션
 		}
 
 		//사용자 정보 조회
