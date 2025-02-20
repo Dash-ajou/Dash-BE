@@ -14,16 +14,16 @@ import jakarta.persistence.Table;
 public class PhoneVerification {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 ID
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //자동 증가 ID
 	private Long id;
 
-	@Column(nullable = false, unique = true) // 전화번호는 필수이며 중복 불가
+	@Column(nullable = false, unique = true) //전화번호는 필수이며 중복 불가
 	private String userPhone;
 
-	@Column(nullable = false) // 생성된 인증 코드
+	@Column(nullable = false) //생성된 인증 코드
 	private String userVerifyCode;
 
-	@Column(nullable = false) // 인증 코드 만료 시간
+	@Column(nullable = false) //인증 코드 만료 시간
 	private LocalDateTime expiresIn;
 
 	@Column(nullable = false)
