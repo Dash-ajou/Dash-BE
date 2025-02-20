@@ -21,7 +21,7 @@ public class SignupCompleteService {
 	public SignupCompleteResponseDTO completeSignup(SignupCompleteRequestDTO requestDTO) {
 		SignupName user = null;
 
-		// 📌 1️⃣ general_id로 기존 사용자 조회 (없으면 예외 발생)
+		//general_id로 기존 사용자 조회 (없으면 예외 발생)
 		if (requestDTO.getGeneralId() != null && !requestDTO.getGeneralId().isBlank()) {
 			user = signupNameRepository.findById(Long.parseLong(requestDTO.getGeneralId()))
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -29,7 +29,7 @@ public class SignupCompleteService {
 			throw new IllegalArgumentException("general_id가 필요합니다.");
 		}
 
-		// DTO 데이터를 엔티티에 매핑 (널 값 방지)
+		//DTO 데이터를 엔티티에 매핑 (널 값 방지)
 		if (requestDTO.getUserType() != null) user.setGeneralType(requestDTO.getUserType());
 		if (requestDTO.getGeneralName() != null) user.setGeneralName(requestDTO.getGeneralName());
 		if (requestDTO.getGeneralPhone() != null) user.setGeneralPhone(requestDTO.getGeneralPhone());
@@ -37,14 +37,13 @@ public class SignupCompleteService {
 		if (requestDTO.getVendorGroupId() != null) user.setVendorGroupId(requestDTO.getVendorGroupId());
 		if (requestDTO.getDepartmentId() != null) user.setDepartmentId(requestDTO.getDepartmentId());
 
-		// 가입일 자동 설정 (기존 값이 없을 때만)
+		//가입일 자동 설정 (기존 값이 없을 때만)
 		if (user.getJoinedAt() == null) {
 			user.setJoinedAt(LocalDateTime.now());
 		}
 
 		SignupName savedUser = signupNameRepository.save(user);
 
-		// 응답 반환
 		return new SignupCompleteResponseDTO(
 			"SUCCESS",
 			"회원가입이 완료되었습니다.",

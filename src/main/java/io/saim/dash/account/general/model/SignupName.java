@@ -3,6 +3,7 @@ package io.saim.dash.account.general.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,10 +25,19 @@ public class SignupName {
 
 	@Column(unique = true, nullable = false)
 	private String generalPhone;
+
+	@Column(unique = true)
+	private String sessionId;
+
 	private LocalDateTime joinedAt;
 	private Long vendorGroupId;
 	private Long departmentId;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
+
+	//비밀번호 검증 메서드 추가
+	public boolean isPasswordValid(String rawPassword, Password password, BCryptPasswordEncoder encoder) {
+		return encoder.matches(rawPassword.trim(), password.getHashedPassword());
+	}
 }
