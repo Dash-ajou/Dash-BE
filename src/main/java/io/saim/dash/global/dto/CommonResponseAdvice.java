@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,9 @@ import lombok.Setter;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@RestControllerAdvice(
+	basePackages = "io.saim.dash" // io.saim.dash 내부의 class method return에만 적용
+)
 public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 
 	@Autowired
@@ -24,7 +29,7 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		return false;
+		return MappingJackson2HttpMessageConverter.class.isAssignableFrom(converterType); // 선택된 converter가 객체 매핑 컨버터인 경우에만 적용
 	}
 
 	@Override
