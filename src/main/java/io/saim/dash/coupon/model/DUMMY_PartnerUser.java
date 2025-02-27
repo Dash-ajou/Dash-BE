@@ -1,11 +1,20 @@
 package io.saim.dash.coupon.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Entity
-public class DUMMY_PartnerUser {
+@Entity @NoArgsConstructor
+public class DUMMY_PartnerUser extends DUMMY_ServiceUser {
 
-	@Id
-	private Long id;
+	@Getter
+	private String partnerName;
+
+	@Getter
+	private String partnerAddress;
+
+	public String getOwnerName() {
+		return this.name;
+	}
+
 }
