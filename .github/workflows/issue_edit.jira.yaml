@@ -1,0 +1,61 @@
+name: Sync Jira Issue - Edit
+on:
+  issues:
+    types:
+      - edited
+jobs:
+  create-issue:
+    name: Open Jira Issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Jira
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: Extract Jira issue key from GitHub issue title
+        id: extract-key
+        run: |
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
+          echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
+
+      - name: Checkout main code
+        uses: actions/checkout@v4
+        with:
+          ref: publish
+
+      - name: Issue Parser
+        uses: stefanbuck/github-issue-praser@v3
+        id: issue-parser
+        with:
+          template-path: .github/ISSUE_TEMPLATE/template.task.yml
+
+      - name: Log Issue Parser
+        run: |
+          echo '${{ steps.issue-parser.outputs.issueparser_parentKey }}'
+          echo '${{ steps.issue-parser.outputs.__ticket_number }}'
+          echo '${{ steps.issue-parser.outputs.jsonString }}'
+
+      - name: Convert markdown to Jira Syntax
+        uses: peter-evans/jira2md@v1
+        id: md2jira
+        with:
+          input-text: |
+            ### Github Issue Link
+            - ${{ github.event.issue.html_url }}
+
+            ${{ github.event.issue.body }}
+          mode: md2jira
+
+      - name: Update Issue
+        id: update
+        uses: Dash-ajou/gajira-edit@main
+        with:
+          issue: ${{ env.JIRA_KEY }}
+          summary: '${{ github.event.issue.title }}'
+          description: '${{ steps.md2jira.outputs.output-text }}'
+          project: 'DASH'
+          issuetype: 'Task'
