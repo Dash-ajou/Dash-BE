@@ -1,6 +1,5 @@
 package io.saim.dash.coupon.model;
 
-import io.saim.dash.coupon.common.dummy.PartnerUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,7 +17,7 @@ public class Product {
 
 	@ManyToOne
 	@Column(name = "partner_id", nullable = false)
-	private PartnerUser partner;
+	private DUMMY_PartnerUser partner;
 
 	@Column(name = "product_name", nullable = false)
 	private String productName;
