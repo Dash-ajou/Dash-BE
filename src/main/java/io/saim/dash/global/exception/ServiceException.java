@@ -1,19 +1,20 @@
 package io.saim.dash.global.exception;
 
+import io.saim.dash.global.dto.APIStatus;
 import lombok.Getter;
 
 public class ServiceException extends RuntimeException {
 
 	@Getter
-	private final Integer statusCode;
+	private final APIStatus apiStatus;
 
 	public ServiceException() {
 		super();
-		this.statusCode = 500;
+		this.apiStatus = APIStatus.FAILED;
 	}
 
 	public ServiceException(ServiceExceptionContent content) {
 		super(content.getMessage());
-		this.statusCode = content.getStatusCode();
+		this.apiStatus = content.getApiStatus();
 	}
 }
