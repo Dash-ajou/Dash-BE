@@ -3,16 +3,20 @@ package io.saim.dash.global.dto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import io.saim.dash.global.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,34 +37,49 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 	}
 
 	@Override
-	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+	public ResponseEntity<CommonResponseDTO<?>> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 		Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
 		ServerHttpResponse response) {
 
 		CommonResponseDTOBuilder newResponse = new CommonResponseDTOBuilder()
-			.version((VersionResponseDTO) this.request.getAttribute("version"));
+			.version((VersionResponseDTO)this.request.getAttribute("version"));
 
-		if (body instanceof Error error) {
+		if (body instanceof ServiceException e) {
 			newResponse
-				.status(APIStatus.FAILURE)
-				.message(error.getMessage());
+				.status(e.getApiStatus())
+				.message(e.getMessage())
+				.data(null);
+		}
+		else if (body instanceof Error e) {
+			newResponse
+				.status(APIStatus.FAILED)
+				.message(e.getMessage())
+				.data(null);
+		}
+		else {
+			newResponse
+				.status(APIStatus.SUCCESS)
+				.data(body);
 		}
 
-		return newResponse
-			.data(body)
-			.build();
+		CommonResponseDTO dto = newResponse.build();
+		return ResponseEntity
+			.status(dto.getStatus().getStatusCode())
+			.body(dto);
 	}
 
 	@Setter @RequiredArgsConstructor
-	static class CommonResponseDTO<T> {
+	private static class CommonResponseDTO<T> {
 		private final String apiVersion;
 		private final String clientVersion;
+
+		@Getter
 		private final APIStatus status;
 		private final String message;
 		private final T data;
 	}
 
-	static class CommonResponseDTOBuilder<A> {
+	static class CommonResponseDTOBuilder<A extends Object> {
 		private String apiVersion;
 		private String clientVersion;
 		private APIStatus status;
