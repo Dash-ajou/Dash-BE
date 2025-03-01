@@ -1,5 +1,7 @@
 package io.saim.dash.global.dto;
 
+import lombok.Getter;
+
 public enum APIStatus {
 	// 200
 	SUCCESS(200),
@@ -15,6 +17,7 @@ public enum APIStatus {
 
 	;
 
+	@Getter
 	private final Integer statusCode;
 
 	APIStatus(Integer statusCode) {
