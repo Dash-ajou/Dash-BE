@@ -26,6 +26,7 @@ public class GeneralUser {
 	@Column(unique = true, nullable = false)
 	private String generalPhone;
 
+	@Getter
 	@Column(nullable = false)
 	private String password = "DUMMY_PASSWORD";
 
@@ -35,10 +36,6 @@ public class GeneralUser {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
-
-	public String getPassword() {
-		return this.password;
-	}
 
 	//비밀번호 검증 메서드 (입력된 비밀번호와 DB 비밀번호 비교)
 	public boolean isPasswordValid(String rawPassword, Password password, BCryptPasswordEncoder encoder) {

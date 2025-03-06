@@ -44,12 +44,9 @@ public class PartnerUser {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Getter
 	@Column(nullable = false)
 	private String password;
-
-	public String getPassword() {
-		return this.password;
-	}
 
 	@PrePersist
 	protected void onCreate() {
