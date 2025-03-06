@@ -1,7 +1,9 @@
 package io.saim.dash.account.general.service;
 
-import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.SignupNameRepository;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -14,11 +16,13 @@ public class SignupNameService {
 
 	private final SignupNameRepository signupNameRepository;
 
-	public SignupName registerUser(String name) {
+	public GeneralUser registerUser(String name) {
 		String phone = generateUniquePhone();
 
-		SignupName user = new SignupName();
+		GeneralUser user = new GeneralUser();
 		user.setGeneralName(name);
+		//비밀번호 기본값 설정 (추후 /signup/password에서 변경됨)
+		user.setPassword(new BCryptPasswordEncoder().encode("DUMMY_PASSWORD"));
 		user.setGeneralPhone(phone);
 		user.setJoinedAt(LocalDateTime.now());
 

@@ -3,6 +3,7 @@ package io.saim.dash.global.dto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class CommonResponseDTO<T> {
 
@@ -24,5 +25,9 @@ public class CommonResponseDTO<T> {
 		this.status = status;
 		this.message = message;
 		this.data = data;
+	}
+
+	public T getData() {
+		return data;
 	}
 }

@@ -5,7 +5,7 @@ import io.saim.dash.account.auth.dto.PasswordResetResponseDTO;
 import io.saim.dash.account.auth.model.PhoneVerification;
 import io.saim.dash.account.auth.repository.PhoneVerificationRepository;
 import io.saim.dash.account.general.model.Password;
-import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +35,14 @@ public class PasswordResetService {
 		}
 
 		//사용자 조회
-		SignupName user = signupNameRepository.findByGeneralPhone(requestDTO.getUserPhone())
+		GeneralUser user = signupNameRepository.findByGeneralPhone(requestDTO.getUserPhone())
 			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 전화번호입니다."));
 
 		//가장 최근 비밀번호 가져오기
 		List<Password> userPasswords = passwordRepository.findByUser(user);
 		Password password = userPasswords.stream()
 			.max((p1, p2) -> p1.getCreatedAt().compareTo(p2.getCreatedAt())) //최신 비밀번호 찾기
-			.orElse(new Password()); // 🔹 기본 비밀번호 객체 생성
+			.orElse(new Password());
 
 		//비밀번호 확인 일치 여부 검증
 		if (!requestDTO.getNewPassword().equals(requestDTO.getNewPasswordConfirm())) {
