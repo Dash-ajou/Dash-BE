@@ -4,6 +4,7 @@ import java.util.Map;
 
 import io.saim.dash.account.general.dto.*;
 import io.saim.dash.account.general.service.GeneralAccountService;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
 import io.saim.dash.global.dto.APIStatus;
@@ -20,83 +21,78 @@ public class GeneralAccountController {
 
 	private final GeneralAccountService generalAccountService;
 
-	// 계정 상세 조회 기능
 	@GetMapping("/account")
 	public ResponseEntity<CommonResponseDTO<GeneralAccountResponseDTO.Data>> getGeneralAccountDetails(
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-		if (userDetails == null || userDetails.getUser() == null) {
+		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILURE,
-				"인증되지 않은 사용자입니다. 로그인 후 다시 시도해주세요.",
+				"인증되지 않은 일반 사용자입니다. 로그인 후 다시 시도해주세요.",
 				null
 			));
 		}
 
-		try {
-			GeneralAccountResponseDTO response = generalAccountService.getGeneralAccountDetails(userDetails.getUser());
+		//GeneralUser 가져오기
+		GeneralUser generalUser = userDetails.getGeneralUser();
+		GeneralAccountResponseDTO response = generalAccountService.getGeneralAccountDetails(generalUser);
 
-			//데이터가 정상적으로 존재하는지 확인
-			GeneralAccountResponseDTO.Data responseData = response.getData();
-			if (responseData == null) {
-				System.out.println("⚠️ [GeneralAccountController] response.getData()가 null입니다.");
-				return ResponseEntity.status(500).body(new CommonResponseDTO<>(
-					new VersionResponseDTO("1.0", "1.0"),
-					APIStatus.FAILURE,
-					"계정 정보를 가져오는 데 실패했습니다.",
-					null
-				));
-			}
-
-			return ResponseEntity.ok(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.SUCCESS,
-				"계정 정보를 가져왔습니다.",
-				responseData
-			));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).body(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
-				"서버 내부 오류가 발생했습니다.",
-				null
-			));
-		}
+		return ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"계정 정보를 가져왔습니다.",
+			response.getData()
+		));
 	}
 
-	// 신규 전화번호 변경 기능
 	@PatchMapping("/account/phone")
 	public ResponseEntity<CommonResponseDTO<?>> updatePhoneNumber(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody GeneralPhoneUpdateDTO updateDTO) {
 
-		boolean isUpdated = generalAccountService.updatePhoneNumber(userDetails.getUser(), updateDTO);
-
-		if (isUpdated) {
-			return ResponseEntity.ok(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.SUCCESS,
-				"전화번호가 성공적으로 변경되었습니다.",
-				Map.of("general_new_phone", updateDTO.getGeneralNewPhone())
-			));
-		} else {
-			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
+		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILURE,
-				"전화번호 변경에 실패했습니다. 인증 코드를 확인하세요.",
+				"인증되지 않은 일반 사용자입니다.",
 				null
 			));
 		}
+
+		GeneralUser generalUser = userDetails.getGeneralUser();
+		boolean isUpdated = generalAccountService.updatePhoneNumber(generalUser, updateDTO);
+
+		return isUpdated
+			? ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"전화번호가 성공적으로 변경되었습니다.",
+			Map.of("general_new_phone", updateDTO.getGeneralNewPhone())
+		))
+			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.FAILURE,
+			"전화번호 변경에 실패했습니다. 인증 코드를 확인하세요.",
+			null
+		));
 	}
 
-	// 이메일 변경 인증 요청
 	@PostMapping("/account/email-verify/request")
 	public ResponseEntity<CommonResponseDTO<?>> requestEmailVerification(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody Map<String, String> requestBody) {
 
+		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILURE,
+				"인증되지 않은 일반 사용자입니다.",
+				null
+			));
+		}
+
+		GeneralUser generalUser = userDetails.getGeneralUser();
 		String newEmail = requestBody.get("new_email");
 
 		if (newEmail == null || newEmail.isBlank()) {
@@ -108,71 +104,110 @@ public class GeneralAccountController {
 			));
 		}
 
-		boolean isSent = generalAccountService.requestEmailVerification(userDetails.getUser(), newEmail);
+		boolean isSent = generalAccountService.requestEmailVerification(generalUser, newEmail);
 
-		if (isSent) {
-			return ResponseEntity.ok(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.SUCCESS,
-				"인증 코드가 이메일로 전송되었습니다.",
-				Map.of("expires_in", 180) // 인증 코드 만료 시간
-			));
-		} else {
-			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
-				"이메일 인증 요청을 실패했습니다.",
-				null
-			));
-		}
+		return isSent
+			? ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"인증 코드가 이메일로 전송되었습니다.",
+			Map.of("expires_in", 180)
+		))
+			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.FAILURE,
+			"이메일 인증 요청을 실패했습니다.",
+			null
+		));
 	}
 
-	// 이메일 변경 인증 코드 확인
 	@PostMapping("/account/email-verify/confirm")
 	public ResponseEntity<CommonResponseDTO<?>> confirmEmailVerification(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestBody GeneralEmailVerifyConfirmDTO confirmDTO) {
+		@RequestBody Map<String, String> requestBody) {
 
-		boolean isConfirmed = generalAccountService.confirmEmailVerification(userDetails.getUser(), confirmDTO);
-
-		if (isConfirmed) {
-			return ResponseEntity.ok(new CommonResponseDTO<>(
+		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.SUCCESS,
-				"인증이 완료되었습니다.",
-				"이메일 인증이 성공적으로 완료되었습니다."
+				APIStatus.FAILURE,
+				"인증되지 않은 일반 사용자입니다. 로그인 후 다시 시도해주세요.",
+				null
 			));
-		} else {
+		}
+
+		GeneralUser generalUser = userDetails.getGeneralUser();
+		if (generalUser == null) {
+			return ResponseEntity.status(500).body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILURE,
+				"사용자 정보를 가져오는 데 실패했습니다.",
+				null
+			));
+		}
+
+		//요청에서 필요한 값 추출
+		String newEmail = requestBody.get("new_email");
+		String verificationCode = requestBody.get("email_verify_code");
+
+		if (newEmail == null || newEmail.isBlank() || verificationCode == null || verificationCode.isBlank()) {
 			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILURE,
-				"인증 코드가 올바르지 않거나 만료되었습니다.",
-				"이메일 인증 실패"
+				"이메일 및 인증 코드를 입력해야 합니다.",
+				null
 			));
 		}
+
+		//DTO 객체 생성하여 전달
+		GeneralEmailVerifyConfirmDTO confirmDTO = new GeneralEmailVerifyConfirmDTO();
+		confirmDTO.setNewEmail(newEmail);
+		confirmDTO.setEmailVerifyCode(verificationCode);
+
+		boolean isVerified = generalAccountService.confirmEmailVerification(generalUser, confirmDTO);
+
+		return isVerified
+			? ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"이메일 인증이 완료되었습니다.",
+			null
+		))
+			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.FAILURE,
+			"이메일 인증에 실패했습니다. 인증 코드를 확인하세요.",
+			null
+		));
 	}
 
-	// 회원 탈퇴
 	@DeleteMapping("/account/delete")
 	public ResponseEntity<CommonResponseDTO<?>> deleteAccount(
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-		boolean isDeleted = generalAccountService.deleteAccount(userDetails.getUser());
-
-		if (isDeleted) {
-			return ResponseEntity.ok(new CommonResponseDTO<>(
-				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.SUCCESS,
-				"회원 탈퇴가 완료되었습니다.",
-				null
-			));
-		} else {
-			return ResponseEntity.status(403).body(new CommonResponseDTO<>(
+		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILURE,
-				"회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다.",
+				"인증되지 않은 일반 사용자입니다.",
 				null
 			));
 		}
+
+		GeneralUser generalUser = userDetails.getGeneralUser();
+		boolean isDeleted = generalAccountService.deleteAccount(generalUser);
+
+		return isDeleted
+			? ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"회원 탈퇴가 완료되었습니다.",
+			null
+		))
+			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.FAILURE,
+			"회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다.",
+			null
+		));
 	}
 }

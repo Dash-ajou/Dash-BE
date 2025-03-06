@@ -2,21 +2,25 @@ package io.saim.dash.account.partner.service;
 
 import io.saim.dash.account.partner.dto.PartnerSignupRequestDTO;
 import io.saim.dash.account.partner.dto.PartnerSignupResponseDTO;
-import io.saim.dash.account.partner.model.Partner;
-import io.saim.dash.account.partner.repository.PartnerRepository;
+import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PartnerService {
 
-	private final PartnerRepository partnerRepository;
+	private final PartnerUserRepository partnerRepository;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Transactional
 	public CommonResponseDTO<PartnerSignupResponseDTO> registerPartner(PartnerSignupRequestDTO requestDTO) {
@@ -31,7 +35,11 @@ public class PartnerService {
 			);
 		}
 
-		Partner partner = Partner.builder()
+		//비밀번호 자동 생성 (초기 랜덤 비밀번호 설정)
+		String randomPassword = UUID.randomUUID().toString().substring(0, 12); // 12자리 랜덤 비밀번호 생성
+		String hashedPassword = passwordEncoder.encode(randomPassword); // 🔹 비밀번호 해싱
+
+		PartnerUser partner = PartnerUser.builder()
 			.partnerName(requestDTO.getPartnerName())
 			.partnerAddress(requestDTO.getPartnerAddress())
 			.ownerName(requestDTO.getOwnerName())
@@ -39,9 +47,10 @@ public class PartnerService {
 			.ownerEmail(requestDTO.getOwnerEmail())
 			.isTemporary(requestDTO.isTemporary())
 			.temporaryRegisterDate(requestDTO.getTemporaryRegisterDate())
+			.password(hashedPassword)
 			.build();
 
-		Partner savedPartner = partnerRepository.save(partner);
+		PartnerUser savedPartner = partnerRepository.save(partner);
 
 		return new CommonResponseDTO<>(
 			new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),

@@ -1,6 +1,7 @@
 package io.saim.dash.security;
 
 import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,25 +11,43 @@ import java.util.Collections;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
-	private final GeneralUser user;
+	private final String userType; //GENERAL 또는 PARTNER
+	private final String phoneNumber;
+	private final String password;
+	private final GeneralUser generalUser;
+	private final PartnerUser partnerUser;
 
+	//일반 사용자 생성자
 	public CustomUserDetails(GeneralUser user) {
-		this.user = user;
+		this.userType = "GENERAL";
+		this.phoneNumber = user.getGeneralPhone();
+		this.password = user.getPassword();
+		this.generalUser = user;
+		this.partnerUser = null;
+	}
+
+	//파트너 사용자 생성자
+	public CustomUserDetails(PartnerUser user) {
+		this.userType = "PARTNER";
+		this.phoneNumber = user.getOwnerPhone();
+		this.password = user.getPassword();
+		this.generalUser = null;
+		this.partnerUser = user;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.emptyList(); //권한이 필요하다면 추가 가능
+		return Collections.emptyList();
 	}
 
 	@Override
 	public String getPassword() {
-		return user.getPassword();
+		return password;
 	}
 
 	@Override
 	public String getUsername() {
-		return user.getGeneralPhone();
+		return phoneNumber;
 	}
 
 	@Override
@@ -49,5 +68,21 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	//일반 사용자 가져오기
+	public GeneralUser getGeneralUser() {
+		if (!"GENERAL".equals(userType)) {
+			throw new IllegalStateException("이 객체는 일반 사용자 정보가 아닙니다.");
+		}
+		return generalUser;
+	}
+
+	//파트너 사용자 가져오기
+	public PartnerUser getPartnerUser() {
+		if (!"PARTNER".equals(userType)) {
+			throw new IllegalStateException("이 객체는 파트너 사용자 정보가 아닙니다.");
+		}
+		return partnerUser;
 	}
 }

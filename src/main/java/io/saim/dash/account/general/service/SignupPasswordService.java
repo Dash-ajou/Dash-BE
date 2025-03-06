@@ -1,5 +1,7 @@
 package io.saim.dash.account.general.service;
 
+import io.saim.dash.global.dto.APIStatus;
+import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.account.general.dto.GeneralPasswordRequestDTO;
 import io.saim.dash.account.general.dto.GeneralPasswordResponseDTO;
 import io.saim.dash.account.general.model.Password;
@@ -23,26 +25,26 @@ public class SignupPasswordService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public GeneralPasswordResponseDTO setPassword(GeneralPasswordRequestDTO requestDto) {
+	public CommonResponseDTO<GeneralPasswordResponseDTO> setPassword(GeneralPasswordRequestDTO requestDto) {
 
-		//비밀번호 확인 일치 여부 검증
+		// 비밀번호 확인 일치 여부 검증
 		if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		//사용자 확인
+		// 사용자 확인
 		GeneralUser user = signupNameRepository.findById(requestDto.getGeneralId())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		//기존 비밀번호 가져오기 (최신 비밀번호 찾기)
+		// 기존 비밀번호 가져오기 (최신 비밀번호 찾기)
 		Optional<Password> existingPasswordOpt = passwordRepository.findByUser(user)
 			.stream()
 			.max((p1, p2) -> p1.getCreatedAt().compareTo(p2.getCreatedAt()));
 
-		//새로운 비밀번호 암호화
+		// 새로운 비밀번호 암호화
 		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
-		//기존 비밀번호가 있으면 업데이트, 없으면 새로 추가
+		// 기존 비밀번호가 있으면 업데이트, 없으면 새로 추가
 		if (existingPasswordOpt.isPresent()) {
 			Password existingPassword = existingPasswordOpt.get();
 			System.out.println("기존 비밀번호 업데이트: " + existingPassword.getPasswordId());
@@ -58,8 +60,11 @@ public class SignupPasswordService {
 			passwordRepository.save(newPassword);
 		}
 
-		//최종 응답 반환
-		return new GeneralPasswordResponseDTO("SUCCESS", "비밀번호가 설정되었습니다.",
-			new GeneralPasswordResponseDTO.Data(user.getGeneralId()));
+		return new CommonResponseDTO<>(
+			new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"비밀번호가 설정되었습니다.",
+			new GeneralPasswordResponseDTO("SUCCESS", "비밀번호가 설정되었습니다.", user.getGeneralId().toString())
+		);
 	}
 }

@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Entity
 @Getter
 @Setter
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "partner")
-public class Partner {
+public class PartnerUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +43,13 @@ public class Partner {
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
+
+	@Column(nullable = false)
+	private String password;
+
+	public String getPassword() {
+		return this.password;
+	}
 
 	@PrePersist
 	protected void onCreate() {
