@@ -16,6 +16,7 @@ public class CommonResponseDTO<T> {
 	private final String clientVersion;
 	private final APIStatus status;
 	private final String message;
+	@Getter
 	private final T data;
 
 	public CommonResponseDTO(VersionResponseDTO version, APIStatus status, String message, T data) {
@@ -27,7 +28,4 @@ public class CommonResponseDTO<T> {
 		this.data = data;
 	}
 
-	public T getData() {
-		return data;
-	}
 }
