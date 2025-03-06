@@ -66,4 +66,19 @@ public class PartnerAccountService {
 
 		return true;
 	}
+
+	@Transactional
+	public boolean deleteAccount(PartnerUser partnerUser) {
+		if (partnerUser == null) {
+			return false;
+		}
+
+		try {
+			partnerUserRepository.delete(partnerUser);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

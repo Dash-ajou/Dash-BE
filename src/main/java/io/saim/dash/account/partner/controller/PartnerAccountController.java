@@ -45,6 +45,7 @@ public class PartnerAccountController {
 		return ResponseEntity.ok(response);
 	}
 
+	//파트너 계정 수정(전화번호 변경)
 	@PatchMapping("/account/phone")
 	public ResponseEntity<CommonResponseDTO<?>> updatePhoneNumber(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -73,6 +74,39 @@ public class PartnerAccountController {
 			new VersionResponseDTO("1.0", "1.0"),
 			APIStatus.FAILURE,
 			"전화번호 변경에 실패했습니다. 인증 코드를 확인하세요.",
+			null
+		));
+	}
+
+	//파트너계정 회원 탈퇴
+	@DeleteMapping("/account/delete")
+	public ResponseEntity<CommonResponseDTO<?>> deletePartnerAccount(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		// 인증 확인
+		if (userDetails == null || !"PARTNER".equals(userDetails.getUserType())) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILURE,
+				"인증되지 않은 사용자입니다.",
+				null
+			));
+		}
+
+		PartnerUser partnerUser = userDetails.getPartnerUser();
+		boolean isDeleted = partnerAccountService.deleteAccount(partnerUser);
+
+		return isDeleted
+			? ResponseEntity.ok(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.SUCCESS,
+			"회원 탈퇴가 완료되었습니다.",
+			null
+		))
+			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
+			new VersionResponseDTO("1.0", "1.0"),
+			APIStatus.FAILURE,
+			"회원 탈퇴에 실패했습니다.",
 			null
 		));
 	}
