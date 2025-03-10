@@ -6,12 +6,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity @NoArgsConstructor
-public class DUMMY_ServiceUser { // SignupName 수정 시 해당 class로 대체
+public abstract class DUMMY_ServiceUser { // SignupName 수정 시 해당 class로 대체
 
 	@Id @Getter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +27,11 @@ public class DUMMY_ServiceUser { // SignupName 수정 시 해당 class로 대체
 
 	@Getter
 	protected LocalDateTime joinedAt;
+
+	@Transient
+	private DUMMY_UserType userType;
+
+	public boolean isPartner() {
+		return this.userType == DUMMY_UserType.PARTNER;
+	}
 }

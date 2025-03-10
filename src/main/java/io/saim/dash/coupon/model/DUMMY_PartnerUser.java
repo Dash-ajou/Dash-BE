@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Entity @NoArgsConstructor
 public class DUMMY_PartnerUser extends DUMMY_ServiceUser {
 
+	private final DUMMY_UserType userType = DUMMY_UserType.PARTNER;
+
 	@Getter
 	private String partnerName;
 
@@ -15,6 +17,10 @@ public class DUMMY_PartnerUser extends DUMMY_ServiceUser {
 
 	public String getOwnerName() {
 		return this.name;
+	}
+
+	public static boolean isPartnerUser(DUMMY_ServiceUser user) {
+		return user instanceof DUMMY_PartnerUser;
 	}
 
 }
