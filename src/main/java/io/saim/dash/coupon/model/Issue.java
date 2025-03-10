@@ -2,7 +2,6 @@ package io.saim.dash.coupon.model;
 
 import java.util.List;
 
-import io.saim.dash.account.general.model.SignupName;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +27,7 @@ public class Issue {
 	private String created_at;
 
 	@ManyToOne(optional = false)
-	private SignupName vendor;
+	private VendorGroup vendorGroup;
 
 	@ManyToOne(optional = false)
 	private DUMMY_PartnerUser partner;
@@ -39,5 +38,12 @@ public class Issue {
 	@OneToMany
 	@Column(nullable = false)
 	private List<Product> products;
+
+	public boolean isRequestedPartner(DUMMY_ServiceUser partner) {
+		if (!DUMMY_PartnerUser.isPartnerUser(partner))
+			return false;
+
+		return this.partner.equals(partner);
+	}
 
 }
