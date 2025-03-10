@@ -17,10 +17,12 @@ public enum ServiceExceptionContent {
 
 	// 403
 	// BLOCKED_USER(APIStatus.FORBIDDEN, "차단된 사용자입니다. 관리자에게 문의해주세요"),
+	ISSUE_FORBIDDEN(APIStatus.FORBIDDEN, "접근권한이 없는 이슈입니다."),
 	TEST_METHOD_REQUESTED(APIStatus.FORBIDDEN, "사용할 수 없는 요청입니다: %s"),
 
 	// 404
 	// DATA_NOT_FOUND(APIStatus.NOT_FOUND, "일치하는 데이터ID를 찾을 수 없습니다: %d"),
+	ISSUE_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 이슈를 찾을 수 없습니다."),
 
 
 	// 500
