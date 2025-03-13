@@ -24,7 +24,7 @@ public enum ServiceExceptionContent {
 
 
 	// 500
-	INTERNAL_SERVER_ERROR(APIStatus.FAILED, "알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도헤주세요."),
+	INTERNAL_SERVER_ERROR(APIStatus.FAILURE, "알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도헤주세요."),
 
 	;
 

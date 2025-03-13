@@ -13,7 +13,7 @@ public enum APIStatus {
 	NOT_FOUND(404),
 
 	// 500
-	FAILED(500),
+	FAILURE(500),
 
 	;
 
