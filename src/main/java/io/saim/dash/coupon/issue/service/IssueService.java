@@ -1,7 +1,6 @@
 package io.saim.dash.coupon.issue.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
-import io.saim.dash.coupon.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.model.Issue;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
 
@@ -22,10 +20,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IssueService {
 
-	// private final CouponRepository couponRepository;
 	private final IssueRepository issueRepository;
 
-	public List<Issue> getIssueByUser(DUMMY_ServiceUser user) {
+	public List<Issue> getIssuesByUser(DUMMY_ServiceUser user) {
 		if(user.isPartner())
 			return issueRepository.getIssuesByPartner((DUMMY_PartnerUser)user);
 

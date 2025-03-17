@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.model.Issue;
 import io.saim.dash.coupon.model.VendorGroup;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
@@ -46,7 +45,7 @@ class IssueServiceTest {
 
 		// when
 		DUMMY_PartnerUser partnerUser = new DUMMY_PartnerUser();
-		List<Issue> issues = issueService.getIssueByUser(partnerUser);
+		List<Issue> issues = issueService.getIssuesByUser(partnerUser);
 
 		// then
 		issues.forEach(v -> {
@@ -66,7 +65,7 @@ class IssueServiceTest {
 
 		// when
 		DUMMY_GeneralUser vendorUser = new DUMMY_GeneralUser();
-		List<Issue> issues = issueService.getIssueByUser(vendorUser);
+		List<Issue> issues = issueService.getIssuesByUser(vendorUser);
 
 		// then
 		issues.forEach(v -> {
