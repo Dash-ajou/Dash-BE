@@ -15,8 +15,8 @@ public class Product {
 	@Column(name="product_id")
 	private Long productId;
 
-	@ManyToOne
-	@Column(name = "partner_id", nullable = false)
+	@ManyToOne()
+	// @Column(name = "partner_id", nullable = false)
 	private DUMMY_PartnerUser partner;
 
 	@Column(name = "product_name", nullable = false)

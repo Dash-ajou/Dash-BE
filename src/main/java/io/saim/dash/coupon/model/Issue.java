@@ -24,7 +24,7 @@ public class Issue {
 	private Long id;
 
 	@Column(nullable = false)
-	private String created_at;
+	private String createdAt;
 
 	@ManyToOne(optional = false)
 	private VendorGroup vendorGroup;

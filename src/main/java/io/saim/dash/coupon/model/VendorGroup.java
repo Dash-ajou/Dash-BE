@@ -25,7 +25,7 @@ public class VendorGroup {
 	private String name;
 	private LocalDateTime createdAt;
 
-	@OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
 	private List<MemberVendor> members;
 
 	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)

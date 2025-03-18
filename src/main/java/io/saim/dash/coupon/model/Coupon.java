@@ -1,7 +1,6 @@
 package io.saim.dash.coupon.model;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
-import io.saim.dash.global.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Coupon extends BaseEntity {
+public class Coupon {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

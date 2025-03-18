@@ -6,11 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity @NoArgsConstructor
+@MappedSuperclass
+@NoArgsConstructor
 public abstract class DUMMY_ServiceUser { // SignupName 수정 시 해당 class로 대체
 
 	@Id @Getter

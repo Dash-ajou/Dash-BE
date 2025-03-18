@@ -24,7 +24,7 @@ public class IssueLog {
 
 	private ActiveStatus activeStatus;
 
-	@OneToOne(mappedBy = "partner")
+	@OneToOne
 	private Issue issue;
 	private Long issueCnt;
 
