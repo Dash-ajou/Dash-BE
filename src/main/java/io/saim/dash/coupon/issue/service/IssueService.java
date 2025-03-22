@@ -2,9 +2,11 @@ package io.saim.dash.coupon.issue.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.saim.dash.coupon.issue.dto.IssueFilter;
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
@@ -22,11 +24,14 @@ public class IssueService {
 
 	private final IssueRepository issueRepository;
 
-	public List<Issue> getIssuesByUser(DUMMY_ServiceUser user) {
-		if(user.isPartner())
-			return issueRepository.getIssuesByPartner((DUMMY_PartnerUser)user);
+	public List<Issue> getIssuesByUser(DUMMY_ServiceUser user, IssueFilter filter) {
+		if(user.isPartner()) {
+			assert user instanceof DUMMY_PartnerUser;
+			return issueRepository.findIssuesByPartner((DUMMY_PartnerUser)user, filter);
+		}
 
-		return issueRepository.getIssuesByVendor((DUMMY_GeneralUser)user);
+		assert user instanceof DUMMY_GeneralUser;
+		return issueRepository.findIssuesByVendor((DUMMY_GeneralUser)user, filter);
 	}
 
 	public Issue getIssue(Long issueId, DUMMY_ServiceUser requestUser) throws ServiceException {

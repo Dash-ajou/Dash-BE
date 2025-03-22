@@ -2,10 +2,14 @@ package io.saim.dash.coupon.issue.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import io.saim.dash.coupon.issue.dto.IssueListRequestDTO;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
+import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
 
 import io.saim.dash.coupon.model.Issue;
@@ -17,6 +21,22 @@ import io.saim.dash.coupon.issue.service.IssueService;
 public class IssueController {
 
 	private final IssueService issueService;
+
+	@GetMapping("/list")
+	public PagingResponse<Issue> getIssues(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@RequestParam IssueListRequestDTO requestQueries
+	) {
+		List<Issue> userIssueList = issueService.getIssuesByUser(
+			serviceUser,
+			requestQueries.toIssueFilter()
+		);
+
+		return new PagingResponse<>(
+			requestQueries.toIssueFilter().getPageOptions(),
+			userIssueList
+		);
+	}
 
 	@GetMapping("/spec/{issueId}")
 	public Issue getIssueRequestSpec(
