@@ -22,7 +22,7 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public static final QIssue issue = new QIssue("issue");
 
-    public final StringPath createdAt = createString("createdAt");
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

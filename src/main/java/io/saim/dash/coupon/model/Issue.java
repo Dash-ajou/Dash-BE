@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Issue {
 	private Long id;
 
 	@Column(nullable = false)
-	private String createdAt;
+	private LocalDateTime createdAt;
 
 	@ManyToOne(optional = false)
 	private VendorGroup vendorGroup;
