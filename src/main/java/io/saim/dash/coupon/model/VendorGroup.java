@@ -1,6 +1,7 @@
 package io.saim.dash.coupon.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -12,10 +13,11 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@NoArgsConstructor
+@Getter @Setter
 public class VendorGroup {
 
 	@Id
@@ -26,7 +28,7 @@ public class VendorGroup {
 	private LocalDateTime createdAt;
 
 	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
-	private List<MemberVendor> members;
+	private List<MemberVendor> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
 	private List<Issue> issues;
@@ -42,5 +44,9 @@ public class VendorGroup {
 		return this.members.stream().map(
 			MemberVendor::getUser
 		).toList();
+	}
+
+	public void linkMember(MemberVendor memberVendor) {
+		this.members.add(memberVendor);
 	}
 }

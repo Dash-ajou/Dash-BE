@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @MappedSuperclass
 @NoArgsConstructor
+@AllArgsConstructor
 public abstract class DUMMY_ServiceUser { // SignupName 수정 시 해당 class로 대체
 
 	@Id @Getter
@@ -30,7 +32,7 @@ public abstract class DUMMY_ServiceUser { // SignupName 수정 시 해당 class�
 	@Getter
 	protected LocalDateTime joinedAt;
 
-	@Transient
+	@Transient @Getter
 	private DUMMY_UserType userType;
 
 	public boolean isPartner() {

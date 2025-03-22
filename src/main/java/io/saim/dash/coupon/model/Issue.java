@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
@@ -13,10 +14,11 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@NoArgsConstructor
+@Getter @Setter
 public class Issue {
 
 	@Id
@@ -29,15 +31,15 @@ public class Issue {
 	@ManyToOne(optional = false)
 	private VendorGroup vendorGroup;
 
+
 	@ManyToOne(optional = false)
 	private DUMMY_PartnerUser partner;
 
 	@Column(nullable = false)
 	private IssueStatus status;
 
-	@OneToMany
-	@Column(nullable = false)
-	private List<Product> products;
+	@OneToMany @Column(nullable = false)
+	private List<Product> products = new ArrayList<>();
 
 	public boolean isRequestedPartner(DUMMY_ServiceUser partner) {
 		if (!DUMMY_PartnerUser.isPartnerUser(partner))
