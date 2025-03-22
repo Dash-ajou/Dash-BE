@@ -3,12 +3,13 @@ package io.saim.dash.coupon.repository.Issue;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.InvalidPropertyException;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import io.saim.dash.coupon.issue.dto.IssueFilter;
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.Issue;
@@ -29,37 +30,48 @@ public class IssueRepositoryImpl implements IssueRepository {
 	}
 
 	@Override
-	public List<Issue> findIssuesByVendor(DUMMY_GeneralUser user, IssueFilter filter) {
+	public List<Issue> findIssuesByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QIssue issue = QIssue.issue;
-		BooleanBuilder vendorOption = new BooleanBuilder();
 
 		List<VendorGroup> vendors = user.getVendors();
 		if (!vendors.isEmpty()) {
-			vendorOption.and(issue.vendorGroup.in(vendors));
+			throw new NullPointerException("No Vendor Found");
 		}
 
-		return queryFactory
-			// Search Filtering
-			.selectFrom(issue)
-			.where(vendorOption)
-			.orderBy(issue.createdAt.desc()) // 최신요청 순
+		filterBuilder.and(issue.vendorGroup.in(vendors));
 
-			// Pagination
-			.offset(filter.getOffset())
-			.limit(filter.getLimit())
-			.fetch();
+		JPAQuery<Issue> issueJPAQuery = getIssueJPAQuery(filterBuilder, issue);
+		addPaginateOptions(issueJPAQuery, page, size);
+		return issueJPAQuery.fetch();
 	}
 
 	@Override
-	public List<Issue> findIssuesByPartner(DUMMY_PartnerUser user, IssueFilter filter) {
+	public List<Issue> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QIssue issue = QIssue.issue;
+
+		filterBuilder.and(issue.partner.eq(user));
+
+		JPAQuery<Issue> issueJPAQuery = getIssueJPAQuery(filterBuilder, issue);
+		addPaginateOptions(issueJPAQuery, page, size);
+		return issueJPAQuery.fetch();
+	}
+
+	private JPAQuery<Issue> getIssueJPAQuery(BooleanBuilder filterBuilder, QIssue issue) {
 		return queryFactory
 			.selectFrom(issue)
-			.where(issue.partner.eq(user))
+			.where(filterBuilder)
+			.orderBy(issue.createdAt.desc()); // 최신요청 순
+	}
 
+	private static void addPaginateOptions(JPAQuery<Issue> issueJPAQuery, int page, int size) {
+
+		if (page <= 0) page = 1;
+		if (size <= 10) size = 10;
+		else if (size % 10 != 0) size = (size/10)*10;
+
+		issueJPAQuery
 			// Pagination
-			.offset(filter.getOffset())
-			.limit(filter.getLimit())
-			.fetch();
+			.offset(page * size)
+			.limit(size);
 	}
 }

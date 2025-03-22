@@ -15,13 +15,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import io.saim.dash.coupon.common.constant.IssueStatus;
-import io.saim.dash.coupon.issue.dto.IssueFilter;
+import com.querydsl.core.BooleanBuilder;
+
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.model.DUMMY_UserType;
 import io.saim.dash.coupon.model.Issue;
-import io.saim.dash.coupon.model.MemberVendor;
 import io.saim.dash.coupon.model.VendorGroup;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
 import io.saim.dash.global.exception.ServiceException;
@@ -35,15 +33,9 @@ class IssueServiceTest {
 	@Mock
 	IssueRepository issueRepository;
 
-	private IssueFilter issueFilter;
-
 	@BeforeEach
 	void setUp() {
 		issueService = new IssueService(issueRepository);
-		issueFilter = new IssueFilter(
-			1, 1, "", "",
-			"", null
-		);
 	}
 
 	@Test
@@ -54,11 +46,14 @@ class IssueServiceTest {
 		DUMMY_PartnerUser partnerUser = new DUMMY_PartnerUser();
 		dummyIssue.setPartner(partnerUser);
 
-		when(issueRepository.findIssuesByPartner(any(DUMMY_PartnerUser.class), any(IssueFilter.class)))
+		when(issueRepository.findIssuesByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyIssue));
 
 		// when
-		List<Issue> issues = issueService.getIssuesByUser(partnerUser, this.issueFilter);
+		List<Issue> issues = issueService.getIssuesByUser(
+			partnerUser, 0, 0,
+			null, null, null, null, null
+		);
 
 		System.out.println(issues.size());
 
@@ -81,11 +76,14 @@ class IssueServiceTest {
 		vendorUser.addVendor(vendorGroup);
 		dummyIssue.setVendorGroup(vendorGroup);
 
-		when(issueRepository.findIssuesByVendor(any(DUMMY_GeneralUser.class), any(IssueFilter.class)))
+		when(issueRepository.findIssuesByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyIssue));
 
 		// when
-		List<Issue> issues = issueService.getIssuesByUser(vendorUser, this.issueFilter);
+		List<Issue> issues = issueService.getIssuesByUser(
+			vendorUser, 0, 0,
+			null, null, null, null, null
+		);
 
 		// then
 		issues.forEach(v -> {
