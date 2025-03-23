@@ -2,14 +2,17 @@ package io.saim.dash.coupon.model;
 
 import java.time.LocalDateTime;
 
-import io.saim.dash.coupon.common.constant.ActiveStatus;
+import org.springframework.cglib.core.Local;
+
+import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,16 +23,27 @@ public class IssueLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long issuedId;
 
-	private ActiveStatus activeStatus;
+	private CouponActiveStatus couponActiveStatus;
 
-	@OneToOne
-	private Issue issue;
+	@ManyToOne
+	private Issue issueRequest;
 	private Long issueCnt;
 
 	@Nullable
-	private LocalDateTime paidAt;
-	private LocalDateTime confirmedAt;
+	private LocalDateTime paidAt = LocalDateTime.now();
+	private LocalDateTime decidedAt;
 	private Long paidPrice;
+
+	@Builder
+	public IssueLog(CouponActiveStatus couponActiveStatus, Issue issueRequest, Long issueCnt, LocalDateTime paidAt,
+		LocalDateTime decidedAt, Long paidPrice) {
+		this.issueRequest = issueRequest;
+		this.decidedAt = decidedAt;
+		this.paidAt = paidAt;
+		this.paidPrice = paidPrice;
+		this.issueCnt = issueCnt;
+		this.couponActiveStatus = couponActiveStatus;
+	}
 }

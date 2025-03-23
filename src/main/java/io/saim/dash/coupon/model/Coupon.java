@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,11 @@ public class Coupon {
 	@Column(nullable = false)
 	private CouponStatus couponStatus;
 
+	@Builder
+	public Coupon(Long issueId, Long productId, String registerCode, CouponStatus couponStatus) {
+		this.issueId = issueId;
+		this.productId = productId;
+		this.registerCode = registerCode;
+		this.couponStatus = couponStatus;
+	}
 }

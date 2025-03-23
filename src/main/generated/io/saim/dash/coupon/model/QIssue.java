@@ -24,7 +24,7 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Long> issueId = createNumber("issueId", Long.class);
 
     public final QDUMMY_PartnerUser partner;
 
