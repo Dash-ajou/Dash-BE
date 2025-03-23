@@ -1,11 +1,15 @@
 package io.saim.dash.coupon.repository.Coupon;
 
+import java.util.List;
+import java.util.Optional;
+
 import io.saim.dash.coupon.model.Coupon;
 
 public interface CouponRepository {
 
-	Long save(Coupon coupon);
+	void save(Coupon coupon);
 
-	Coupon getById(Long id);
+	Optional<Coupon> getById(Long id);
 
+	void saveAll(List<Coupon> issuedCoupons);
 }

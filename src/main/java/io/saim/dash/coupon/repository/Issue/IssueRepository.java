@@ -1,11 +1,26 @@
 package io.saim.dash.coupon.repository.Issue;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.Optional;
 
-import io.saim.dash.coupon.common.dto.IssueFilterDTO;
+import com.querydsl.core.BooleanBuilder;
+
+import io.saim.dash.coupon.model.DUMMY_GeneralUser;
+import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.Issue;
 
 public interface IssueRepository {
-	Page<Issue> findIssueRequest(IssueFilterDTO filter, Pageable pageable);
+
+	Optional<Issue> getById(long issueId);
+
+	// List<Issue> getIssuesByVendor(DUMMY_GeneralUser user);
+	List<Issue> findIssuesByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size);
+	// List<Issue> getIssuesByPartner(DUMMY_PartnerUser user);
+	List<Issue> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size);
+
+	void save(Issue issue);
+
+	void delete(Issue issue);
+
+	// List<Issue> getIssueByUserId(Long userId);
 }
