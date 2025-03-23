@@ -6,6 +6,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.common.dto.PartnerDTO;
+import io.saim.dash.coupon.common.dto.VendorDTO;
 import io.saim.dash.coupon.issue.dto.IssueConfirmSpecDTO;
 import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueCreateRequestDTO;
@@ -68,8 +70,8 @@ public class IssueController {
 		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
 		@RequestBody IssueCreateRequestDTO issueCreateRequestDTO
 	) {
-		IssueCreateRequestDTO.VendorRequestDTO vendor = issueCreateRequestDTO.getVendor();
-		IssueCreateRequestDTO.PartnerRequestDTO partner = issueCreateRequestDTO.getPartner();
+		VendorDTO vendor = issueCreateRequestDTO.getVendor();
+		PartnerDTO partner = issueCreateRequestDTO.getPartner();
 
 		Issue issue = issueService.createIssue(
 			serviceUser,
