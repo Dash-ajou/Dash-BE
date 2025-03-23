@@ -22,15 +22,15 @@ public class QIssueLog extends EntityPathBase<IssueLog> {
 
     public static final QIssueLog issueLog = new QIssueLog("issueLog");
 
-    public final EnumPath<io.saim.dash.coupon.common.constant.ActiveStatus> activeStatus = createEnum("activeStatus", io.saim.dash.coupon.common.constant.ActiveStatus.class);
+    public final EnumPath<io.saim.dash.coupon.common.constant.CouponActiveStatus> couponActiveStatus = createEnum("couponActiveStatus", io.saim.dash.coupon.common.constant.CouponActiveStatus.class);
 
-    public final DateTimePath<java.time.LocalDateTime> confirmedAt = createDateTime("confirmedAt", java.time.LocalDateTime.class);
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final QIssue issue;
+    public final DateTimePath<java.time.LocalDateTime> decidedAt = createDateTime("decidedAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> issueCnt = createNumber("issueCnt", Long.class);
+
+    public final NumberPath<Long> issuedId = createNumber("issuedId", Long.class);
+
+    public final QIssue issueRequest;
 
     public final DateTimePath<java.time.LocalDateTime> paidAt = createDateTime("paidAt", java.time.LocalDateTime.class);
 
@@ -54,7 +54,7 @@ public class QIssueLog extends EntityPathBase<IssueLog> {
 
     public QIssueLog(Class<? extends IssueLog> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.issue = inits.isInitialized("issue") ? new QIssue(forProperty("issue"), inits.get("issue")) : null;
+        this.issueRequest = inits.isInitialized("issueRequest") ? new QIssue(forProperty("issueRequest"), inits.get("issueRequest")) : null;
     }
 
 }
