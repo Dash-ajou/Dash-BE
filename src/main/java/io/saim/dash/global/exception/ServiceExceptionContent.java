@@ -9,7 +9,9 @@ import lombok.Getter;
 public enum ServiceExceptionContent {
 
 	// 400
-	// DEFAULT_BAD_REQUEST(APIStatus.BAD_REQUEST, "잘못된 요청입니다. 확인 후 다시 시도해주세요."),
+	DEFAULT_BAD_REQUEST(APIStatus.BAD_REQUEST, "잘못된 요청입니다. 확인 후 다시 시도해주세요."),
+	ISSUE_ALREADY_SIGNED(APIStatus.BAD_REQUEST, "이미 승인/반려여부가 결정된 발행요청입니다."),
+	BAD_ISSUE_SIGN_REQUEST(APIStatus.BAD_REQUEST, "올바르지 않은 발행승인/반려 요청입니다."),
 
 	// 401
 	// UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다"),

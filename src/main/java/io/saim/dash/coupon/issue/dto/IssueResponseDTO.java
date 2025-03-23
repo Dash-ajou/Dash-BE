@@ -19,7 +19,7 @@ public class IssueResponseDTO {
 	private List<Product> products = new ArrayList<>();
 
 	public IssueResponseDTO(Issue issue) {
-		this.id = issue.getId();
+		this.id = issue.getIssueId();
 		this.createdAt = issue.getCreatedAt();
 		this.vendorGroup = issue.getVendorGroup();
 		this.partner = issue.getPartner();

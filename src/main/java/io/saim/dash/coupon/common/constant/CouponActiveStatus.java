@@ -1,5 +1,5 @@
 package io.saim.dash.coupon.common.constant;
 
-public enum ActiveStatus {
+public enum CouponActiveStatus {
 	ENABLED, DISABLED;
 }

@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.issue.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,18 +8,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
+import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.model.Coupon;
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.model.Issue;
+import io.saim.dash.coupon.model.IssueLog;
 import io.saim.dash.coupon.model.Product;
 import io.saim.dash.coupon.model.QIssue;
 import io.saim.dash.coupon.model.VendorGroup;
+import io.saim.dash.coupon.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.repository.DUMMY.DUMMY_GeneralUserRepository;
 import io.saim.dash.coupon.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
 
+import io.saim.dash.coupon.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.coupon.repository.Product.ProductRepository;
 import io.saim.dash.coupon.repository.Vendor.VendorRepository;
 import io.saim.dash.coupon.util.IssueQueryHelper;
@@ -34,6 +42,8 @@ public class IssueService {
 	private final IssueRepository issueRepository;
 	private final VendorRepository vendorRepository;
 	private final ProductRepository productRepository;
+	private final IssueLogRepository issueLogRepository;
+	private final CouponRepository couponRepository;
 
 	private final DUMMY_GeneralUserRepository generalUserRepository;
 	private final DUMMY_PartnerUserRepository partnerUserRepository;
@@ -74,6 +84,7 @@ public class IssueService {
 		return issue;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	public Issue createIssue(
 		DUMMY_ServiceUser serviceUser,
 		String vendorName, String presidentName, String presidentPhone,
@@ -101,6 +112,35 @@ public class IssueService {
 		issueRepository.save(issue);
 
 		return issue;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public IssueResultDTO signIssue(
+		DUMMY_ServiceUser serviceUser, Long issueId,
+		IssueStatus status,
+		String paidAtString, List<IssueSignRequestDTO.IssuePaymentPriceInfo> price, Long discount
+	) {
+		if (!serviceUser.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		if (
+			(status == IssueStatus.APPROVED && (paidAtString == null || price.isEmpty())) ||
+			(status == IssueStatus.REQUESTED)
+		)
+			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
+
+		Issue issue = getIssue(issueId, serviceUser);
+
+		if (issue.getStatus() != IssueStatus.REQUESTED)
+			throw new ServiceException(ServiceExceptionContent.ISSUE_ALREADY_SIGNED);
+
+		Long paidPrice = getPaidPrice(price, discount);
+
+		updateIssueStatus(issue, status);
+		if (status == IssueStatus.DENIED)
+			return new IssueResultDTO(issue, null);
+
+		return issueCoupon(issue, LocalDateTime.parse(paidAtString), paidPrice);
 	}
 
 	private VendorGroup createIssueVendor(
@@ -132,5 +172,62 @@ public class IssueService {
 			partnerUserRepository.save(partner);
 		}
 		return partner;
+	}
+
+	private IssueResultDTO issueCoupon(Issue issue, LocalDateTime paidAt, Long paidPrice) {
+		List<Coupon> issuedCoupons = issue.getProducts().stream()
+			.map(product -> Coupon.builder()
+				.issueId(issue.getIssueId())
+				.productId(product.getProductId())
+				.registerCode(generateCouponRegisterCode(issue, 10))
+				.build()
+			)
+			.toList();
+
+		IssueLog issueLog = logCouponIssue(issue, paidAt, paidPrice);
+		couponRepository.saveAll(issuedCoupons);
+
+		return new IssueResultDTO(issue, issueLog);
+	}
+
+	private IssueLog logCouponIssue(Issue issue, LocalDateTime paidAt, Long paidPrice) {
+		IssueLog issueLog = IssueLog.builder()
+			.issueRequest(issue)
+			.paidAt(paidAt)
+			.paidPrice(paidPrice)
+			.issueCnt(Integer.toUnsignedLong(issue.getProducts().size()))
+			.couponActiveStatus(CouponActiveStatus.ENABLED)
+			.build();
+		issueLogRepository.save(issueLog);
+		return issueLog;
+	}
+
+	private Long getPaidPrice(List<IssueSignRequestDTO.IssuePaymentPriceInfo> price, Long discount) {
+		long paidPrice = price.stream()
+			.map(IssueSignRequestDTO.IssuePaymentPriceInfo::getPrice)
+			.reduce(Long::sum)
+			.orElse(0L) - discount;
+
+		if (paidPrice <= 0)
+			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
+
+		return paidPrice;
+	}
+
+	private void updateIssueStatus(Issue issue, IssueStatus status) {
+		if (issue.getStatus() != IssueStatus.REQUESTED)
+			throw new ServiceException(ServiceExceptionContent.ISSUE_ALREADY_SIGNED);
+
+		issue.setStatus(status);
+	}
+
+	private static String generateCouponRegisterCode(Issue issueRequest, int length) {
+		if (length < 10) length = 10;
+
+		int basecode = issueRequest.hashCode();
+		String prefix = Integer.toString(basecode).substring(0, 5);
+		String uqn = Integer.toString((basecode + (int)(Math.random() % 1000) % 1000));
+
+		return (prefix + uqn).substring(0, length);
 	}
 }

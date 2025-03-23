@@ -2,7 +2,7 @@ package io.saim.dash.coupon.issue.service;
 
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,12 +17,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
 import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.Issue;
+import io.saim.dash.coupon.model.Product;
 import io.saim.dash.coupon.model.VendorGroup;
+import io.saim.dash.coupon.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
+import io.saim.dash.coupon.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.repository.Product.ProductRepository;
@@ -38,9 +44,10 @@ class IssueServiceTest {
 	@Mock IssueRepository issueRepository;
 	@Mock VendorRepository vendorRepository;
 	@Mock ProductRepository productRepository;
+	@Mock IssueLogRepository issueLogRepository;
+	@Mock CouponRepository couponRepository;
 	@Mock DUMMY_GeneralUserRepository generalUserRepository;
-	@Mock
-	DUMMY_PartnerUserRepository partnerUserRepository;
+	@Mock DUMMY_PartnerUserRepository partnerUserRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -48,6 +55,8 @@ class IssueServiceTest {
 			issueRepository,
 			vendorRepository,
 			productRepository,
+			issueLogRepository,
+			couponRepository,
 			generalUserRepository,
 			partnerUserRepository
 		);
@@ -142,7 +151,7 @@ class IssueServiceTest {
 	void getIssueTest_B() {
 		// given
 		Long dummyissueId = 1L;
-		Issue dummyIssue = new Issue(); dummyIssue.setId(dummyissueId);
+		Issue dummyIssue = new Issue(); dummyIssue.setIssueId(dummyissueId);
 		DUMMY_GeneralUser userA = new DUMMY_GeneralUser();
 		DUMMY_GeneralUser userB = new DUMMY_GeneralUser();
 
@@ -167,17 +176,10 @@ class IssueServiceTest {
 	void createIssueTest() {
 		// given
 		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
-		List<Long> dummyProducts = List.of(
-			1L,
-			2L,
-			3L
-		);
+		List<Long> dummyProducts = List.of(1L, 2L, 3L);
 
-		String vendorName = "";
-		String presidentName = "";
-		String presidentPhone = "";
-		String businessName = "";
-		String ownerPhone = "";
+		String vendorName = "", presidentName = "", presidentPhone = "";
+		String businessName = "", ownerPhone = "";
 
 		when(productRepository.findAllById(any(List.class)))
 			.thenReturn(List.of());
@@ -198,18 +200,121 @@ class IssueServiceTest {
 	@Test
 	@DisplayName("일반사용자는 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
 	void signIssueTest_A() {
+		// given
+		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
 
+		// when
+		Assertions.assertThatThrownBy(() ->
+				issueService.signIssue(
+					serviceUser, 0L,
+					null, null, null, null
+				)
+			)
+		// then
+			.isInstanceOf(ServiceException.class)
+			.hasMessage(ServiceExceptionContent.NO_PERMISSION.getMessage());
 	}
 
 	@Test
 	@DisplayName("파트너사용자는 본인에게 요청되지 않은 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
 	void signIssueTest_B() {
+		// given
+		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
+		DUMMY_PartnerUser serviceUserB = new DUMMY_PartnerUser();
 
+		// when
+		Issue dummyIssue = new Issue();
+		dummyIssue.setPartner(serviceUserB);
+
+		when(issueRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyIssue));
+
+		// then
+		Assertions.assertThatThrownBy(() ->
+				issueService.signIssue(
+					serviceUserA, 0L,
+					null, null, null, null
+				)
+			)
+			.isInstanceOf(ServiceException.class)
+			.hasMessage(ServiceExceptionContent.ISSUE_FORBIDDEN.getMessage());
+	}
+
+	@Test
+	@DisplayName("파트너사용자는 이미 결정한 쿠폰발행요청을 정정할 수 없다")
+	void signIssueTest_C() {
+		// given
+		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
+		List<IssueSignRequestDTO.IssuePaymentPriceInfo> issuePaymentPriceInfos = List.of(
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(1L, 1000L),
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(2L, 1000L),
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(3L, 1000L)
+		);
+
+		// when
+		Issue dummyIssue = new Issue();
+		dummyIssue.setPartner(serviceUserA);
+		dummyIssue.setStatus(IssueStatus.REQUESTED);
+		when(issueRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyIssue));
+
+		issueService.signIssue(
+			serviceUserA, 0L,
+			IssueStatus.APPROVED,
+			LocalDateTime.now().toString(),
+			issuePaymentPriceInfos,
+			0L
+		);
+
+		// then
+		Assertions.assertThatThrownBy(() ->
+				issueService.signIssue(
+					serviceUserA, 0L,
+					IssueStatus.APPROVED,
+					LocalDateTime.now().toString(),
+					issuePaymentPriceInfos,
+					0L
+				)
+			)
+			.isInstanceOf(ServiceException.class)
+			.hasMessage(ServiceExceptionContent.ISSUE_ALREADY_SIGNED.getMessage());
 	}
 
 	@Test
 	@DisplayName("파트너사용자가 쿠폰 발행요청서를 승인하면, 쿠폰은 발행요청서의 요청수량만큼 자동발행된다")
-	void signIssueTest_C() {
+	void signIssueTest_D() {
+		// given
+		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
+		List<IssueSignRequestDTO.IssuePaymentPriceInfo> issuePaymentPriceInfos = List.of(
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(1L, 1000L),
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(2L, 1000L),
+			new IssueSignRequestDTO.IssuePaymentPriceInfo(3L, 1000L)
+		);
 
+		// when
+		Issue dummyIssue = new Issue();
+		dummyIssue.setPartner(serviceUserA);
+		dummyIssue.setStatus(IssueStatus.REQUESTED);
+		dummyIssue.setProducts(List.of(
+			Product.builder().build(),
+			Product.builder().build(),
+			Product.builder().build()
+		));
+
+		when(issueRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyIssue));
+
+		IssueResultDTO issueResultDTO = issueService.signIssue(
+			serviceUserA, 0L,
+			IssueStatus.APPROVED,
+			LocalDateTime.now().toString(),
+			issuePaymentPriceInfos,
+			0L
+		);
+
+		// then
+		Assertions.assertThat(
+			issueResultDTO.issueLog().getIssueCnt()
+		).isEqualTo(dummyIssue.getProducts().size());
 	}
 }
