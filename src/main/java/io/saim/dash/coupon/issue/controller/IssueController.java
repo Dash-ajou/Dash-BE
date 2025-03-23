@@ -2,14 +2,16 @@ package io.saim.dash.coupon.issue.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.issue.dto.IssueConfirmSpecDTO;
+import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueResponseDTO;
+import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.issue.dto.IssueSignResponseDTO;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +79,30 @@ public class IssueController {
 		);
 
 		return new IssueResponseDTO(issue);
+	}
+
+	@PostMapping("/{issueId}/sign")
+	public IssueSignResponseDTO signIssue(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@PathVariable Long issueId,
+		@RequestBody IssueSignRequestDTO issueSignRequestDTO
+	) {
+		IssueResultDTO issueResult = issueService.signIssue(
+			serviceUser, issueId,
+			issueSignRequestDTO.getStatus(),
+			issueSignRequestDTO.getPayment().getPaidAt(),
+			issueSignRequestDTO.getPayment().getPrices(),
+			issueSignRequestDTO.getPayment().getDiscount()
+		);
+
+		IssueStatus updatedStatus = issueResult.issue().getStatus();
+		IssueSignResponseDTO.IssueSignResponseDTOBuilder status = IssueSignResponseDTO.builder()
+			.result(true)
+			.status(updatedStatus);
+
+		if (updatedStatus == IssueStatus.APPROVED)
+			status.confirmSpec(new IssueConfirmSpecDTO(issueResult));
+
+		return status.build();
 	}
 }
