@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
-import io.saim.dash.coupon.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.model.Issue;
-import io.saim.dash.coupon.model.Product;
-import io.saim.dash.coupon.model.VendorGroup;
+import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.common.model.Product;
+import io.saim.dash.coupon.common.model.VendorGroup;
 
 public class IssueResponseDTO {
 	private Long id;

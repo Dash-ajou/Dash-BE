@@ -20,21 +20,21 @@ import com.querydsl.core.BooleanBuilder;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.issue.dto.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
-import io.saim.dash.coupon.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.model.Issue;
-import io.saim.dash.coupon.model.Product;
-import io.saim.dash.coupon.model.VendorGroup;
-import io.saim.dash.coupon.repository.Coupon.CouponRepository;
-import io.saim.dash.coupon.repository.DUMMY.DUMMY_PartnerUserRepository;
-import io.saim.dash.coupon.repository.Issue.IssueRepository;
-import io.saim.dash.coupon.repository.Log.IssueLog.IssueLogRepository;
+import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
+import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.common.model.Product;
+import io.saim.dash.coupon.common.model.VendorGroup;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
+import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
+import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
+import io.saim.dash.coupon.common.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
-import io.saim.dash.coupon.repository.Product.ProductRepository;
-import io.saim.dash.coupon.repository.Vendor.VendorRepository;
+import io.saim.dash.coupon.common.repository.Product.ProductRepository;
+import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
 
-import io.saim.dash.coupon.repository.DUMMY.DUMMY_GeneralUserRepository;
+import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_GeneralUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class IssueServiceTest {

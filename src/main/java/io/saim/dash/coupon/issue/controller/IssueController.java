@@ -12,11 +12,11 @@ import io.saim.dash.coupon.issue.dto.IssueCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueResponseDTO;
 import io.saim.dash.coupon.issue.dto.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.IssueSignResponseDTO;
-import io.saim.dash.coupon.model.DUMMY_ServiceUser;
+import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
 
-import io.saim.dash.coupon.model.Issue;
+import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.issue.service.IssueService;
 
 @RestController
