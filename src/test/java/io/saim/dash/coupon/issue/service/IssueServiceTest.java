@@ -194,4 +194,22 @@ class IssueServiceTest {
 			createdIssue.getVendorGroup()
 		).isIn(serviceUser.getVendors());
 	}
+
+	@Test
+	@DisplayName("일반사용자는 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
+	void signIssueTest_A() {
+
+	}
+
+	@Test
+	@DisplayName("파트너사용자는 본인에게 요청되지 않은 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
+	void signIssueTest_B() {
+
+	}
+
+	@Test
+	@DisplayName("파트너사용자가 쿠폰 발행요청서를 승인하면, 쿠폰은 발행요청서의 요청수량만큼 자동발행된다")
+	void signIssueTest_C() {
+
+	}
 }
