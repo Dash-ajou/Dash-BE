@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.issue.dto.IssueCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueResponseDTO;
 import io.saim.dash.coupon.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
@@ -53,10 +54,28 @@ public class IssueController {
 
 	@GetMapping("/spec/{issueId}")
 	public IssueResponseDTO getIssueRequestSpec(
-		@PathVariable Long issueId,
-		@AuthenticationPrincipal DUMMY_ServiceUser user
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@PathVariable Long issueId
 	) {
 		Issue issue = issueService.getIssue(issueId, user);
+		return new IssueResponseDTO(issue);
+	}
+
+	@PostMapping("/create")
+	public IssueResponseDTO createIssue(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@RequestBody IssueCreateRequestDTO issueCreateRequestDTO
+	) {
+		IssueCreateRequestDTO.VendorRequestDTO vendor = issueCreateRequestDTO.getVendor();
+		IssueCreateRequestDTO.PartnerRequestDTO partner = issueCreateRequestDTO.getPartner();
+
+		Issue issue = issueService.createIssue(
+			serviceUser,
+			vendor.getVendorName(), vendor.getPresidentName(), vendor.getPresidentPhone(),
+			partner.getBusinessName(), partner.getOwnerPhone(),
+			issueCreateRequestDTO.getProducts()
+		);
+
 		return new IssueResponseDTO(issue);
 	}
 }
