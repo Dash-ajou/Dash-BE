@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,4 +25,11 @@ public class Product {
 
 	@Column(nullable = false)
 	private Integer price;
+
+	@Builder
+	public Product(DUMMY_PartnerUser partner, String productName, Integer price) {
+		this.partner = partner;
+		this.productName = productName;
+		this.price = price;
+	}
 }

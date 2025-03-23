@@ -3,7 +3,6 @@ package io.saim.dash.coupon.repository.Issue;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.InvalidPropertyException;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -22,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class IssueRepositoryImpl implements IssueRepository {
 
 	private final JPAQueryFactory queryFactory;
-	private IssueJpaRepository jpaRepository;
+	private final IssueJpaRepository issueJpaRepository;
 
 	@Override
 	public Optional<Issue> getById(long issueId) {
-		return jpaRepository.findById(issueId);
+		return issueJpaRepository.findById(issueId);
 	}
 
 	@Override
@@ -54,6 +53,11 @@ public class IssueRepositoryImpl implements IssueRepository {
 		JPAQuery<Issue> issueJPAQuery = getIssueJPAQuery(filterBuilder, issue);
 		addPaginateOptions(issueJPAQuery, page, size);
 		return issueJPAQuery.fetch();
+	}
+
+	@Override
+	public void save(Issue issue) {
+		issueJpaRepository.save(issue);
 	}
 
 	private JPAQuery<Issue> getIssueJPAQuery(BooleanBuilder filterBuilder, QIssue issue) {

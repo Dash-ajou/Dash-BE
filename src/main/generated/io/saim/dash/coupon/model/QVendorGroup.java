@@ -30,6 +30,10 @@ public class QVendorGroup extends EntityPathBase<VendorGroup> {
 
     public final StringPath name = createString("name");
 
+    public final StringPath presidentName = createString("presidentName");
+
+    public final StringPath presidentPhone = createString("presidentPhone");
+
     public QVendorGroup(String variable) {
         super(VendorGroup.class, forVariable(variable));
     }

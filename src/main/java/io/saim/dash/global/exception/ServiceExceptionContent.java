@@ -17,6 +17,7 @@ public enum ServiceExceptionContent {
 
 	// 403
 	// BLOCKED_USER(APIStatus.FORBIDDEN, "차단된 사용자입니다. 관리자에게 문의해주세요"),
+	NO_PERMISSION(APIStatus.FORBIDDEN, "요청한 작업에 대한 권한이 없습니다."),
 	ISSUE_FORBIDDEN(APIStatus.FORBIDDEN, "접근권한이 없는 이슈입니다."),
 	TEST_METHOD_REQUESTED(APIStatus.FORBIDDEN, "사용할 수 없는 요청입니다: %s"),
 

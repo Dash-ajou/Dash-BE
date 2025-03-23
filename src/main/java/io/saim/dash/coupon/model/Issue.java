@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,17 @@ public class Issue {
 
 	@OneToMany @Column(nullable = false)
 	private List<Product> products = new ArrayList<>();
+
+	@Builder
+	private Issue(VendorGroup vendorGroup, DUMMY_PartnerUser partner,
+		IssueStatus status,
+		List<Product> products
+	) {
+		this.vendorGroup = vendorGroup;
+		this.partner = partner;
+		this.status = status;
+		this.products = products;
+	}
 
 	public boolean isRequestedPartner(DUMMY_ServiceUser partner) {
 		if (!DUMMY_PartnerUser.isPartnerUser(partner))

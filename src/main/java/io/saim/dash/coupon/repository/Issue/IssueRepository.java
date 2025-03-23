@@ -18,5 +18,7 @@ public interface IssueRepository {
 	// List<Issue> getIssuesByPartner(DUMMY_PartnerUser user);
 	List<Issue> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size);
 
+	void save(Issue issue);
+
 	// List<Issue> getIssueByUserId(Long userId);
 }

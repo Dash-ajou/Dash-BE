@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,10 @@ import lombok.Setter;
 @Entity @NoArgsConstructor
 public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private List<MemberVendor> vendors = new ArrayList<>();
+
+	@Builder
 	public DUMMY_GeneralUser(
 		Long id, String name, String email, String phone, LocalDateTime joinedAt,
 		List<MemberVendor> vendors
@@ -24,9 +29,6 @@ public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 		super(id, name, email, phone, joinedAt, DUMMY_UserType.GENERAL);
 		this.vendors = vendors;
 	}
-
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<MemberVendor> vendors = new ArrayList<>();
 
 	public String getName() {
 		return this.name;

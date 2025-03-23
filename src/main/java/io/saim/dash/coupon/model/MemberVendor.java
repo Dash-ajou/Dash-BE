@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,4 +27,10 @@ public class MemberVendor {
 
 	@ManyToOne
 	private DUMMY_GeneralUser user;
+
+	@Builder
+	private MemberVendor(VendorGroup vendorGroup, DUMMY_GeneralUser user) {
+		this.vendorGroup = vendorGroup;
+		this.user = user;
+	}
 }
