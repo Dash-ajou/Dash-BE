@@ -2,7 +2,7 @@ package io.saim.dash.coupon.issue.service;
 
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,21 +21,36 @@ import io.saim.dash.coupon.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.model.Issue;
 import io.saim.dash.coupon.model.VendorGroup;
+import io.saim.dash.coupon.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.repository.Issue.IssueRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
+import io.saim.dash.coupon.repository.Product.ProductRepository;
+import io.saim.dash.coupon.repository.Vendor.VendorRepository;
+
+import io.saim.dash.coupon.repository.DUMMY.DUMMY_GeneralUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class IssueServiceTest {
 
 	IssueService issueService;
 
+	@Mock IssueRepository issueRepository;
+	@Mock VendorRepository vendorRepository;
+	@Mock ProductRepository productRepository;
+	@Mock DUMMY_GeneralUserRepository generalUserRepository;
 	@Mock
-	IssueRepository issueRepository;
+	DUMMY_PartnerUserRepository partnerUserRepository;
 
 	@BeforeEach
 	void setUp() {
-		issueService = new IssueService(issueRepository);
+		issueService = new IssueService(
+			issueRepository,
+			vendorRepository,
+			productRepository,
+			generalUserRepository,
+			partnerUserRepository
+		);
 	}
 
 	@Test
@@ -145,5 +160,38 @@ class IssueServiceTest {
 		// then
 			.isInstanceOf(ServiceException.class)
 			.hasMessage(ServiceExceptionContent.ISSUE_FORBIDDEN.getMessage());
+	}
+
+	@Test
+	@DisplayName("일반사용자는 쿠폰의 발행요청서를 생성할 수 있다")
+	void createIssueTest() {
+		// given
+		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
+		List<Long> dummyProducts = List.of(
+			1L,
+			2L,
+			3L
+		);
+
+		String vendorName = "";
+		String presidentName = "";
+		String presidentPhone = "";
+		String businessName = "";
+		String ownerPhone = "";
+
+		when(productRepository.findAllById(any(List.class)))
+			.thenReturn(List.of());
+
+		// when
+
+		Issue createdIssue = issueService.createIssue(serviceUser,
+			vendorName, presidentName, presidentPhone, businessName, ownerPhone,
+			dummyProducts
+		);
+
+		// then
+		Assertions.assertThat(
+			createdIssue.getVendorGroup()
+		).isIn(serviceUser.getVendors());
 	}
 }
