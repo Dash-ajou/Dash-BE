@@ -143,6 +143,19 @@ public class IssueService {
 		return issueCoupon(issue, LocalDateTime.parse(paidAtString), paidPrice);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean deleteIssue(
+		DUMMY_ServiceUser serviceUser, Long issueId
+	) {
+		if (serviceUser.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		Issue issue = getIssue(issueId, serviceUser);
+		issueRepository.delete(issue);
+
+		return true;
+	}
+
 	private VendorGroup createIssueVendor(
 		DUMMY_GeneralUser serviceUser, String vendorName, String presidentName,
 		String presidentPhone

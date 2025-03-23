@@ -20,5 +20,7 @@ public interface IssueRepository {
 
 	void save(Issue issue);
 
+	void delete(Issue issue);
+
 	// List<Issue> getIssueByUserId(Long userId);
 }

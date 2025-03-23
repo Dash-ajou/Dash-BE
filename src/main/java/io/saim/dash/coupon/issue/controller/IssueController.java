@@ -105,4 +105,12 @@ public class IssueController {
 
 		return status.build();
 	}
+
+	@DeleteMapping("/{issueId}")
+	public Boolean deleteIssue(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@PathVariable Long issueId
+	) {
+		return issueService.deleteIssue(serviceUser, issueId);
+	}
 }

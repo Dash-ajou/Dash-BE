@@ -60,6 +60,11 @@ public class IssueRepositoryImpl implements IssueRepository {
 		issueJpaRepository.save(issue);
 	}
 
+	@Override
+	public void delete(Issue issue) {
+		issueJpaRepository.delete(issue);
+	}
+
 	private JPAQuery<Issue> getIssueJPAQuery(BooleanBuilder filterBuilder, QIssue issue) {
 		return queryFactory
 			.selectFrom(issue)

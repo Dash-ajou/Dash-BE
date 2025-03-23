@@ -317,4 +317,76 @@ class IssueServiceTest {
 			issueResultDTO.issueLog().getIssueCnt()
 		).isEqualTo(dummyIssue.getProducts().size());
 	}
+
+	@Test
+	@DisplayName("파트너사용자는 발행요청서를 삭제할 수 없다")
+	void deleteIssueTest_A() {
+		// given
+		DUMMY_PartnerUser serviceUser = new DUMMY_PartnerUser();
+
+		// when
+		Assertions.assertThatThrownBy(() ->
+				issueService.deleteIssue(serviceUser, 0L)
+			)
+		// then
+			.isInstanceOf(ServiceException.class)
+			.hasMessage(ServiceExceptionContent.NO_PERMISSION.getMessage());
+	}
+
+	@Test
+	@DisplayName("일반사용자는 자신이 요청한 것이 아닌 발행요청서를 삭제할 수 없다")
+	void deleteIssueTest_B() {
+		// given
+		DUMMY_GeneralUser serviceUserA = new DUMMY_GeneralUser();
+		DUMMY_GeneralUser serviceUserB = new DUMMY_GeneralUser();
+		VendorGroup vendorGroupA = VendorGroup.builder()
+			.presidentName("TEST_VG_PRESIDENT")
+			.name("TEST_VG")
+			.build();
+		VendorGroup vendorGroupB = VendorGroup.builder()
+			.presidentName("TEST_VG_PRESIDENTB")
+			.name("TEST_VGB")
+			.build();
+
+		serviceUserA.addVendor(vendorGroupA);
+		serviceUserB.addVendor(vendorGroupB);
+
+		// when
+		Issue dummyIssue = new Issue();
+		dummyIssue.setVendorGroup(vendorGroupA);
+
+		when(issueRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyIssue));
+
+		// then
+		Assertions.assertThatThrownBy(() ->
+				issueService.deleteIssue(serviceUserB, 0L)
+			)
+			.isInstanceOf(ServiceException.class)
+			.hasMessage(ServiceExceptionContent.ISSUE_FORBIDDEN.getMessage());
+	}
+
+	@Test
+	@DisplayName("일반사용자는 자신이 요청한 발행요청서를 삭제할 수 있다")
+	void deleteIssueTest_C() {
+		// given
+		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
+		VendorGroup vendorGroupA = VendorGroup.builder()
+			.presidentName("TEST_VG_PRESIDENT")
+			.name("TEST_VG")
+			.build();
+
+		serviceUser.addVendor(vendorGroupA);
+
+		// when
+		Issue dummyIssue = new Issue();
+		dummyIssue.setVendorGroup(vendorGroupA);
+
+		when(issueRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyIssue));
+
+		// then
+		Assertions.assertThat(issueService.deleteIssue(serviceUser, 0L))
+			.isTrue();
+	}
 }
