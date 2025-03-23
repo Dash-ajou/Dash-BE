@@ -1,9 +1,11 @@
 package io.saim.dash.coupon.model;
 
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,13 +28,25 @@ public class VendorGroup {
 	private Long id;
 
 	private String name;
-	private LocalDateTime createdAt;
+	private String presidentName;
+	private String presidentPhone;
 
-	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberVendor> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
 	private List<Issue> issues;
+
+	private LocalDateTime createdAt = LocalDateTime.now();
+
+	@Builder
+	private VendorGroup(
+		String name, String presidentName, String presidentPhone
+	) {
+		this.name = name;
+		this.presidentName = presidentName;
+		this.presidentPhone = presidentPhone;
+	}
 
 	public boolean isMemberIncluded(DUMMY_ServiceUser user) {
 		if (!DUMMY_GeneralUser.isGeneralUser(user))
@@ -46,7 +61,14 @@ public class VendorGroup {
 		).toList();
 	}
 
-	public void linkMember(MemberVendor memberVendor) {
-		this.members.add(memberVendor);
+	public MemberVendor linkMember(DUMMY_GeneralUser user) {
+		MemberVendor link = MemberVendor.builder()
+			.vendorGroup(this)
+			.user(user)
+			.build();
+
+		this.members.add(link);
+
+		return link;
 	}
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -24,7 +25,7 @@ public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 		this.vendors = vendors;
 	}
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<MemberVendor> vendors = new ArrayList<>();
 
 	public String getName() {
@@ -32,12 +33,8 @@ public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 	}
 
 	public void addVendor(VendorGroup vendorGroup) {
-		MemberVendor link = new MemberVendor(
-			null,
-			vendorGroup, this
-		);
+		MemberVendor link = vendorGroup.linkMember(this);
 		this.vendors.add(link);
-		vendorGroup.linkMember(link);
 	}
 
 	public List<VendorGroup> getVendors() {
