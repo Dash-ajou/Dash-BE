@@ -9,13 +9,14 @@ import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
+
 /**
  * QProduct is a Querydsl query type for Product
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QProduct extends EntityPathBase<Product> {
 
-    private static final long serialVersionUID = 419207914L;
+    private static final long serialVersionUID = 755229799L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

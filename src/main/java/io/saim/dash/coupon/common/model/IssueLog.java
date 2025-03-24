@@ -8,7 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,8 +25,8 @@ public class IssueLog {
 
 	private CouponActiveStatus couponActiveStatus;
 
-	@ManyToOne
-	private Issue issueRequest;
+	@OneToOne
+	private IssueRequest issueRequest;
 	private Long issueCnt;
 
 	@Nullable
@@ -35,7 +35,7 @@ public class IssueLog {
 	private Long paidPrice;
 
 	@Builder
-	public IssueLog(CouponActiveStatus couponActiveStatus, Issue issueRequest, Long issueCnt, LocalDateTime paidAt,
+	public IssueLog(CouponActiveStatus couponActiveStatus, IssueRequest issueRequest, Long issueCnt, LocalDateTime paidAt,
 		LocalDateTime decidedAt, Long paidPrice) {
 		this.issueRequest = issueRequest;
 		this.decidedAt = decidedAt;

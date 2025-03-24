@@ -8,13 +8,14 @@ import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 
+
 /**
  * QDUMMY_PartnerUser is a Querydsl query type for DUMMY_PartnerUser
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QDUMMY_PartnerUser extends EntityPathBase<DUMMY_PartnerUser> {
 
-    private static final long serialVersionUID = 466137015L;
+    private static final long serialVersionUID = -38534924L;
 
     public static final QDUMMY_PartnerUser dUMMY_PartnerUser = new QDUMMY_PartnerUser("dUMMY_PartnerUser");
 

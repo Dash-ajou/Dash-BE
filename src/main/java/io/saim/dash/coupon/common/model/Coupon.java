@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +22,9 @@ public class Coupon {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long issueId;
+	@ManyToOne
+	@JoinColumn(name = "issue_id")
+	private IssueLog issueLog;
 
 	@Column(nullable = false)
 	private Long productId;
@@ -33,8 +36,8 @@ public class Coupon {
 	private CouponStatus couponStatus;
 
 	@Builder
-	public Coupon(Long issueId, Long productId, String registerCode, CouponStatus couponStatus) {
-		this.issueId = issueId;
+	public Coupon(IssueLog issueLog, Long productId, String registerCode, CouponStatus couponStatus) {
+		this.issueLog = issueLog;
 		this.productId = productId;
 		this.registerCode = registerCode;
 		this.couponStatus = couponStatus;

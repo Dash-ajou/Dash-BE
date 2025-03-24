@@ -9,13 +9,14 @@ import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
+
 /**
  * QIssueLog is a Querydsl query type for IssueLog
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QIssueLog extends EntityPathBase<IssueLog> {
 
-    private static final long serialVersionUID = 1812994320L;
+    private static final long serialVersionUID = -655229133L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -29,7 +30,7 @@ public class QIssueLog extends EntityPathBase<IssueLog> {
 
     public final NumberPath<Long> issuedId = createNumber("issuedId", Long.class);
 
-    public final QIssue issueRequest;
+    public final QIssueRequest issueRequest;
 
     public final DateTimePath<java.time.LocalDateTime> paidAt = createDateTime("paidAt", java.time.LocalDateTime.class);
 
@@ -53,7 +54,7 @@ public class QIssueLog extends EntityPathBase<IssueLog> {
 
     public QIssueLog(Class<? extends IssueLog> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.issueRequest = inits.isInitialized("issueRequest") ? new QIssue(forProperty("issueRequest"), inits.get("issueRequest")) : null;
+        this.issueRequest = inits.isInitialized("issueRequest") ? new QIssueRequest(forProperty("issueRequest"), inits.get("issueRequest")) : null;
     }
 
 }

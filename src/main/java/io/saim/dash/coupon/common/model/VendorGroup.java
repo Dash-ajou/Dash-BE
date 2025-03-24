@@ -33,7 +33,7 @@ public class VendorGroup {
 	private List<MemberVendor> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
-	private List<Issue> issues;
+	private List<IssueRequest> issueRequests;
 
 	private LocalDateTime createdAt = LocalDateTime.now();
 

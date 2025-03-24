@@ -9,13 +9,14 @@ import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
+
 /**
  * QMemberVendor is a Querydsl query type for MemberVendor
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QMemberVendor extends EntityPathBase<MemberVendor> {
 
-    private static final long serialVersionUID = 877655911L;
+    private static final long serialVersionUID = -205777910L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

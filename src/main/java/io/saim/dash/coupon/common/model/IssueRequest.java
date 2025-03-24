@@ -20,11 +20,11 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @Getter @Setter
-public class Issue {
+public class IssueRequest {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long issueId;
+	private Long requestId;
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
@@ -43,7 +43,7 @@ public class Issue {
 	private List<Product> products = new ArrayList<>();
 
 	@Builder
-	private Issue(VendorGroup vendorGroup, DUMMY_PartnerUser partner,
+	private IssueRequest(VendorGroup vendorGroup, DUMMY_PartnerUser partner,
 		IssueStatus status,
 		List<Product> products
 	) {

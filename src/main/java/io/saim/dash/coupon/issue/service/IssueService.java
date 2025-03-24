@@ -10,21 +10,21 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
-import io.saim.dash.coupon.issue.dto.IssueSignRequestDTO;
+import io.saim.dash.coupon.common.model.IssueRequest;
+import io.saim.dash.coupon.common.model.QIssueRequest;
+import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
 import io.saim.dash.coupon.issue.dto.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
-import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.IssueLog;
 import io.saim.dash.coupon.common.model.Product;
-import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.VendorGroup;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_GeneralUserRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
-import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
+import io.saim.dash.coupon.common.repository.IssueRequest.IssueRequestRepository;
 
 import io.saim.dash.coupon.common.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
@@ -39,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IssueService {
 
-	private final IssueRepository issueRepository;
+	private final IssueRequestRepository issueRequestRepository;
 	private final VendorRepository vendorRepository;
 	private final ProductRepository productRepository;
 	private final IssueLogRepository issueLogRepository;
@@ -48,7 +48,7 @@ public class IssueService {
 	private final DUMMY_GeneralUserRepository generalUserRepository;
 	private final DUMMY_PartnerUserRepository partnerUserRepository;
 
-	public List<Issue> getIssuesByUser(
+	public List<IssueRequest> getIssueRequestsByUser(
 		DUMMY_ServiceUser user,
 		int page, int size,
 		String createat_start, String createat_end,
@@ -57,35 +57,35 @@ public class IssueService {
 		BooleanBuilder filterBuilder = IssueQueryHelper.createFilterBuilder(
 			createat_start, createat_end,
 			business_name, owner_phone, status,
-			QIssue.issue
+			QIssueRequest.issueRequest
 		);
 
 		if(user.isPartner()) {
 			assert user instanceof DUMMY_PartnerUser;
-			return issueRepository.findIssuesByPartner((DUMMY_PartnerUser)user, filterBuilder, page, size);
+			return issueRequestRepository.findIssuesByPartner((DUMMY_PartnerUser)user, filterBuilder, page, size);
 		}
 
 		assert user instanceof DUMMY_GeneralUser;
-		return issueRepository.findIssuesByVendor((DUMMY_GeneralUser)user, filterBuilder, page, size);
+		return issueRequestRepository.findIssuesByVendor((DUMMY_GeneralUser)user, filterBuilder, page, size);
 	}
 
-	public Issue getIssue(Long issueId, DUMMY_ServiceUser requestUser) throws ServiceException {
-		Issue issue = issueRepository.getById(issueId)
+	public IssueRequest getIssueRequest(Long requestId, DUMMY_ServiceUser requestUser) throws ServiceException {
+		IssueRequest issueRequest = issueRequestRepository.getById(requestId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 
 		if (requestUser.isPartner()) {
-			if (!issue.isRequestedPartner(requestUser))
+			if (!issueRequest.isRequestedPartner(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
 		} else {
-			if (!issue.getVendorGroup().isMemberIncluded(requestUser))
+			if (!issueRequest.getVendorGroup().isMemberIncluded(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
 		}
 
-		return issue;
+		return issueRequest;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Issue createIssue(
+	public IssueRequest createIssueRequest(
 		DUMMY_ServiceUser serviceUser,
 		String vendorName, String presidentName, String presidentPhone,
 		String businessName, String ownerPhone,
@@ -103,22 +103,22 @@ public class IssueService {
 		DUMMY_PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
 		List<Product> products = productRepository.findAllById(productIds);
 
-		Issue issue = Issue.builder()
+		IssueRequest issueRequest = IssueRequest.builder()
 			.vendorGroup(issueVendor)
 			.partner(partnerUser)
 			.products(products)
 			.build();
 
-		issueRepository.save(issue);
+		issueRequestRepository.save(issueRequest);
 
-		return issue;
+		return issueRequest;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public IssueResultDTO signIssue(
-		DUMMY_ServiceUser serviceUser, Long issueId,
+	public IssueResultDTO signIssueRequest(
+		DUMMY_ServiceUser serviceUser, Long requestId,
 		IssueStatus status,
-		String paidAtString, List<IssueSignRequestDTO.IssuePaymentPriceInfo> price, Long discount
+		String paidAtString, List<IRSignRequestDTO.IssuePaymentPriceInfo> price, Long discount
 	) {
 		if (!serviceUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
@@ -129,29 +129,29 @@ public class IssueService {
 		)
 			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
 
-		Issue issue = getIssue(issueId, serviceUser);
+		IssueRequest issueRequest = getIssueRequest(requestId, serviceUser);
 
-		if (issue.getStatus() != IssueStatus.REQUESTED)
+		if (issueRequest.getStatus() != IssueStatus.REQUESTED)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_ALREADY_SIGNED);
 
 		Long paidPrice = getPaidPrice(price, discount);
 
-		updateIssueStatus(issue, status);
+		updateIssueRequestStatus(issueRequest, status);
 		if (status == IssueStatus.DENIED)
-			return new IssueResultDTO(issue, null);
+			return new IssueResultDTO(issueRequest, null);
 
-		return issueCoupon(issue, LocalDateTime.parse(paidAtString), paidPrice);
+		return issueCoupon(issueRequest, LocalDateTime.parse(paidAtString), paidPrice);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Boolean deleteIssue(
-		DUMMY_ServiceUser serviceUser, Long issueId
+	public Boolean deleteIssueRequest(
+		DUMMY_ServiceUser serviceUser, Long requestId
 	) {
 		if (serviceUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Issue issue = getIssue(issueId, serviceUser);
-		issueRepository.delete(issue);
+		IssueRequest issueRequest = getIssueRequest(requestId, serviceUser);
+		issueRequestRepository.delete(issueRequest);
 
 		return true;
 	}
@@ -187,37 +187,37 @@ public class IssueService {
 		return partner;
 	}
 
-	private IssueResultDTO issueCoupon(Issue issue, LocalDateTime paidAt, Long paidPrice) {
-		List<Coupon> issuedCoupons = issue.getProducts().stream()
+	private IssueResultDTO issueCoupon(IssueRequest issueRequest, LocalDateTime paidAt, Long paidPrice) {
+		IssueLog issueLog = logCouponIssue(issueRequest, paidAt, paidPrice);
+		List<Coupon> issuedCoupons = issueRequest.getProducts().stream()
 			.map(product -> Coupon.builder()
-				.issueId(issue.getIssueId())
+				.issueLog(issueLog)
 				.productId(product.getProductId())
-				.registerCode(generateCouponRegisterCode(issue, 10))
+				.registerCode(generateCouponRegisterCode(issueRequest, 10))
 				.build()
 			)
 			.toList();
 
-		IssueLog issueLog = logCouponIssue(issue, paidAt, paidPrice);
 		couponRepository.saveAll(issuedCoupons);
 
-		return new IssueResultDTO(issue, issueLog);
+		return new IssueResultDTO(issueRequest, issueLog);
 	}
 
-	private IssueLog logCouponIssue(Issue issue, LocalDateTime paidAt, Long paidPrice) {
+	private IssueLog logCouponIssue(IssueRequest issueRequest, LocalDateTime paidAt, Long paidPrice) {
 		IssueLog issueLog = IssueLog.builder()
-			.issueRequest(issue)
+			.issueRequest(issueRequest)
 			.paidAt(paidAt)
 			.paidPrice(paidPrice)
-			.issueCnt(Integer.toUnsignedLong(issue.getProducts().size()))
+			.issueCnt(Integer.toUnsignedLong(issueRequest.getProducts().size()))
 			.couponActiveStatus(CouponActiveStatus.ENABLED)
 			.build();
 		issueLogRepository.save(issueLog);
 		return issueLog;
 	}
 
-	private Long getPaidPrice(List<IssueSignRequestDTO.IssuePaymentPriceInfo> price, Long discount) {
+	private Long getPaidPrice(List<IRSignRequestDTO.IssuePaymentPriceInfo> price, Long discount) {
 		long paidPrice = price.stream()
-			.map(IssueSignRequestDTO.IssuePaymentPriceInfo::getPrice)
+			.map(IRSignRequestDTO.IssuePaymentPriceInfo::getPrice)
 			.reduce(Long::sum)
 			.orElse(0L) - discount;
 
@@ -227,14 +227,14 @@ public class IssueService {
 		return paidPrice;
 	}
 
-	private void updateIssueStatus(Issue issue, IssueStatus status) {
-		if (issue.getStatus() != IssueStatus.REQUESTED)
+	private void updateIssueRequestStatus(IssueRequest issueRequest, IssueStatus status) {
+		if (issueRequest.getStatus() != IssueStatus.REQUESTED)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_ALREADY_SIGNED);
 
-		issue.setStatus(status);
+		issueRequest.setStatus(status);
 	}
 
-	private static String generateCouponRegisterCode(Issue issueRequest, int length) {
+	private static String generateCouponRegisterCode(IssueRequest issueRequest, int length) {
 		if (length < 10) length = 10;
 
 		int basecode = issueRequest.hashCode();

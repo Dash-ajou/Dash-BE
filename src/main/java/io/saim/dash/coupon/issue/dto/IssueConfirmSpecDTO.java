@@ -13,7 +13,7 @@ public class IssueConfirmSpecDTO {
 
 	public IssueConfirmSpecDTO(IssueResultDTO issueResultDTO) {
 		this.issued_id = issueResultDTO.issueLog().getIssuedId();
-		this.issue_id = issueResultDTO.issue().getIssueId();
+		this.issue_id = issueResultDTO.issueRequest().getRequestId();
 		this.paid_at = issueResultDTO.issueLog().getPaidAt().toString();
 		this.status = issueResultDTO.issueLog().getCouponActiveStatus();
 		this.issue_count = issueResultDTO.issueLog().getIssueCnt();

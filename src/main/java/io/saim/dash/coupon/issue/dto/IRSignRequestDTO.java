@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor @Getter
-public class IssueSignRequestDTO {
+public class IRSignRequestDTO {
 	private final IssueStatus status;
 
 	@Nullable
@@ -17,7 +17,7 @@ public class IssueSignRequestDTO {
 	@RequiredArgsConstructor @Getter
 	public static class IssuePaymentInfo {
 		private final String paid_at;
-		private final List<IssueSignRequestDTO.IssuePaymentPriceInfo> prices;
+		private final List<IRSignRequestDTO.IssuePaymentPriceInfo> prices;
 		private final Long discount;
 
 		public String getPaidAt() {

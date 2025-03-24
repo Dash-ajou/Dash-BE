@@ -9,13 +9,14 @@ import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
+
 /**
  * QVendorGroup is a Querydsl query type for VendorGroup
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QVendorGroup extends EntityPathBase<VendorGroup> {
 
-    private static final long serialVersionUID = 491570834L;
+    private static final long serialVersionUID = -513209969L;
 
     public static final QVendorGroup vendorGroup = new QVendorGroup("vendorGroup");
 
@@ -23,7 +24,7 @@ public class QVendorGroup extends EntityPathBase<VendorGroup> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ListPath<Issue, QIssue> issues = this.<Issue, QIssue>createList("issues", Issue.class, QIssue.class, PathInits.DIRECT2);
+    public final ListPath<IssueRequest, QIssueRequest> issueRequests = this.<IssueRequest, QIssueRequest>createList("issueRequests", IssueRequest.class, QIssueRequest.class, PathInits.DIRECT2);
 
     public final ListPath<MemberVendor, QMemberVendor> members = this.<MemberVendor, QMemberVendor>createList("members", MemberVendor.class, QMemberVendor.class, PathInits.DIRECT2);
 

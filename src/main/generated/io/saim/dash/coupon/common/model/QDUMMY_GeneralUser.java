@@ -9,13 +9,14 @@ import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
+
 /**
  * QDUMMY_GeneralUser is a Querydsl query type for DUMMY_GeneralUser
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QDUMMY_GeneralUser extends EntityPathBase<DUMMY_GeneralUser> {
 
-    private static final long serialVersionUID = 370265047L;
+    private static final long serialVersionUID = -134406892L;
 
     public static final QDUMMY_GeneralUser dUMMY_GeneralUser = new QDUMMY_GeneralUser("dUMMY_GeneralUser");
 
