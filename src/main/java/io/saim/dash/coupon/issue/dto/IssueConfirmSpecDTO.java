@@ -1,9 +1,10 @@
 package io.saim.dash.coupon.issue.dto;
 
 import io.saim.dash.coupon.common.constant.CouponActiveStatus;
+import io.saim.dash.coupon.common.dto.IssueResultDTO;
 
 public class IssueConfirmSpecDTO {
-	private final Long issued_id;
+	private final Long request_id;
 	private final Long issue_id;
 	private final String paid_at;
 	private final CouponActiveStatus status;
@@ -12,12 +13,12 @@ public class IssueConfirmSpecDTO {
 	private final String issued_at;
 
 	public IssueConfirmSpecDTO(IssueResultDTO issueResultDTO) {
-		this.issued_id = issueResultDTO.issueLog().getIssuedId();
-		this.issue_id = issueResultDTO.issueRequest().getRequestId();
-		this.paid_at = issueResultDTO.issueLog().getPaidAt().toString();
-		this.status = issueResultDTO.issueLog().getCouponActiveStatus();
-		this.issue_count = issueResultDTO.issueLog().getIssueCnt();
-		this.paid_price = issueResultDTO.issueLog().getPaidPrice();
-		this.issued_at = issueResultDTO.issueLog().getDecidedAt().toString();
+		this.request_id = issueResultDTO.getRequestId();
+		this.issue_id = issueResultDTO.getIssueId();
+		this.paid_at = issueResultDTO.getPaidAt().toString();
+		this.status = CouponActiveStatus.ENABLED;
+		this.issue_count = issueResultDTO.getIssueCount();
+		this.paid_price = issueResultDTO.getPaidPrice();
+		this.issued_at = issueResultDTO.getIssuedAt().toString();
 	}
 }

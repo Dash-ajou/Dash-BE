@@ -13,7 +13,7 @@ import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.IssueRequest;
 import io.saim.dash.coupon.common.model.QIssueRequest;
 import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
-import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.common.dto.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
@@ -138,7 +138,7 @@ public class IssueService {
 
 		updateIssueRequestStatus(issueRequest, status);
 		if (status == IssueStatus.DENIED)
-			return new IssueResultDTO(issueRequest, null);
+			return new IssueResultDTO(issueRequest);
 
 		return issueCoupon(issueRequest, LocalDateTime.parse(paidAtString), paidPrice);
 	}
@@ -200,7 +200,7 @@ public class IssueService {
 
 		couponRepository.saveAll(issuedCoupons);
 
-		return new IssueResultDTO(issueRequest, issueLog);
+		return new IssueResultDTO(issueLog, issuedCoupons);
 	}
 
 	private IssueLog logCouponIssue(IssueRequest issueRequest, LocalDateTime paidAt, Long paidPrice) {

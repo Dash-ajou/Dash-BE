@@ -19,7 +19,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.IssueRequest;
-import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.common.dto.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
@@ -255,6 +255,7 @@ class IssueRequestServiceTest {
 		// when
 		IssueRequest dummyIssueRequest = new IssueRequest();
 		dummyIssueRequest.setPartner(serviceUserA);
+		dummyIssueRequest.setVendorGroup(new VendorGroup());
 		dummyIssueRequest.setStatus(IssueStatus.REQUESTED);
 		when(issueRequestRepository.getById(any(Long.class)))
 			.thenReturn(Optional.of(dummyIssueRequest));
@@ -295,6 +296,7 @@ class IssueRequestServiceTest {
 		// when
 		IssueRequest dummyIssueRequest = new IssueRequest();
 		dummyIssueRequest.setPartner(serviceUserA);
+		dummyIssueRequest.setVendorGroup(new VendorGroup());
 		dummyIssueRequest.setStatus(IssueStatus.REQUESTED);
 		dummyIssueRequest.setProducts(List.of(
 			Product.builder().build(),
@@ -315,7 +317,7 @@ class IssueRequestServiceTest {
 
 		// then
 		Assertions.assertThat(
-			issueResultDTO.issueLog().getIssueCnt()
+			issueResultDTO.getIssueCount()
 		).isEqualTo(dummyIssueRequest.getProducts().size());
 	}
 

@@ -12,7 +12,7 @@ import io.saim.dash.coupon.issue.dto.IssueConfirmSpecDTO;
 import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
 import io.saim.dash.coupon.issue.dto.IRCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.IRResponseDTO;
-import io.saim.dash.coupon.issue.dto.IssueResultDTO;
+import io.saim.dash.coupon.common.dto.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.IRSignResponseDTO;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
@@ -97,7 +97,7 @@ public class IssueController {
 			IRSignRequestDTO.getPayment().getDiscount()
 		);
 
-		IssueStatus updatedStatus = issueResult.issueRequest().getStatus();
+		IssueStatus updatedStatus = issueResult.getStatus();
 		IRSignResponseDTO.IRSignResponseDTOBuilder status = IRSignResponseDTO.builder()
 			.result(true)
 			.status(updatedStatus);
