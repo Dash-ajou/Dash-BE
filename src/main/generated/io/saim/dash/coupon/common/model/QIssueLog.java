@@ -28,13 +28,15 @@ public class QIssueLog extends EntityPathBase<IssueLog> {
 
     public final NumberPath<Long> issueCnt = createNumber("issueCnt", Long.class);
 
-    public final NumberPath<Long> issuedId = createNumber("issuedId", Long.class);
+    public final NumberPath<Long> issueId = createNumber("issueId", Long.class);
 
     public final QIssueRequest issueRequest;
 
     public final DateTimePath<java.time.LocalDateTime> paidAt = createDateTime("paidAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> paidPrice = createNumber("paidPrice", Long.class);
+
+    public final NumberPath<Long> usedCnt = createNumber("usedCnt", Long.class);
 
     public QIssueLog(String variable) {
         this(IssueLog.class, forVariable(variable), INITS);

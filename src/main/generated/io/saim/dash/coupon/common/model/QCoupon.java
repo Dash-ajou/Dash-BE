@@ -24,6 +24,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final EnumPath<io.saim.dash.coupon.common.constant.CouponStatus> couponStatus = createEnum("couponStatus", io.saim.dash.coupon.common.constant.CouponStatus.class);
 
+    public final DateTimePath<java.time.LocalDateTime> expiredAt = createDateTime("expiredAt", java.time.LocalDateTime.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QIssueLog issueLog;
