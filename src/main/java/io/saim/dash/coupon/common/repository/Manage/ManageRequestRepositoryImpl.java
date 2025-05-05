@@ -2,19 +2,24 @@ package io.saim.dash.coupon.common.repository.Manage;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import io.saim.dash.coupon.common.dto.CouponDTO;
 import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.common.model.QIssueLog;
 import io.saim.dash.coupon.common.model.QIssueRequest;
+import io.saim.dash.coupon.common.repository.Coupon.CouponJpaRepository;
 import io.saim.dash.coupon.common.repository.jpa.IssueLogJpaRepository;
 import io.saim.dash.coupon.common.repository.jpa.IssueRequestJpaRepository;
+import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,6 +29,7 @@ public class ManageRequestRepositoryImpl implements ManageRequestRepository {
 	private final JPAQueryFactory queryFactory;
 	private final IssueLogJpaRepository issueLogJpaRepository;
 	private final IssueRequestJpaRepository issueRequestJpaRepository;
+	private final CouponJpaRepository couponJpaRepository;
 
 	@Override
 	public List<CouponIssueLogDTO> findIRsByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size) {
@@ -61,5 +67,12 @@ public class ManageRequestRepositoryImpl implements ManageRequestRepository {
 			.where(filter)
 			.orderBy(issueLog.decidedAt.desc())
 			.fetch();
+	}
+
+	@Override
+	public List<CouponDTO> findCouponsByIssueId(DUMMY_ServiceUser user, Long issueId, Integer page, Integer size) {
+		return couponJpaRepository.findByIssueId(issueId, PageRequest.of(page-1, size)).stream()
+			.map(CouponDTO::new)
+			.toList();
 	}
 }

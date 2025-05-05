@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.saim.dash.coupon.common.dto.CouponDTO;
 import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.manage.dto.IssuedIRResponseDTO;
@@ -46,6 +47,25 @@ public class ManageController {
 		return new PagingResponse<>(
 			page, size,
 			issuedIRList
+		);
+	}
+
+	@GetMapping("/{issue_id}/list")
+	public PagingResponse<CouponDTO> getIssuedCouponList(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@PathVariable Integer page,
+		@PathVariable Integer size,
+		@PathVariable Long issue_id
+	) {
+		List<CouponDTO> coupons = manageService.getCouponsByIssueId(
+			serviceUser,
+			page, size,
+			issue_id
+		);
+
+		return new PagingResponse<>(
+			page, size,
+			coupons
 		);
 	}
 }

@@ -12,4 +12,8 @@ public interface CouponRepository {
 	Optional<Coupon> getById(Long id);
 
 	void saveAll(List<Coupon> issuedCoupons);
+
+	List<Coupon> getByIssueId(Long issueId, int page, int size);
+
+	List<Coupon> getByRegisteredUserId(Long userId, int page, int size);
 }

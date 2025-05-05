@@ -1,5 +1,7 @@
 package io.saim.dash.coupon.common.model;
 
+import java.time.LocalDateTime;
+
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,11 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Coupon {
@@ -34,6 +38,9 @@ public class Coupon {
 
 	@Column(nullable = false)
 	private CouponStatus couponStatus;
+
+	@Column(nullable = false)
+	private LocalDateTime expiredAt;
 
 	@Builder
 	public Coupon(IssueLog issueLog, Long productId, String registerCode, CouponStatus couponStatus) {

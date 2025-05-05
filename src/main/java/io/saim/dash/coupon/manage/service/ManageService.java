@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.coupon.common.dto.CouponDTO;
 import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
@@ -26,8 +27,8 @@ public class ManageService {
 
 	public List<CouponIssueLogDTO> getIssuedIRs(
 		DUMMY_ServiceUser user,
-		int page, int size,
-		String vendorName, String presidentName, String businessName, boolean isCompletionInclude
+		Integer page, Integer size,
+		String vendorName, String presidentName, String businessName, Boolean isCompletionInclude
 	) {
 		BooleanBuilder filterBuilder = ManageQueryHelper.createFilterBuilder(
 			vendorName, presidentName, businessName, isCompletionInclude,
@@ -49,4 +50,14 @@ public class ManageService {
 		);
 	}
 
+	public List<CouponDTO> getCouponsByIssueId(
+		DUMMY_ServiceUser user,
+		Integer page, Integer size,
+		Long issueId
+	) {
+		return manageRequestRepository.findCouponsByIssueId(
+			user, issueId,
+			page, size
+		);
+	}
 }
