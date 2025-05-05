@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import io.saim.dash.account.general.dto.SignupNameRequestDTO;
-import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.service.SignupNameService;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ public class SignupNameController {
 
 	@PostMapping("/name")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupNameRequestDTO requestDTO) {
-		SignupName user = signupNameService.registerUser(requestDTO.getGeneralName());
+		GeneralUser user = signupNameService.registerUser(requestDTO.getGeneralName());
 
 		return ResponseEntity.status(201).body(Map.of(
 			"status", "SUCCESS",

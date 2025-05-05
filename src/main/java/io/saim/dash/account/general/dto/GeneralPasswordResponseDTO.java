@@ -10,7 +10,7 @@ import lombok.Setter;
 public class GeneralPasswordResponseDTO {
 	private String status;
 	private String message;
-	private Data data;
+	private Object data;
 
 	@Getter
 	@Setter
