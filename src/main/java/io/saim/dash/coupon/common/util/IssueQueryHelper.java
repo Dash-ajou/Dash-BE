@@ -24,12 +24,15 @@ public class IssueQueryHelper {
 	}
 
 	private static void addCreateAtFilter(BooleanBuilder builder, QIssueRequest issueRequest, String createatStart, String createatEnd) {
-		if (createatStart == null || createatEnd == null) return;
+		if (createatStart != null) {
+			LocalDateTime createAtStart = LocalDateTime.parse(createatStart);
+			builder.and(issueRequest.createdAt.gt(createAtStart));
+		}
 
-		LocalDateTime createAtStart = LocalDateTime.parse(createatStart);
-		LocalDateTime createAtEnd = LocalDateTime.parse(createatEnd);
-
-		builder.and(issueRequest.createdAt.between(createAtStart, createAtEnd));
+		if (createatEnd != null) {
+			LocalDateTime createAtEnd = LocalDateTime.parse(createatEnd);
+			builder.and(issueRequest.createdAt.lt(createAtEnd));
+		}
 	}
 
 	private static void addBusinesNameFilter(BooleanBuilder builder, QIssueRequest issueRequest, String businessName) {

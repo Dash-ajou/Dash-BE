@@ -28,6 +28,7 @@ public class IssueLog {
 	@OneToOne
 	private IssueRequest issueRequest;
 	private Long issueCnt;
+	private Long usedCnt;
 
 	@Nullable
 	private LocalDateTime paidAt = LocalDateTime.now();
@@ -35,13 +36,14 @@ public class IssueLog {
 	private Long paidPrice;
 
 	@Builder
-	public IssueLog(CouponActiveStatus couponActiveStatus, IssueRequest issueRequest, Long issueCnt, LocalDateTime paidAt,
+	public IssueLog(CouponActiveStatus couponActiveStatus, IssueRequest issueRequest, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
 		LocalDateTime decidedAt, Long paidPrice) {
 		this.issueRequest = issueRequest;
 		this.decidedAt = decidedAt;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
 		this.issueCnt = issueCnt;
+		this.usedCnt = usedCnt;
 		this.couponActiveStatus = couponActiveStatus;
 	}
 }

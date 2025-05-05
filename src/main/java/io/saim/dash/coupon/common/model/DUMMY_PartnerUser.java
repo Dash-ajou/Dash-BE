@@ -12,7 +12,7 @@ public class DUMMY_PartnerUser extends DUMMY_ServiceUser {
 	private final DUMMY_UserType userType = DUMMY_UserType.PARTNER;
 
 	@Getter
-	private String partnerName;
+	private String partnerName; // businessName
 
 	@Getter
 	private String partnerAddress;

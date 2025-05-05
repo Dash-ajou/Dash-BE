@@ -20,6 +20,7 @@ import com.querydsl.core.BooleanBuilder;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.IssueRequest;
 import io.saim.dash.coupon.common.dto.IssueResultDTO;
+import io.saim.dash.coupon.common.repository.jpa.IssueLogJpaRepository;
 import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
@@ -28,7 +29,6 @@ import io.saim.dash.coupon.common.model.VendorGroup;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.common.repository.IssueRequest.IssueRequestRepository;
-import io.saim.dash.coupon.common.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
@@ -41,11 +41,10 @@ class IssueRequestServiceTest {
 
 	IssueService issueService;
 
-	@Mock
-	IssueRequestRepository issueRequestRepository;
+	@Mock IssueRequestRepository issueRequestRepository;
 	@Mock VendorRepository vendorRepository;
 	@Mock ProductRepository productRepository;
-	@Mock IssueLogRepository issueLogRepository;
+	@Mock IssueLogJpaRepository issueLogRepository;
 	@Mock CouponRepository couponRepository;
 	@Mock DUMMY_GeneralUserRepository generalUserRepository;
 	@Mock DUMMY_PartnerUserRepository partnerUserRepository;
