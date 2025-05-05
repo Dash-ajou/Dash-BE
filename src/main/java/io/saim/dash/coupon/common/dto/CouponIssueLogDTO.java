@@ -30,7 +30,7 @@ public class CouponIssueLogDTO {
 		this.requestId = data.get(issueRequest.requestId);
 		this.vendorGroup = data.get(issueRequest.vendorGroup);
 		this.partner = data.get(issueRequest.partner);
-		this.issueId = data.get(issueLog.issuedId);
+		this.issueId = data.get(issueLog.issueId);
 		this.couponActiveStatus = data.get(issueLog.couponActiveStatus);
 		this.issuedAt = data.get(issueLog.decidedAt);
 		this.issueCnt = data.get(issueLog.issueCnt);

@@ -31,8 +31,8 @@ public class IssueController {
 	@GetMapping("/list")
 	public PagingResponse<IRResponseDTO> getIssues(
 		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
-		@RequestParam(required = false) int page,
-		@RequestParam(required = false) int size,
+		@RequestParam(required = false, defaultValue = "1") int page,
+		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) String createat_start,
 		@RequestParam(required = false) String createat_end,
 		@RequestParam(required = false) String business_name,

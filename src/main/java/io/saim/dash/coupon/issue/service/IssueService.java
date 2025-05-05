@@ -12,6 +12,7 @@ import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.IssueRequest;
 import io.saim.dash.coupon.common.model.QIssueRequest;
+import io.saim.dash.coupon.common.repository.jpa.IssueLogJpaRepository;
 import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
 import io.saim.dash.coupon.common.dto.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
@@ -26,7 +27,6 @@ import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_GeneralUserRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.common.repository.IssueRequest.IssueRequestRepository;
 
-import io.saim.dash.coupon.common.repository.Log.IssueLog.IssueLogRepository;
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
 import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
 import io.saim.dash.coupon.common.util.IssueQueryHelper;
@@ -42,7 +42,7 @@ public class IssueService {
 	private final IssueRequestRepository issueRequestRepository;
 	private final VendorRepository vendorRepository;
 	private final ProductRepository productRepository;
-	private final IssueLogRepository issueLogRepository;
+	private final IssueLogJpaRepository issueLogRepository;
 	private final CouponRepository couponRepository;
 
 	private final DUMMY_GeneralUserRepository generalUserRepository;

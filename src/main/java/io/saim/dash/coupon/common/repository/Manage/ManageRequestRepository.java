@@ -9,7 +9,9 @@ import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 
 public interface ManageRequestRepository {
-	List<CouponIssueLogDTO> findIssuedRequestsByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size);
+
+	List<CouponIssueLogDTO> findIRsByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size);
 
 	List<CouponIssueLogDTO> findIssuedRequestsByVendor(DUMMY_GeneralUser user, BooleanBuilder filter, Integer page, Integer size);
+	List<CouponIssueLogDTO> findIRsByVendor(DUMMY_GeneralUser user, BooleanBuilder filter, Integer page, Integer size);
 }

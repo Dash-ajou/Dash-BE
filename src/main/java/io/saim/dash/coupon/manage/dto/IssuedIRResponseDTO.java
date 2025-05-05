@@ -4,14 +4,13 @@ import java.time.LocalDateTime;
 
 import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
-import io.saim.dash.coupon.common.dto.IssueResultDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor @Getter
-public class IssuedCouponResponseDTO {
+public class IssuedIRResponseDTO {
 	private final Long request_id;
 	private final VendorDTO vendor;
 	private final PartnerDTO partner;
@@ -21,7 +20,7 @@ public class IssuedCouponResponseDTO {
 	private final Long issue_count;
 	private final Long used_count;
 
-	public IssuedCouponResponseDTO(CouponIssueLogDTO couponIssueLogDTO) {
+	public IssuedIRResponseDTO(CouponIssueLogDTO couponIssueLogDTO) {
 		this.request_id = couponIssueLogDTO.getRequestId();
 		this.vendor = new VendorDTO(
 			couponIssueLogDTO.getVendorGroup().getName(),

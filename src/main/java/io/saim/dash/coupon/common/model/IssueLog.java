@@ -21,7 +21,7 @@ public class IssueLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long issuedId;
+	private Long issueId;
 
 	private CouponActiveStatus couponActiveStatus;
 

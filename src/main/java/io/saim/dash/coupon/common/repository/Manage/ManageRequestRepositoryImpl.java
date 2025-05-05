@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
@@ -27,7 +26,7 @@ public class ManageRequestRepositoryImpl implements ManageRequestRepository {
 	private final IssueRequestJpaRepository issueRequestJpaRepository;
 
 	@Override
-	public List<CouponIssueLogDTO> findIssuedRequestsByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size) {
+	public List<CouponIssueLogDTO> findIRsByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size) {
 		QIssueRequest issueRequest = QIssueRequest.issueRequest;
 		QIssueLog issueLog = QIssueLog.issueLog;
 
@@ -40,7 +39,7 @@ public class ManageRequestRepositoryImpl implements ManageRequestRepository {
 	}
 
 	@Override
-	public List<CouponIssueLogDTO> findIssuedRequestsByVendor(DUMMY_GeneralUser user, BooleanBuilder filter, Integer page, Integer size) {
+	public List<CouponIssueLogDTO> findIRsByVendor(DUMMY_GeneralUser user, BooleanBuilder filter, Integer page, Integer size) {
 		QIssueRequest issueRequest = QIssueRequest.issueRequest;
 		QIssueLog issueLog = QIssueLog.issueLog;
 
@@ -56,7 +55,7 @@ public class ManageRequestRepositoryImpl implements ManageRequestRepository {
 		return queryFactory
 			.select(
 				issueRequest.requestId, issueRequest.vendorGroup, issueRequest.partner,
-				issueLog.issuedId, issueLog.couponActiveStatus, issueLog.decidedAt, issueLog.issueCnt, issueLog.usedCnt
+				issueLog.issueId, issueLog.couponActiveStatus, issueLog.decidedAt, issueLog.issueCnt, issueLog.usedCnt
 			)
 			.from(issueLog)
 			.where(filter)

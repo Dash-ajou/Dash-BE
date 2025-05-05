@@ -2,7 +2,6 @@ package io.saim.dash.coupon.common.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.Coupon;
@@ -56,7 +55,7 @@ public class IssueResultDTO {
 
 		// -----------------------
 
-		this.issueId = issueLog.getIssuedId();
+		this.issueId = issueLog.getIssueId();
 		this.status = issueRequest.getStatus();
 		this.paidPrice = issueLog.getPaidPrice();
 		this.paidAt = issueLog.getPaidAt();
