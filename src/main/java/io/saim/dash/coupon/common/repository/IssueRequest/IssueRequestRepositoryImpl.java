@@ -14,6 +14,7 @@ import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.IssueRequest;
 import io.saim.dash.coupon.common.model.QIssueRequest;
 import io.saim.dash.coupon.common.model.VendorGroup;
+import io.saim.dash.coupon.common.repository.jpa.IssueRequestJpaRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

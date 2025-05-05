@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.repository.IssueRequest;
+package io.saim.dash.coupon.common.repository.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
