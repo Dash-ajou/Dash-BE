@@ -1,7 +1,7 @@
 package io.saim.dash.coupon.common.repository.Vendor;
 
-import io.saim.dash.coupon.common.model.VendorGroup;
+import io.saim.dash.coupon.common.model.Vendor;
 
 public interface VendorRepository {
-	void save(VendorGroup vendorGroup);
+	void save(Vendor vendor);
 }

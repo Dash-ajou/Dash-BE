@@ -1,0 +1,42 @@
+package io.saim.dash.coupon.common.dto.Coupon;
+
+import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.coupon.common.model.Product;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class CouponDTO {
+	private final long coupon_id; // 쿠폰ID
+	private final long issue_id; // 쿠폰 발행ID
+	@Getter private final CouponStatus status; // 쿠폰상태
+	private final String expired_at; // 쿠폰 만료일자
+	@Getter private final Product product; // 상품
+	@Getter private final DUMMY_PartnerUser partner; // 파트너
+	private final String register_code; // 쿠폰등록코드
+
+	public CouponDTO (Coupon coupon) {
+		this.coupon_id = coupon.getId();
+		this.issue_id = coupon.getIssue().getIssueId();
+		this.status = coupon.getCouponStatus();
+		this.expired_at = coupon.getExpiredAt().toString();
+		this.product = coupon.getProduct();
+		this.partner = this.product.getPartner();
+		this.register_code = coupon.getRegisterCode();
+	}
+
+	public long getCouponId() {
+		return coupon_id;
+	}
+	public long getIssueId() {
+		return issue_id;
+	}
+	public String getExpiredAt() {
+		return expired_at;
+	}
+	public String getRegisterCode() {
+		return register_code;
+	}
+}

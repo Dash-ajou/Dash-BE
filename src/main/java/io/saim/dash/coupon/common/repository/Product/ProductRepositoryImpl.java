@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import io.saim.dash.coupon.common.model.Product;
+import io.saim.dash.coupon.common.repository.jpa.ProductJpaRepository;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,12 +23,21 @@ public class ProductRepositoryImpl implements ProductRepository {
 	}
 
 	@Override
-	public Optional<Product> getById(Long id) {
-		return productJpaRepository.findById(id);
+	public Product findById(Long id) {
+		Optional<Product> product = productJpaRepository.findById(id);
+		if (product.isEmpty())
+			throw new ServiceException(ServiceExceptionContent.PRODUCT_NOT_FOUND);
+
+		return product.get();
 	}
 
 	@Override
 	public List<Product> findAllById(List<Long> productIds) {
 		return productJpaRepository.findAllById(productIds);
+	}
+
+	@Override
+	public Product getReferenceById(Long productId) {
+		return productJpaRepository.getReferenceById(productId);
 	}
 }

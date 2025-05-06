@@ -2,19 +2,16 @@ package io.saim.dash.coupon.common.util;
 
 import com.querydsl.core.BooleanBuilder;
 
-import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponActiveStatus;
-import io.saim.dash.coupon.common.model.QIssueLog;
-import io.saim.dash.coupon.common.model.QIssueRequest;
-import io.saim.dash.coupon.common.model.QVendorGroup;
-import jakarta.validation.constraints.NotBlank;
+import io.saim.dash.coupon.common.model.QIssue;
+import io.saim.dash.coupon.common.model.QRequest;
 
 public class ManageQueryHelper {
 	public static BooleanBuilder createFilterBuilder(
 		String vendorName,
 		String presidentName, String businessName,
 		Boolean isCompletionIncluded,
-		QIssueLog issueLog, QIssueRequest issueRequest
+		QIssue issueLog, QRequest issueRequest
 	) {
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -27,7 +24,7 @@ public class ManageQueryHelper {
 
 	private static void addCompletionFilter(
 		BooleanBuilder builder,
-		QIssueLog issueLog,
+		QIssue issueLog,
 		Boolean isCompletionIncluded
 	) {
 		if (isCompletionIncluded.equals(true))
@@ -36,7 +33,7 @@ public class ManageQueryHelper {
 
 	private static void addPresidentFilter(
 		BooleanBuilder builder,
-		QIssueRequest issueRequest,
+		QRequest issueRequest,
 		String businessName
 	) {
 		if (businessName != null && !businessName.isEmpty()) {
@@ -46,15 +43,15 @@ public class ManageQueryHelper {
 
 	private static void addVendorNameFilter(
 		BooleanBuilder builder,
-		QIssueRequest issueRequest,
+		QRequest request,
 		String vendorName, String presidentName
 	) {
 		if (vendorName != null && !vendorName.isEmpty()) {
-			builder.and(issueRequest.vendorGroup.name.eq(vendorName));
+			builder.and(request.vendor.name.eq(vendorName));
 		}
 
 		if (presidentName != null && !presidentName.isEmpty()) {
-			builder.and(issueRequest.vendorGroup.name.eq(presidentName));
+			builder.and(request.vendor.name.eq(presidentName));
 		}
 	}
 

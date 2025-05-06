@@ -27,10 +27,10 @@ public class Product {
 	private String productName;
 
 	@Column(nullable = false)
-	private Integer price;
+	private Long price;
 
 	@Builder
-	public Product(DUMMY_PartnerUser partner, String productName, Integer price) {
+	public Product(DUMMY_PartnerUser partner, String productName, Long price) {
 		this.partner = partner;
 		this.productName = productName;
 		this.price = price;

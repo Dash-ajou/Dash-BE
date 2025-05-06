@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import jakarta.persistence.CascadeType;
@@ -18,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +28,7 @@ import lombok.Setter;
 @Embeddable
 @Entity
 @NoArgsConstructor @AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class Request {
 
 	@Id
@@ -33,6 +36,7 @@ public class Request {
 	private Long requestId;
 
 	@Column(nullable = false)
+	@CreatedDate
 	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -43,7 +47,7 @@ public class Request {
 	private DUMMY_PartnerUser partner;
 
 	@Column(nullable = false)
-	private IssueStatus status;
+	private IssueStatus status = IssueStatus.REQUESTED;
 
 	@OneToMany(
 		mappedBy = "request", fetch = FetchType.LAZY,
@@ -51,11 +55,11 @@ public class Request {
 	)
 	private List<RequestProduct> requestProducts = new ArrayList<>();
 
-	public void addRequestProduct(Product product, Integer quantity) {
+	public void addRequestProduct(Product product, Long quantity) {
 		addRequestProduct(product, quantity, product.getPrice());
 	}
 
-	public void addRequestProduct(Product product, Integer quantity, Integer price) {
+	public void addRequestProduct(Product product, Long quantity, Long price) {
 		RequestProduct requestProduct = new RequestProduct(product, this, quantity, price);
 		this.requestProducts.add(requestProduct);
 	}

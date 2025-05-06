@@ -43,20 +43,24 @@ public class Coupon {
 	private CouponStatus couponStatus = CouponStatus.REGISTERABLE;
 
 	@Column(nullable = false)
-	private Integer price;
+	private Long price;
 
+	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
-	private LocalDateTime expiredAt;
+	private LocalDateTime expiredAt = LocalDateTime.now().plusMonths(1);
 
 	@Builder
 	public Coupon(
 		Issue issue,
 		Product product,
-		String registerCode, CouponStatus couponStatus
+		String registerCode, CouponStatus couponStatus,
+		Long price, LocalDateTime expiredAt
 	) {
 		this.issue = issue;
 		this.product = product;
 		this.registerCode = registerCode;
 		this.couponStatus = couponStatus;
+		this.price = price;
+		this.expiredAt = expiredAt;
 	}
 }

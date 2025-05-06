@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
-import io.saim.dash.coupon.issue.dto.IssueConfirmSpecDTO;
-import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
-import io.saim.dash.coupon.issue.dto.IRCreateRequestDTO;
-import io.saim.dash.coupon.issue.dto.IRResponseDTO;
-import io.saim.dash.coupon.common.dto.IssueResultDTO;
-import io.saim.dash.coupon.issue.dto.IRSignResponseDTO;
+import io.saim.dash.coupon.common.model.Request;
+import io.saim.dash.coupon.common.dto.Issue.IssueConfirmSpecDTO;
+import io.saim.dash.coupon.issue.dto.RequestSignRequestDTO;
+import io.saim.dash.coupon.issue.dto.RequestCreateRequestDTO;
+import io.saim.dash.coupon.issue.dto.RequestBriefResponseDTO;
+import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
+import io.saim.dash.coupon.issue.dto.SignResponseDTO;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
 
-import io.saim.dash.coupon.common.model.IssueRequest;
 import io.saim.dash.coupon.issue.service.IssueService;
 
 @RestController
@@ -29,8 +29,8 @@ public class IssueController {
 	private final IssueService issueService;
 
 	@GetMapping("/list")
-	public PagingResponse<IRResponseDTO> getIssues(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+	public PagingResponse<RequestBriefResponseDTO> getIssues(
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) String createat_start,
@@ -39,15 +39,15 @@ public class IssueController {
 		@RequestParam(required = false) String owner_phone,
 		@RequestParam(required = false) IssueStatus status
 	) {
-		List<IssueRequest> userIssueRequestList = issueService.getIssueRequestsByUser(
-			serviceUser,
+		List<Request> userRequestList = issueService.getIssueRequestsByUser(
+			user,
 			page, size,
 			createat_start, createat_end,
 			business_name, owner_phone, status
 		);
 
-		List<IRResponseDTO> issueRequestList = userIssueRequestList.stream()
-			.map(IRResponseDTO::new)
+		List<RequestBriefResponseDTO> issueRequestList = userRequestList.stream()
+			.map(request -> new RequestBriefResponseDTO(request, user.isPartner()))
 			.toList();
 
 		return new PagingResponse<>(
@@ -57,48 +57,48 @@ public class IssueController {
 	}
 
 	@GetMapping("/spec/{issueId}")
-	public IRResponseDTO getIssueRequestSpec(
+	public RequestBriefResponseDTO getIssueRequestSpec(
 		@AuthenticationPrincipal DUMMY_ServiceUser user,
 		@PathVariable Long issueId
 	) {
-		IssueRequest issueRequest = issueService.getIssueRequest(issueId, user);
-		return new IRResponseDTO(issueRequest);
+		Request request = issueService.getRequest(issueId, user);
+		return new RequestBriefResponseDTO(request, user.isPartner());
 	}
 
 	@PostMapping("/create")
-	public IRResponseDTO createIssue(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
-		@RequestBody IRCreateRequestDTO IRCreateRequestDTO
+	public RequestBriefResponseDTO createIssue(
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@RequestBody RequestCreateRequestDTO RequestCreateRequestDTO
 	) {
-		VendorDTO vendor = IRCreateRequestDTO.getVendor();
-		PartnerDTO partner = IRCreateRequestDTO.getPartner();
+		VendorDTO vendor = RequestCreateRequestDTO.getVendor();
+		PartnerDTO partner = RequestCreateRequestDTO.getPartner();
 
-		IssueRequest issueRequest = issueService.createIssueRequest(
-			serviceUser,
+		Request request = issueService.createIssueRequest(
+			user,
 			vendor.getVendorName(), vendor.getPresidentName(), vendor.getPresidentPhone(),
 			partner.getBusinessName(), partner.getOwnerPhone(),
-			IRCreateRequestDTO.getProducts()
+			RequestCreateRequestDTO.getProducts()
 		);
 
-		return new IRResponseDTO(issueRequest);
+		return new RequestBriefResponseDTO(request, user.isPartner());
 	}
 
 	@PostMapping("/{issueId}/sign")
-	public IRSignResponseDTO signIssue(
+	public SignResponseDTO signIssue(
 		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
 		@PathVariable Long issueId,
-		@RequestBody IRSignRequestDTO IRSignRequestDTO
+		@RequestBody RequestSignRequestDTO RequestSignRequestDTO
 	) {
-		IssueResultDTO issueResult = issueService.signIssueRequest(
+		IssueResultDTO issueResult = issueService.signRequest(
 			serviceUser, issueId,
-			IRSignRequestDTO.getStatus(),
-			IRSignRequestDTO.getPayment().getPaidAt(),
-			IRSignRequestDTO.getPayment().getPrices(),
-			IRSignRequestDTO.getPayment().getDiscount()
+			RequestSignRequestDTO.getStatus(),
+			RequestSignRequestDTO.getPayment().getPaidAt(),
+			RequestSignRequestDTO.getPayment().getPrices(),
+			RequestSignRequestDTO.getPayment().getDiscount()
 		);
 
-		IssueStatus updatedStatus = issueResult.getStatus();
-		IRSignResponseDTO.IRSignResponseDTOBuilder status = IRSignResponseDTO.builder()
+		IssueStatus updatedStatus = issueResult.getRequets().getStatus();
+		SignResponseDTO.SignResponseDTOBuilder status = SignResponseDTO.builder()
 			.result(true)
 			.status(updatedStatus);
 

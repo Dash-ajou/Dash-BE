@@ -18,12 +18,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Table(name = "request_product")
-@Entity @Getter @Setter
+@Entity @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class RequestProduct implements Persistable<RequestProductId> {
@@ -41,15 +42,15 @@ public class RequestProduct implements Persistable<RequestProductId> {
 	@JoinColumn(name = "request_id")
 	private Request request;
 
-	private Integer quantity;
-	private Integer price;
+	private Long quantity;
+	private Long price;
 
 	@CreatedDate
 	private LocalDate created;
 
 	public RequestProduct(
 		Product product, Request request,
-		Integer quantity, Integer price
+		Long quantity, Long price
 	) {
 		this.id = new RequestProductId(product.getProductId(), request.getRequestId());
 

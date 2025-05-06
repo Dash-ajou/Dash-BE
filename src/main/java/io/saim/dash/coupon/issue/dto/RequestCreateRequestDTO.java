@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.saim.dash.coupon.common.dto.PartnerDTO;
+import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter @AllArgsConstructor
-public class IRCreateRequestDTO {
+public class RequestCreateRequestDTO {
 	private VendorDTO vendor;
 	private PartnerDTO partner;
-	private List<Long> products = new ArrayList<>();
+	private List<RequestProductCountDTO> products = new ArrayList<>();
 }

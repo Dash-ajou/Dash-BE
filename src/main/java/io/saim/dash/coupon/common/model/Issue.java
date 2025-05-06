@@ -46,7 +46,7 @@ public class Issue {
 	private List<Coupon> coupons = new ArrayList<>();
 
 	private Long issueCnt;
-	private Long usedCnt;
+	private Long usedCnt = 0L;
 
 	@Nullable
 	private LocalDateTime paidAt = LocalDateTime.now();
@@ -57,9 +57,8 @@ public class Issue {
 
 	@Builder
 	public Issue(CouponActiveStatus couponActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
-		LocalDateTime decidedAt, Long paidPrice) {
+		Long paidPrice) {
 		this.request = request;
-		this.decidedAt = decidedAt;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
 		this.issueCnt = issueCnt;

@@ -8,7 +8,9 @@ import io.saim.dash.coupon.common.model.Product;
 public interface ProductRepository {
 	void save(Product product);
 
-	Optional<Product> getById(Long id);
+	Product findById(Long id);
 
 	List<Product> findAllById(List<Long> productIds);
+
+	Product getReferenceById(Long productId);
 }

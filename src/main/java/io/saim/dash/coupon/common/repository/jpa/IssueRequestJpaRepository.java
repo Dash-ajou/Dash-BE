@@ -2,7 +2,7 @@ package io.saim.dash.coupon.common.repository.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import io.saim.dash.coupon.common.model.IssueRequest;
+import io.saim.dash.coupon.common.model.Request;
 
-public interface IssueRequestJpaRepository extends JpaRepository<IssueRequest, Long> {
+public interface IssueRequestJpaRepository extends JpaRepository<Request, Long> {
 }

@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
-import io.saim.dash.coupon.common.model.QIssueRequest;
+import io.saim.dash.coupon.common.model.QRequest;
 
 public class IssueQueryHelper {
 	public static BooleanBuilder createFilterBuilder(
 		String createat_start, String createat_end,
 		String business_name, String owner_phone, IssueStatus status,
-		QIssueRequest issueReq
+		QRequest issueReq
 	) {
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -23,7 +23,7 @@ public class IssueQueryHelper {
 		return builder;
 	}
 
-	private static void addCreateAtFilter(BooleanBuilder builder, QIssueRequest issueRequest, String createatStart, String createatEnd) {
+	private static void addCreateAtFilter(BooleanBuilder builder, QRequest issueRequest, String createatStart, String createatEnd) {
 		if (createatStart != null) {
 			LocalDateTime createAtStart = LocalDateTime.parse(createatStart);
 			builder.and(issueRequest.createdAt.gt(createAtStart));
@@ -35,19 +35,19 @@ public class IssueQueryHelper {
 		}
 	}
 
-	private static void addBusinesNameFilter(BooleanBuilder builder, QIssueRequest issueRequest, String businessName) {
+	private static void addBusinesNameFilter(BooleanBuilder builder, QRequest issueRequest, String businessName) {
 		if (businessName == null || businessName.isEmpty()) return;
 
 		builder.and(issueRequest.partner.name.eq(businessName));
 	}
 
-	private static void addBusinesOwnerPnFilter(BooleanBuilder builder, QIssueRequest issueRequest, String ownerPhone) {
+	private static void addBusinesOwnerPnFilter(BooleanBuilder builder, QRequest issueRequest, String ownerPhone) {
 		if (ownerPhone == null || ownerPhone.isEmpty()) return;
 
 		builder.and(issueRequest.partner.phone.eq(ownerPhone));
 	}
 
-	private static void addIssueStatuFilter(BooleanBuilder builder, QIssueRequest issueRequest, IssueStatus status) {
+	private static void addIssueStatuFilter(BooleanBuilder builder, QRequest issueRequest, IssueStatus status) {
 		if (status == null) return;
 
 		builder.and(issueRequest.status.eq(status));

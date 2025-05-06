@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.repository.Coupon;
+package io.saim.dash.coupon.common.repository.jpa;
 
 import java.util.List;
 

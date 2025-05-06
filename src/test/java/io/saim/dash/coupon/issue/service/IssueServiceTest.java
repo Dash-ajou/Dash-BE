@@ -18,17 +18,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
-import io.saim.dash.coupon.common.model.IssueRequest;
-import io.saim.dash.coupon.common.dto.IssueResultDTO;
-import io.saim.dash.coupon.common.repository.jpa.IssueLogJpaRepository;
-import io.saim.dash.coupon.issue.dto.IRSignRequestDTO;
+import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
+import io.saim.dash.coupon.common.model.Request;
+import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
+import io.saim.dash.coupon.common.model.Vendor;
+import io.saim.dash.coupon.common.model.mapping.RequestProduct;
+import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.Product;
-import io.saim.dash.coupon.common.model.VendorGroup;
-import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
-import io.saim.dash.coupon.common.repository.IssueRequest.IssueRequestRepository;
+import io.saim.dash.coupon.common.repository.Request.RequestRepository;
+import io.saim.dash.coupon.common.dto.Request.RequestProductPriceDTO;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
@@ -37,27 +38,23 @@ import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
 import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_GeneralUserRepository;
 
 @ExtendWith(MockitoExtension.class)
-class IssueRequestServiceTest {
+class IssueServiceTest {
 
 	IssueService issueService;
 
-	@Mock IssueRequestRepository issueRequestRepository;
+	@Mock RequestRepository requestRepository;
+	@Mock IssueJpaRepository issueJpaRepository;
 	@Mock VendorRepository vendorRepository;
 	@Mock ProductRepository productRepository;
-	@Mock IssueLogJpaRepository issueLogRepository;
-	@Mock CouponRepository couponRepository;
-	@Mock DUMMY_GeneralUserRepository generalUserRepository;
 	@Mock DUMMY_PartnerUserRepository partnerUserRepository;
 
 	@BeforeEach
 	void setUp() {
 		issueService = new IssueService(
-			issueRequestRepository,
+			requestRepository,
+			issueJpaRepository,
 			vendorRepository,
 			productRepository,
-			issueLogRepository,
-			couponRepository,
-			generalUserRepository,
 			partnerUserRepository
 		);
 	}
@@ -66,23 +63,23 @@ class IssueRequestServiceTest {
 	@DisplayName("[로그인: 파트너] 자신에게 들어온 발행요청을 조회한다")
 	void getIssueRequestByPartnerUserTest() {
 		// // given
-		IssueRequest dummyIssueRequest = new IssueRequest();
+		Request dummyRequest = new Request();
 		DUMMY_PartnerUser partnerUser = new DUMMY_PartnerUser();
-		dummyIssueRequest.setPartner(partnerUser);
+		dummyRequest.setPartner(partnerUser);
 
-		when(issueRequestRepository.findIssuesByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
-			.thenReturn(List.of(dummyIssueRequest));
+		when(requestRepository.findIssuesByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<IssueRequest> issueRequests = issueService.getIssueRequestsByUser(
+		List<Request> requests = issueService.getIssueRequestsByUser(
 			partnerUser, 0, 0,
 			null, null, null, null, null
 		);
 
-		System.out.println(issueRequests.size());
+		System.out.println(requests.size());
 
 		// then
-		issueRequests.forEach(v -> {
+		requests.forEach(v -> {
 			Assertions.assertThat(
 				v.getPartner().equals(partnerUser)
 			).isTrue();
@@ -93,25 +90,25 @@ class IssueRequestServiceTest {
 	@DisplayName("[로그인: 벤더] 자신이 요청한 발행요청을 조회한다")
 	void getIssueRequestByVendorUserTest() {
 		// given
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		VendorGroup vendorGroup = new VendorGroup();
+		Request dummyRequest = new Request();
+		Vendor vendor = new Vendor();
 		DUMMY_GeneralUser vendorUser = new DUMMY_GeneralUser();
 
-		vendorUser.addVendor(vendorGroup);
-		dummyIssueRequest.setVendorGroup(vendorGroup);
+		vendorUser.addVendor(vendor);
+		dummyRequest.setVendor(vendor);
 
-		when(issueRequestRepository.findIssuesByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
-			.thenReturn(List.of(dummyIssueRequest));
+		when(requestRepository.findIssuesByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<IssueRequest> issueRequests = issueService.getIssueRequestsByUser(
+		List<Request> requests = issueService.getIssueRequestsByUser(
 			vendorUser, 0, 0,
 			null, null, null, null, null
 		);
 
 		// then
-		issueRequests.forEach(v -> {
-			VendorGroup requestedVendor = v.getVendorGroup();
+		requests.forEach(v -> {
+			Vendor requestedVendor = v.getVendor();
 			System.out.println(requestedVendor != null);
 
 			Assertions.assertThat(
@@ -125,23 +122,23 @@ class IssueRequestServiceTest {
 	@DisplayName("발행벤더에 소속된 사용자는 제공된 ID와 일치하는 발행요청을 가져올 수 있다")
 	void getIssueRequestTest_A() {
 		// given
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		VendorGroup vendorGroup = new VendorGroup();
+		Request dummyRequest = new Request();
+		Vendor vendor = new Vendor();
 		DUMMY_GeneralUser vendorUser = new DUMMY_GeneralUser();
 
-		vendorUser.addVendor(vendorGroup);
-		dummyIssueRequest.setVendorGroup(vendorGroup);
+		vendorUser.addVendor(vendor);
+		dummyRequest.setVendor(vendor);
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
 		// when
 
 		// then
 		Assertions.assertThat(
 			issueService
-				.getIssueRequest(1L, vendorUser)
-				.getVendorGroup()
+				.getRequest(1L, vendorUser)
+				.getVendor()
 		)
 		.isIn(vendorUser.getVendors());
 	}
@@ -151,20 +148,20 @@ class IssueRequestServiceTest {
 	void getIssueRequestTest_B() {
 		// given
 		Long dummyissueId = 1L;
-		IssueRequest dummyIssueRequest = new IssueRequest(); dummyIssueRequest.setRequestId(dummyissueId);
+		Request dummyRequest = new Request(); dummyRequest.setRequestId(dummyissueId);
 		DUMMY_GeneralUser userA = new DUMMY_GeneralUser();
 		DUMMY_GeneralUser userB = new DUMMY_GeneralUser();
 
-		VendorGroup vendorGroup = new VendorGroup();
-		userA.addVendor(vendorGroup);
-		dummyIssueRequest.setVendorGroup(userA.getVendors().getFirst());
+		Vendor vendor = new Vendor();
+		userA.addVendor(vendor);
+		dummyRequest.setVendor(userA.getVendors().getFirst());
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
 		// when
 		Assertions.assertThatThrownBy(() ->
-				issueService.getIssueRequest(dummyissueId, userB)
+				issueService.getRequest(dummyissueId, userB)
 			)
 		// then
 			.isInstanceOf(ServiceException.class)
@@ -176,7 +173,11 @@ class IssueRequestServiceTest {
 	void createIssueRequestTest() {
 		// given
 		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
-		List<Long> dummyProducts = List.of(1L, 2L, 3L);
+		List<RequestProductCountDTO> dummyRequestProducts = List.of(
+			new RequestProductCountDTO(1L, 2L),
+			new RequestProductCountDTO(2L, 10L),
+			new RequestProductCountDTO(3L, 30L)
+		);
 
 		String vendorName = "", presidentName = "", presidentPhone = "";
 		String businessName = "", ownerPhone = "";
@@ -186,14 +187,14 @@ class IssueRequestServiceTest {
 
 		// when
 
-		IssueRequest createdIssueRequest = issueService.createIssueRequest(serviceUser,
+		Request createdRequest = issueService.createIssueRequest(serviceUser,
 			vendorName, presidentName, presidentPhone, businessName, ownerPhone,
-			dummyProducts
+			dummyRequestProducts
 		);
 
 		// then
 		Assertions.assertThat(
-			createdIssueRequest.getVendorGroup()
+			createdRequest.getVendor()
 		).isIn(serviceUser.getVendors());
 	}
 
@@ -205,7 +206,7 @@ class IssueRequestServiceTest {
 
 		// when
 		Assertions.assertThatThrownBy(() ->
-				issueService.signIssueRequest(
+				issueService.signRequest(
 					serviceUser, 0L,
 					null, null, null, null
 				)
@@ -223,15 +224,15 @@ class IssueRequestServiceTest {
 		DUMMY_PartnerUser serviceUserB = new DUMMY_PartnerUser();
 
 		// when
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		dummyIssueRequest.setPartner(serviceUserB);
+		Request dummyRequest = new Request();
+		dummyRequest.setPartner(serviceUserB);
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
 		// then
 		Assertions.assertThatThrownBy(() ->
-				issueService.signIssueRequest(
+				issueService.signRequest(
 					serviceUserA, 0L,
 					null, null, null, null
 				)
@@ -245,35 +246,35 @@ class IssueRequestServiceTest {
 	void signIssueRequestTest_C() {
 		// given
 		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
-		List<IRSignRequestDTO.IssuePaymentPriceInfo> issuePaymentPriceInfos = List.of(
-			new IRSignRequestDTO.IssuePaymentPriceInfo(1L, 1000L),
-			new IRSignRequestDTO.IssuePaymentPriceInfo(2L, 1000L),
-			new IRSignRequestDTO.IssuePaymentPriceInfo(3L, 1000L)
+		List<RequestProductPriceDTO> requestProductPriceDTOS = List.of(
+			new RequestProductPriceDTO(1L, 1000L),
+			new RequestProductPriceDTO(2L, 1000L),
+			new RequestProductPriceDTO(3L, 1000L)
 		);
 
 		// when
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		dummyIssueRequest.setPartner(serviceUserA);
-		dummyIssueRequest.setVendorGroup(new VendorGroup());
-		dummyIssueRequest.setStatus(IssueStatus.REQUESTED);
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		Request dummyRequest = new Request();
+		dummyRequest.setPartner(serviceUserA);
+		dummyRequest.setVendor(new Vendor());
+		dummyRequest.setStatus(IssueStatus.REQUESTED);
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
-		issueService.signIssueRequest(
+		issueService.signRequest(
 			serviceUserA, 0L,
 			IssueStatus.APPROVED,
 			LocalDateTime.now().toString(),
-			issuePaymentPriceInfos,
+			requestProductPriceDTOS,
 			0L
 		);
 
 		// then
 		Assertions.assertThatThrownBy(() ->
-				issueService.signIssueRequest(
+				issueService.signRequest(
 					serviceUserA, 0L,
 					IssueStatus.APPROVED,
 					LocalDateTime.now().toString(),
-					issuePaymentPriceInfos,
+					requestProductPriceDTOS,
 					0L
 				)
 			)
@@ -286,38 +287,47 @@ class IssueRequestServiceTest {
 	void signIssueRequestTest_D() {
 		// given
 		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
-		List<IRSignRequestDTO.IssuePaymentPriceInfo> issuePaymentPriceInfos = List.of(
-			new IRSignRequestDTO.IssuePaymentPriceInfo(1L, 1000L),
-			new IRSignRequestDTO.IssuePaymentPriceInfo(2L, 1000L),
-			new IRSignRequestDTO.IssuePaymentPriceInfo(3L, 1000L)
+		List<RequestProductPriceDTO> requestProductPriceDTOS = List.of(
+			new RequestProductPriceDTO(1L, 1000L),
+			new RequestProductPriceDTO(2L, 1000L),
+			new RequestProductPriceDTO(3L, 1000L)
 		);
 
 		// when
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		dummyIssueRequest.setPartner(serviceUserA);
-		dummyIssueRequest.setVendorGroup(new VendorGroup());
-		dummyIssueRequest.setStatus(IssueStatus.REQUESTED);
-		dummyIssueRequest.setProducts(List.of(
-			Product.builder().build(),
-			Product.builder().build(),
-			Product.builder().build()
+		Request dummyRequest = new Request();
+		dummyRequest.setPartner(serviceUserA);
+		dummyRequest.setVendor(new Vendor());
+		dummyRequest.setStatus(IssueStatus.REQUESTED);
+
+		DUMMY_PartnerUser serviceUserB = new DUMMY_PartnerUser();
+		Product productA = new Product(serviceUserB, "sefes", 50000L);
+		productA.setProductId(1L);
+		Product productB = new Product(serviceUserB, "sefes", 50000L);
+		productB.setProductId(2L);
+		Product productC = new Product(serviceUserB, "sefes", 50000L);
+		productC.setProductId(3L);
+
+		dummyRequest.setRequestProducts(List.of(
+			RequestProduct.builder().product(productA).build(),
+			RequestProduct.builder().product(productB).build(),
+			RequestProduct.builder().product(productC).build()
 		));
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
-		IssueResultDTO issueResultDTO = issueService.signIssueRequest(
+		IssueResultDTO issueResultDTO = issueService.signRequest(
 			serviceUserA, 0L,
 			IssueStatus.APPROVED,
 			LocalDateTime.now().toString(),
-			issuePaymentPriceInfos,
+			requestProductPriceDTOS,
 			0L
 		);
 
 		// then
 		Assertions.assertThat(
-			issueResultDTO.getIssueCount()
-		).isEqualTo(dummyIssueRequest.getProducts().size());
+			issueResultDTO.getIssue().getIssueCnt()
+		).isEqualTo(dummyRequest.getRequestProducts().size());
 	}
 
 	@Test
@@ -341,24 +351,24 @@ class IssueRequestServiceTest {
 		// given
 		DUMMY_GeneralUser serviceUserA = new DUMMY_GeneralUser();
 		DUMMY_GeneralUser serviceUserB = new DUMMY_GeneralUser();
-		VendorGroup vendorGroupA = VendorGroup.builder()
+		Vendor vendorA = Vendor.builder()
 			.presidentName("TEST_VG_PRESIDENT")
 			.name("TEST_VG")
 			.build();
-		VendorGroup vendorGroupB = VendorGroup.builder()
+		Vendor vendorB = Vendor.builder()
 			.presidentName("TEST_VG_PRESIDENTB")
 			.name("TEST_VGB")
 			.build();
 
-		serviceUserA.addVendor(vendorGroupA);
-		serviceUserB.addVendor(vendorGroupB);
+		serviceUserA.addVendor(vendorA);
+		serviceUserB.addVendor(vendorB);
 
 		// when
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		dummyIssueRequest.setVendorGroup(vendorGroupA);
+		Request dummyRequest = new Request();
+		dummyRequest.setVendor(vendorA);
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
 		// then
 		Assertions.assertThatThrownBy(() ->
@@ -373,19 +383,19 @@ class IssueRequestServiceTest {
 	void deleteIssueRequestTest_C() {
 		// given
 		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
-		VendorGroup vendorGroupA = VendorGroup.builder()
+		Vendor vendorA = Vendor.builder()
 			.presidentName("TEST_VG_PRESIDENT")
 			.name("TEST_VG")
 			.build();
 
-		serviceUser.addVendor(vendorGroupA);
+		serviceUser.addVendor(vendorA);
 
 		// when
-		IssueRequest dummyIssueRequest = new IssueRequest();
-		dummyIssueRequest.setVendorGroup(vendorGroupA);
+		Request dummyRequest = new Request();
+		dummyRequest.setVendor(vendorA);
 
-		when(issueRequestRepository.getById(any(Long.class)))
-			.thenReturn(Optional.of(dummyIssueRequest));
+		when(requestRepository.getById(any(Long.class)))
+			.thenReturn(Optional.of(dummyRequest));
 
 		// then
 		Assertions.assertThat(issueService.deleteIssueRequest(serviceUser, 0L))
