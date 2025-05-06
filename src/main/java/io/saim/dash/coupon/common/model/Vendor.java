@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,28 +19,32 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Getter @Setter
-public class VendorGroup {
+public class Vendor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Column(name = "vendor_id")
+	@Getter private Long vendorId;
 
-	private String name;
-	private String presidentName;
-	private String presidentPhone;
+	@Getter private String name;
+	@Getter private String presidentName;
+	@Getter private String presidentPhone;
 
-	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MemberVendor> members = new ArrayList<>();
+	@OneToMany(
+		mappedBy = "vendorGroup", fetch = FetchType.LAZY,
+		cascade = CascadeType.ALL, orphanRemoval = true
+	)
+	private List<UserVendor> vendorUsers = new ArrayList<>();
 
-	@OneToMany(mappedBy = "vendorGroup", fetch = FetchType.LAZY)
-	private List<IssueRequest> issueRequests;
+	@OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
+	private List<Request> requests;
 
 	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder
-	private VendorGroup(
-		String name, String presidentName, String presidentPhone
+	private Vendor(
+		String name,
+		String presidentName, String presidentPhone
 	) {
 		this.name = name;
 		this.presidentName = presidentName;
@@ -50,22 +55,22 @@ public class VendorGroup {
 		if (!DUMMY_GeneralUser.isGeneralUser(user))
 			return false;
 
-		return this.getMembers().contains(user);
+		return this.getVendorUsers().contains(user);
 	}
 
-	private List<DUMMY_GeneralUser> getMembers() {
-		return this.members.stream().map(
-			MemberVendor::getUser
-		).toList();
+	private List<DUMMY_GeneralUser> getVendorUsers() {
+		return this.vendorUsers.stream()
+			.map(UserVendor::getUser)
+			.toList();
 	}
 
-	public MemberVendor linkMember(DUMMY_GeneralUser user) {
-		MemberVendor link = MemberVendor.builder()
-			.vendorGroup(this)
+	public UserVendor linkMember(DUMMY_GeneralUser user) {
+		UserVendor link = UserVendor.builder()
+			.vendor(this)
 			.user(user)
 			.build();
 
-		this.members.add(link);
+		this.vendorUsers.add(link);
 
 		return link;
 	}

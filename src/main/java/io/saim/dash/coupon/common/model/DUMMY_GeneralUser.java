@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<MemberVendor> vendors = new ArrayList<>();
+	private List<UserVendor> vendors = new ArrayList<>();
 
 	@Builder
 	public DUMMY_GeneralUser(
 		Long id, String name, String email, String phone, LocalDateTime joinedAt,
-		List<MemberVendor> vendors
+		List<UserVendor> vendors
 	) {
 		super(id, name, email, phone, joinedAt, DUMMY_UserType.GENERAL);
 		this.vendors = vendors;
@@ -29,14 +29,14 @@ public class DUMMY_GeneralUser extends DUMMY_ServiceUser {
 		return this.name;
 	}
 
-	public void addVendor(VendorGroup vendorGroup) {
-		MemberVendor link = vendorGroup.linkMember(this);
+	public void addVendor(Vendor vendor) {
+		UserVendor link = vendor.linkMember(this);
 		this.vendors.add(link);
 	}
 
-	public List<VendorGroup> getVendors() {
+	public List<Vendor> getVendors() {
 		return this.vendors.stream()
-			.map(MemberVendor::getVendorGroup)
+			.map(UserVendor::getVendor)
 			.toList();
 	}
 

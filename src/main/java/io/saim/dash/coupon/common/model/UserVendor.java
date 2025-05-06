@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,24 +14,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
-public class MemberVendor {
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @Builder
+public class UserVendor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	private VendorGroup vendorGroup;
+	@JoinColumn(name = "vendor_id")
+	private Vendor vendor;
 
 	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private DUMMY_GeneralUser user;
-
-	@Builder
-	private MemberVendor(VendorGroup vendorGroup, DUMMY_GeneralUser user) {
-		this.vendorGroup = vendorGroup;
-		this.user = user;
-	}
 }
