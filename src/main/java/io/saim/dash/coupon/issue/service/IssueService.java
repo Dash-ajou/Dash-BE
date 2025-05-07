@@ -18,6 +18,7 @@ import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
+import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
@@ -42,7 +43,7 @@ import lombok.RequiredArgsConstructor;
 public class IssueService {
 
 	private final RequestRepository requestRepository;
-	private final IssueJpaRepository issueRepository;
+	private final IssueRepository issueRepository;
 	private final VendorRepository vendorRepository;
 	private final ProductRepository productRepository;
 

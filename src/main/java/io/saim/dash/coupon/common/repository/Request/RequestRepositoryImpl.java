@@ -14,7 +14,7 @@ import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
-import io.saim.dash.coupon.common.repository.jpa.IssueRequestJpaRepository;
+import io.saim.dash.coupon.common.repository.jpa.RequestJpaRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class RequestRepositoryImpl implements RequestRepository {
 
 	private final JPAQueryFactory queryFactory;
-	private final IssueRequestJpaRepository issueRequestJpaRepository;
+	private final RequestJpaRepository requestJpaRepository;
 
 	@Override
 	public Optional<Request> getById(long issueRequestId) {
-		return issueRequestJpaRepository.findById(issueRequestId);
+		return requestJpaRepository.findById(issueRequestId);
 	}
 
 	@Override
@@ -58,17 +58,17 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 	@Override
 	public void save(Request request) {
-		issueRequestJpaRepository.save(request);
+		requestJpaRepository.save(request);
 	}
 
 	@Override
 	public void delete(Request request) {
-		issueRequestJpaRepository.delete(request);
+		requestJpaRepository.delete(request);
 	}
 
 	@Override
 	public Request getReferenceById(Long requestId) {
-		return issueRequestJpaRepository.getReferenceById(requestId);
+		return requestJpaRepository.getReferenceById(requestId);
 	}
 
 	private JPAQuery<Request> getIssueJPAQuery(BooleanBuilder filterBuilder, QRequest issue) {
