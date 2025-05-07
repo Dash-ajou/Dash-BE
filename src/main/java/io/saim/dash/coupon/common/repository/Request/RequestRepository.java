@@ -14,9 +14,9 @@ public interface RequestRepository {
 	Optional<Request> getById(long issueId);
 
 	// List<Issue> getIssuesByVendor(DUMMY_GeneralUser user);
-	List<Request> findIssuesByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size);
+	List<Request> findRequestsByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size);
 	// List<Issue> getIssuesByPartner(DUMMY_PartnerUser user);
-	List<Request> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size);
+	List<Request> findRequestsByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size);
 
 	void save(Request request);
 

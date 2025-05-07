@@ -39,7 +39,7 @@ public class IssueController {
 		@RequestParam(required = false) String owner_phone,
 		@RequestParam(required = false) IssueStatus status
 	) {
-		List<Request> userRequestList = issueService.getIssueRequestsByUser(
+		List<Request> userRequestList = issueService.getRequestsByPartner(
 			user,
 			page, size,
 			createat_start, createat_end,

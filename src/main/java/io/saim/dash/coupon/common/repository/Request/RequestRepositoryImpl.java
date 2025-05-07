@@ -30,7 +30,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	@Override
-	public List<Request> findIssuesByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
+	public List<Request> findRequestsByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
 		List<Vendor> vendors = user.getVendors();
@@ -46,7 +46,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	@Override
-	public List<Request> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
+	public List<Request> findRequestsByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
 		filterBuilder.and(issue.partner.eq(user));

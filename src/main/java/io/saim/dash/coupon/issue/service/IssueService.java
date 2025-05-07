@@ -19,7 +19,6 @@ import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
-import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
@@ -49,7 +48,7 @@ public class IssueService {
 
 	private final DUMMY_PartnerUserRepository partnerUserRepository;
 
-	public List<Request> getIssueRequestsByUser(
+	public List<Request> getRequestsByPartner(
 		DUMMY_ServiceUser user,
 		int page, int size,
 		String createat_start, String createat_end,
@@ -63,11 +62,11 @@ public class IssueService {
 
 		if(user.isPartner()) {
 			assert user instanceof DUMMY_PartnerUser;
-			return requestRepository.findIssuesByPartner((DUMMY_PartnerUser)user, filterBuilder, page, size);
+			return requestRepository.findRequestsByPartner((DUMMY_PartnerUser)user, filterBuilder, page, size);
 		}
 
 		assert user instanceof DUMMY_GeneralUser;
-		return requestRepository.findIssuesByVendor((DUMMY_GeneralUser)user, filterBuilder, page, size);
+		return requestRepository.findRequestsByVendor((DUMMY_GeneralUser)user, filterBuilder, page, size);
 	}
 
 	public Request getRequest(Long requestId, DUMMY_ServiceUser requestUser) throws ServiceException {
