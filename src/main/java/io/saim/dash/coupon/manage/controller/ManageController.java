@@ -6,16 +6,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.saim.dash.coupon.common.dto.Coupon.CancelCouponRegistrationResult;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
+import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
+import io.saim.dash.coupon.manage.dto.CancelRegistrationResponseDTO;
 import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
 import io.saim.dash.coupon.manage.dto.UpdateUsableStatusRequestDTO;
 import io.saim.dash.coupon.manage.dto.PauseCouponsResponseDTO;
@@ -111,5 +115,15 @@ public class ManageController {
 			issue_id, updateRequestDTO.getStatus()
 		);
 		return new PauseCouponsResponseDTO(issue_id, updateRequestDTO.getStatus(), usableUpdateResult);
+	}
+
+	@PostMapping("/{issue_id}/{coupon_id}/cancel")
+	public CancelRegistrationResponseDTO cancelCouponRegistration(
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@PathVariable Long issue_id,
+		@PathVariable Long coupon_id
+	) {
+		CouponRegistration cancelResult = manageService.cancelCouponRegistration(user, issue_id, coupon_id);
+		return new CancelRegistrationResponseDTO(cancelResult);
 	}
 }

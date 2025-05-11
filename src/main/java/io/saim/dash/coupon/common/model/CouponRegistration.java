@@ -13,11 +13,12 @@ import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class RegisterLog {
+public class CouponRegistration {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,9 @@ public class RegisterLog {
 	@ManyToOne
 	@JoinColumn(nullable = false, name = "couponId")
 	private Coupon coupon;
+
+	@Column(nullable = false) @Setter
+	private Boolean isValid;
 
 	@Column(nullable = false)
 	private LocalDateTime registeredAt;

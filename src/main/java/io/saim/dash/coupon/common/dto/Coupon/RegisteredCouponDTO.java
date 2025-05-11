@@ -3,7 +3,7 @@ package io.saim.dash.coupon.common.dto.Coupon;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.Issue;
-import io.saim.dash.coupon.common.model.RegisterLog;
+import io.saim.dash.coupon.common.model.CouponRegistration;
 import lombok.Getter;
 
 @Getter
@@ -18,10 +18,15 @@ public class RegisteredCouponDTO extends CouponDTO {
 		this.registered_at = null;
 	}
 
-	public RegisteredCouponDTO(Issue issue, Coupon coupon, RegisterLog registerLog) {
+	public RegisteredCouponDTO(Issue issue, Coupon coupon, CouponRegistration couponRegistration) {
 		super(coupon, issue.getIssueActiveStatus());
 
-		this.register = registerLog.getRegisteredUser();
-		this.registered_at = registerLog.getRegisteredAt().toString();
+		if (couponRegistration == null) {
+			this.register = null;
+			this.registered_at = null;
+		} else {
+			this.register = couponRegistration.getRegisteredUser();
+			this.registered_at = couponRegistration.getRegisteredAt().toString();
+		}
 	}
 }
