@@ -6,8 +6,8 @@ import com.querydsl.core.Tuple;
 
 import io.saim.dash.coupon.common.constant.CouponActiveStatus;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.common.model.QIssue;
-import io.saim.dash.coupon.common.model.QRequest;
+import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.Vendor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,17 +23,14 @@ public class CouponIssueLogDTO {
 	private Long issueCnt;
 	private Long usedCnt;
 
-	public CouponIssueLogDTO(Tuple data) {
-		QRequest issueRequest = QRequest.request;
-		QIssue issueLog = QIssue.issue;
-
-		this.requestId = data.get(issueRequest.requestId);
-		this.vendor = data.get(issueRequest.vendor);
-		this.partner = data.get(issueRequest.partner);
-		this.issueId = data.get(issueLog.issueId);
-		this.couponActiveStatus = data.get(issueLog.couponActiveStatus);
-		this.issuedAt = data.get(issueLog.decidedAt);
-		this.issueCnt = data.get(issueLog.issueCnt);
-		this.usedCnt = data.get(issueLog.usedCnt);
+	public CouponIssueLogDTO(Issue issue) {
+		this.requestId = issue.getRequest().getRequestId();
+		this.vendor = issue.getRequest().getVendor();
+		this.partner = issue.getRequest().getPartner();
+		this.issueId = issue.getIssueId();
+		this.couponActiveStatus = issue.getCouponActiveStatus();
+		this.issuedAt = issue.getDecidedAt();
+		this.issueCnt = issue.getIssueCnt();
+		this.usedCnt = issue.getUsedCnt();
 	}
 }
