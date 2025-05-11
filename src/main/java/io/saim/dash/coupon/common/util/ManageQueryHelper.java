@@ -2,7 +2,7 @@ package io.saim.dash.coupon.common.util;
 
 import com.querydsl.core.BooleanBuilder;
 
-import io.saim.dash.coupon.common.constant.CouponActiveStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
 
@@ -28,7 +28,7 @@ public class ManageQueryHelper {
 		Boolean isCompletionIncluded
 	) {
 		if (isCompletionIncluded.equals(true))
-			builder.and(issueLog.couponActiveStatus.eq(CouponActiveStatus.ENABLED));
+			builder.and(issueLog.couponActiveStatus.eq(IssueActiveStatus.ENABLED));
 	}
 
 	private static void addPresidentFilter(

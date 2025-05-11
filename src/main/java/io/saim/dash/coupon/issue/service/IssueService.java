@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
-import io.saim.dash.coupon.common.constant.CouponActiveStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
 import io.saim.dash.coupon.common.model.Issue;
@@ -233,7 +233,7 @@ public class IssueService {
 			.paidAt(paidAt)
 			.paidPrice(paidPrice)
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
-			.couponActiveStatus(CouponActiveStatus.ENABLED)
+			.couponActiveStatus(IssueActiveStatus.ENABLED)
 			.build();
 
 		List<Coupon> issuedCoupons = createCoupons(issue);

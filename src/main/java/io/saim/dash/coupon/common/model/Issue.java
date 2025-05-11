@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import io.saim.dash.coupon.common.constant.CouponActiveStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
@@ -33,7 +33,7 @@ public class Issue {
 	private Long issueId;
 
 	@Embedded
-	private CouponActiveStatus couponActiveStatus;
+	private IssueActiveStatus issueActiveStatus;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "request_id")
@@ -56,13 +56,13 @@ public class Issue {
 	private LocalDateTime decidedAt;
 
 	@Builder
-	public Issue(CouponActiveStatus couponActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
+	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
 		Long paidPrice) {
 		this.request = request;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
 		this.issueCnt = issueCnt;
 		this.usedCnt = usedCnt;
-		this.couponActiveStatus = couponActiveStatus;
+		this.issueActiveStatus = issueActiveStatus;
 	}
 }

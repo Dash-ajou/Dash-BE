@@ -1,6 +1,6 @@
 package io.saim.dash.coupon.common.dto.Issue;
 
-import io.saim.dash.coupon.common.constant.CouponActiveStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
 
@@ -8,7 +8,7 @@ public class IssueConfirmSpecDTO {
 	private final Long request_id;
 	private final Long issue_id;
 	private final String paid_at;
-	private final CouponActiveStatus status;
+	private final IssueActiveStatus status;
 	private final Long issue_count;
 	private final Long paid_price;
 	private final String issued_at;
@@ -20,7 +20,7 @@ public class IssueConfirmSpecDTO {
 		this.request_id = request.getRequestId();
 		this.issue_id = issue.getIssueId();
 		this.paid_at = issue.getPaidAt().toString();
-		this.status = issue.getCouponActiveStatus();
+		this.status = issue.getIssueActiveStatus();
 		this.issue_count = issue.getIssueCnt();
 		this.paid_price = issue.getPaidPrice();
 		this.issued_at = issue.getDecidedAt().toString();
