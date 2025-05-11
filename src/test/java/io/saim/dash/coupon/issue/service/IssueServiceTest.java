@@ -35,8 +35,6 @@ import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
 import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
 
-import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_GeneralUserRepository;
-
 @ExtendWith(MockitoExtension.class)
 class IssueServiceTest {
 
@@ -67,11 +65,11 @@ class IssueServiceTest {
 		DUMMY_PartnerUser partnerUser = new DUMMY_PartnerUser();
 		dummyRequest.setPartner(partnerUser);
 
-		when(requestRepository.findIssuesByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+		when(requestRepository.findRequestsByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<Request> requests = issueService.getIssueRequestsByUser(
+		List<Request> requests = issueService.getRequestsByPartner(
 			partnerUser, 0, 0,
 			null, null, null, null, null
 		);
@@ -97,11 +95,11 @@ class IssueServiceTest {
 		vendorUser.addVendor(vendor);
 		dummyRequest.setVendor(vendor);
 
-		when(requestRepository.findIssuesByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+		when(requestRepository.findRequestsByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<Request> requests = issueService.getIssueRequestsByUser(
+		List<Request> requests = issueService.getRequestsByPartner(
 			vendorUser, 0, 0,
 			null, null, null, null, null
 		);

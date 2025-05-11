@@ -16,7 +16,7 @@ class ManageServiceTest {
 
 	@Test
 	@DisplayName("[로그인: 파트너] 본인이 승인하여 발급된 쿠폰들에 대한 발행내역을 조회할 수 있다")
-	void getIssuedIRsByPartnerUserTest_A() {
+	void getIssuedRequestsByPartnerUserTest_A() {
 		// given
 
 		// when
@@ -26,13 +26,13 @@ class ManageServiceTest {
 
 	@Test
 	@DisplayName("[로그인: 벤더] 본인이 요청하여 발급된 쿠폰들에 대한 발행내역을 조회할 수 있다")
-	void getIssuedIRsByVendorUserTest_A() {
+	void getIssuedRequestsByVendorUserTest_A() {
 
 	}
 
 	@Test
 	@DisplayName("[로그인: 벤더] 본인이 소속된 벤더 내 다른사용자가 요청한 발행내역을 조회할 수 있다")
-	void getIssuedIRsByVendorUserTest_B() {
+	void getIssuedRequestsByVendorUserTest_B() {
 
 	}
 
