@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
+import io.saim.dash.coupon.common.dto.Issue.CancelIssueResultDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
@@ -42,7 +44,7 @@ public class ManageService {
 		Integer page, Integer size,
 		String vendorName, String presidentName, String businessName, Boolean isCompletionInclude
 	) {
-		BooleanBuilder filterBuilder = ManageQueryHelper.createFilterBuilder(
+		BooleanBuilder filterBuilder = ManageQueryHelper.createIssueSearchFilterBuilder(
 			vendorName, presidentName, businessName, isCompletionInclude,
 			QIssue.issue, QRequest.request
 		);
@@ -146,5 +148,21 @@ public class ManageService {
 			throw new ServiceException(ServiceExceptionContent.ISSUE_IS_ENABLED);
 
 		return true;
+	}
+
+	@Transactional
+	public CancelIssueResultDTO cancelIssue(DUMMY_ServiceUser user, Long issueId) {
+		if (user.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		Issue issue = getIssue(user, issueId);
+
+		BooleanBuilder couponFilterBuilder = ManageQueryHelper.createCouponSearchFilterBuilder(
+			List.of(new CouponStatus[]{CouponStatus.DISABLED}),
+			issueId
+		);
+		Long expiredCnt = couponRepository.cancelCoupons(couponFilterBuilder);
+
+		return new CancelIssueResultDTO(issue, expiredCnt);
 	}
 }

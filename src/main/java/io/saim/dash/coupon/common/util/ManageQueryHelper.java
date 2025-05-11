@@ -11,7 +11,7 @@ import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
 
 public class ManageQueryHelper {
-	public static BooleanBuilder createFilterBuilder(
+	public static BooleanBuilder createIssueSearchFilterBuilder(
 		String vendorName,
 		String presidentName, String businessName,
 		Boolean isCompletionIncluded,
@@ -26,7 +26,7 @@ public class ManageQueryHelper {
 		return builder;
 	}
 
-	public static BooleanBuilder createUpdateStatusFilter(
+	public static BooleanBuilder createCouponSearchFilterBuilder(
 		List<CouponStatus> couponStatuses,
 		Long issueId
 	) {
