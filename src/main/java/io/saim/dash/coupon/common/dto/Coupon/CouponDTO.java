@@ -1,6 +1,7 @@
 package io.saim.dash.coupon.common.dto.Coupon;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.Product;
@@ -17,14 +18,17 @@ public class CouponDTO {
 	@Getter private final DUMMY_PartnerUser partner; // 파트너
 	private final String register_code; // 쿠폰등록코드
 
-	public CouponDTO (Coupon coupon) {
+	public CouponDTO (Coupon coupon, IssueActiveStatus issueActiveStatus) {
 		this.coupon_id = coupon.getId();
 		this.issue_id = coupon.getIssue().getIssueId();
-		this.status = coupon.getCouponStatus();
 		this.expired_at = coupon.getExpiredAt().toString();
 		this.product = coupon.getProduct();
 		this.partner = this.product.getPartner();
 		this.register_code = coupon.getRegisterCode();
+
+		if (issueActiveStatus == IssueActiveStatus.DISABLED)
+			this.status = CouponStatus.DISABLED;
+		else this.status = coupon.getCouponStatus();
 	}
 
 	public long getCouponId() {

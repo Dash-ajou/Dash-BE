@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor @AllArgsConstructor
@@ -32,7 +33,7 @@ public class Issue {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long issueId;
 
-	@Embedded
+	@Embedded @Setter
 	private IssueActiveStatus issueActiveStatus;
 
 	@OneToOne(fetch = FetchType.EAGER)

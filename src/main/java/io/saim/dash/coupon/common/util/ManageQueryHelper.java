@@ -1,8 +1,12 @@
 package io.saim.dash.coupon.common.util;
 
+import java.util.List;
+
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
+import io.saim.dash.coupon.common.model.QCoupon;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
 
@@ -22,13 +26,40 @@ public class ManageQueryHelper {
 		return builder;
 	}
 
+	public static BooleanBuilder createUpdateStatusFilter(
+		List<CouponStatus> couponStatuses,
+		Long issueId
+	) {
+		QCoupon coupon = QCoupon.coupon;
+		BooleanBuilder builder = new BooleanBuilder();
+
+		addIssueIdFilter(builder, coupon, issueId);
+		addCouponStatusFilter(builder, coupon, couponStatuses);
+
+		return builder;
+	}
+
+	private static void addIssueIdFilter(BooleanBuilder builder, QCoupon coupon, Long issueId) {
+		builder.and(coupon.issue.issueId.eq(issueId));
+	}
+
+	private static void addCouponStatusFilter(
+		BooleanBuilder builder,
+		QCoupon coupon,
+		List<CouponStatus> couponStatuses
+	) {
+		for (CouponStatus couponStatus : couponStatuses) {
+			builder.and(coupon.couponStatus.notIn(couponStatus));
+		}
+	}
+
 	private static void addCompletionFilter(
 		BooleanBuilder builder,
 		QIssue issueLog,
 		Boolean isCompletionIncluded
 	) {
 		if (isCompletionIncluded.equals(true))
-			builder.and(issueLog.couponActiveStatus.eq(IssueActiveStatus.ENABLED));
+			builder.and(issueLog.issueActiveStatus.eq(IssueActiveStatus.ENABLED));
 	}
 
 	private static void addPresidentFilter(

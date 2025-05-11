@@ -12,6 +12,7 @@ public enum ServiceExceptionContent {
 	DEFAULT_BAD_REQUEST(APIStatus.BAD_REQUEST, "잘못된 요청입니다. 확인 후 다시 시도해주세요."),
 	ISSUE_ALREADY_SIGNED(APIStatus.BAD_REQUEST, "이미 승인/반려여부가 결정된 발행요청입니다."),
 	BAD_ISSUE_SIGN_REQUEST(APIStatus.BAD_REQUEST, "올바르지 않은 발행승인/반려 요청입니다."),
+	ACTIVE_STATUS_ALREADY_UPDATED(APIStatus.BAD_REQUEST, "현재 상태와 요청하신 상태가 동일합니다."),
 
 	// 401
 	// UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다"),

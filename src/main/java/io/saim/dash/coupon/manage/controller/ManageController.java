@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
+import io.saim.dash.coupon.common.dto.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
+import io.saim.dash.coupon.manage.dto.UpdateUsableStatusRequestDTO;
+import io.saim.dash.coupon.manage.dto.PauseCouponsResponseDTO;
 import io.saim.dash.coupon.manage.service.ManageService;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
@@ -93,5 +98,18 @@ public class ManageController {
 		);
 
 		return specCoupon;
+	}
+
+	@PatchMapping("{issue_id}/status")
+	public PauseCouponsResponseDTO updateCouponUsableStatus(
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@PathVariable Long issue_id,
+		@RequestBody UpdateUsableStatusRequestDTO updateRequestDTO
+	) {
+		PauseCouponsResultDTO usableUpdateResult = manageService.updateCouponsPauseStatus(
+			user,
+			issue_id, updateRequestDTO.getStatus()
+		);
+		return new PauseCouponsResponseDTO(issue_id, updateRequestDTO.getStatus(), usableUpdateResult);
 	}
 }
