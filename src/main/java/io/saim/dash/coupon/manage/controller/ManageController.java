@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.saim.dash.coupon.common.dto.CouponDTO;
-import io.saim.dash.coupon.common.dto.CouponIssueLogDTO;
+import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
+import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
+import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
-import io.saim.dash.coupon.manage.dto.IssuedIRResponseDTO;
+import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
 import io.saim.dash.coupon.manage.service.ManageService;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ManageController {
 	private final ManageService manageService;
 
 	@GetMapping("/list")
-	public PagingResponse<IssuedIRResponseDTO> getIssuedIRList(
+	public PagingResponse<IssuedRequestResponseDTO> getApprovedIssues(
 		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
 		@RequestParam(required = false, defaultValue = "1") Integer page,
 		@RequestParam(required = false, defaultValue = "10") Integer size,
@@ -34,30 +35,30 @@ public class ManageController {
 		@RequestParam(required = false) String business_name,
 		@RequestParam(required = false, defaultValue = "false") Boolean include_completed
 	) {
-		List<CouponIssueLogDTO> savedIssuedIRList = manageService.getIssuedIRs(
+		List<CouponIssueLogDTO> savedIssuedRequest = manageService.getIssuedRequests(
 			serviceUser,
 			page, size,
 			vendor_name, president_name, business_name, include_completed
 		);
 
-		List<IssuedIRResponseDTO> issuedIRList = savedIssuedIRList.stream()
-			.map(IssuedIRResponseDTO::new)
+		List<IssuedRequestResponseDTO> issuedRequestList = savedIssuedRequest.stream()
+			.map(IssuedRequestResponseDTO::new)
 			.toList();
 
 		return new PagingResponse<>(
 			page, size,
-			issuedIRList
+			issuedRequestList
 		);
 	}
 
 	@GetMapping("/{issue_id}/list")
-	public PagingResponse<CouponDTO> getIssuedCouponList(
+	public PagingResponse<CouponBriefDTO> getIssuedCoupons(
 		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
-		@PathVariable Integer page,
-		@PathVariable Integer size,
-		@PathVariable Long issue_id
+		@PathVariable Long issue_id,
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false) Integer size
 	) {
-		List<CouponDTO> coupons = manageService.getCouponsByIssueId(
+		List<CouponBriefDTO> coupons = manageService.getCouponsByIssueId(
 			serviceUser,
 			page, size,
 			issue_id
@@ -67,5 +68,30 @@ public class ManageController {
 			page, size,
 			coupons
 		);
+	}
+
+	@Deprecated
+	@GetMapping("/{issue_id}/{coupon_id}/register")
+	public RegisteredCouponDTO deprecatedGetCouponSpec(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@PathVariable Long issue_id,
+		@PathVariable Long coupon_id
+	) {
+		return this.getCouponSpec(serviceUser, issue_id, coupon_id);
+	}
+
+	@GetMapping("/{issue_id}/{coupon_id}")
+	public RegisteredCouponDTO getCouponSpec(
+		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@PathVariable Long issue_id,
+		@PathVariable Long coupon_id
+	) {
+
+		RegisteredCouponDTO specCoupon = manageService.getCouponByCouponId(
+			serviceUser,
+			issue_id, coupon_id
+		);
+
+		return specCoupon;
 	}
 }

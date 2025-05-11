@@ -10,6 +10,12 @@ public class RegisteredCouponDTO extends CouponDTO {
 	private final DUMMY_GeneralUser register; // 등록자
 	private final String registered_at; // 등록일시
 
+	public RegisteredCouponDTO(Coupon coupon) {
+		super(coupon);
+		this.register = null;
+		this.registered_at = null;
+	}
+
 	public RegisteredCouponDTO(Coupon coupon, RegisterLog registerLog) {
 		super(coupon);
 
