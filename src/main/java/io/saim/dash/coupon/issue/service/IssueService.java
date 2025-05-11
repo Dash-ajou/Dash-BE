@@ -233,7 +233,7 @@ public class IssueService {
 			.paidAt(paidAt)
 			.paidPrice(paidPrice)
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
-			.couponActiveStatus(IssueActiveStatus.ENABLED)
+			.issueActiveStatus(IssueActiveStatus.ENABLED)
 			.build();
 
 		List<Coupon> issuedCoupons = createCoupons(issue);
