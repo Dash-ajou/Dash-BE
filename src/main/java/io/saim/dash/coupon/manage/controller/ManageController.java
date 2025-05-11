@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.saim.dash.coupon.common.dto.Coupon.CancelCouponRegistrationResult;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
@@ -125,5 +124,16 @@ public class ManageController {
 	) {
 		CouponRegistration cancelResult = manageService.cancelCouponRegistration(user, issue_id, coupon_id);
 		return new CancelRegistrationResponseDTO(cancelResult);
+	}
+
+	@PostMapping("/{issue_id}/cancel/request")
+	public void requestIssueCancellation(
+		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@PathVariable Long issue_id
+	) {
+		manageService.checkIssueCancellable(user, issue_id);
+
+		// 파트너 인증문자 발송
+
 	}
 }

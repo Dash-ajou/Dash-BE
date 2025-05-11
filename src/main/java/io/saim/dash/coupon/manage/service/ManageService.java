@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
-import io.saim.dash.coupon.common.dto.Coupon.CancelCouponRegistrationResult;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
@@ -24,7 +23,6 @@ import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
-import io.saim.dash.coupon.common.repository.Request.RequestRepository;
 import io.saim.dash.coupon.common.util.ManageQueryHelper;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -137,5 +135,16 @@ public class ManageService {
 		registration.setIsValid(false);
 
 		return registration;
+	}
+
+	public Boolean checkIssueCancellable(DUMMY_ServiceUser user, Long issueId) {
+		if (user.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		Issue issue = getIssue(user, issueId);
+		if (issue.getIssueActiveStatus() != IssueActiveStatus.DISABLED)
+			throw new ServiceException(ServiceExceptionContent.ISSUE_IS_ENABLED);
+
+		return true;
 	}
 }
