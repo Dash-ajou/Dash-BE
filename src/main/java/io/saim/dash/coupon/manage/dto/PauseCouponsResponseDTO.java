@@ -1,7 +1,7 @@
 package io.saim.dash.coupon.manage.dto;
 
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
-import io.saim.dash.coupon.common.dto.PauseCouponsResultDTO;
+import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

@@ -7,18 +7,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
-import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
-import io.saim.dash.coupon.common.dto.PauseCouponsResultDTO;
+import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
 import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.common.model.Issue;
-import io.saim.dash.coupon.common.model.QCoupon;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;

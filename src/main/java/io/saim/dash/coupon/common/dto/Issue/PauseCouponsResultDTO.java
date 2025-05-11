@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.dto;
+package io.saim.dash.coupon.common.dto.Issue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
