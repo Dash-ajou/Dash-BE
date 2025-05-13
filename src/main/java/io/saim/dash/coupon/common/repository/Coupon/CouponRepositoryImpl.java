@@ -22,7 +22,7 @@ public class CouponRepositoryImpl implements CouponRepository {
 
 	@Override
 	public List<Coupon> findCouponsByIssueId(Long issueId) {
-		return couponJpaRepository.findByIssueId(issueId);
+		return couponJpaRepository.findByIssueIssueId(issueId);
 	}
 
 	@Override

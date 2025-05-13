@@ -31,7 +31,7 @@ public class Vendor {
 	@Getter private String presidentPhone;
 
 	@OneToMany(
-		mappedBy = "vendorGroup", fetch = FetchType.LAZY,
+		mappedBy = "vendor", fetch = FetchType.LAZY,
 		cascade = CascadeType.ALL, orphanRemoval = true
 	)
 	private List<UserVendor> vendorUsers = new ArrayList<>();

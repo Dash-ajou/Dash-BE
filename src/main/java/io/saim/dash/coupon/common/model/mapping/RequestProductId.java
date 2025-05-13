@@ -16,5 +16,5 @@ public class RequestProductId implements Serializable {
 	private Long productId;
 
 	@Column(name = "request_id")
-	private Long issueRequestId;
+	private Long requestId;
 }
