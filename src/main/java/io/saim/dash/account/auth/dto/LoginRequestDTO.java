@@ -15,7 +15,7 @@ public class LoginRequestDTO {
 	@NotBlank(message = ValidationMessages.PHONE_REQUIRED)
 	@Pattern(regexp = ValidationPatterns.PHONE_REGEX, message = ValidationMessages.PHONE_INVALID_FORMAT)
 	@JsonProperty("user_phone")
-	private String generalPhone;
+	private String userPhone;
 
 	@NotBlank(message = ValidationMessages.PASSWORD_REQUIRED)
 	@JsonProperty("user_password")

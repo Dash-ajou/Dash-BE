@@ -1,7 +1,5 @@
 package io.saim.dash.global.exception;
 
-import java.util.Collections;
-
 import io.saim.dash.global.dto.APIStatus;
 import lombok.Getter;
 
@@ -12,6 +10,8 @@ public enum ServiceExceptionContent {
 	DEFAULT_BAD_REQUEST(APIStatus.BAD_REQUEST, "잘못된 요청입니다. 확인 후 다시 시도해주세요."),
 	ISSUE_ALREADY_SIGNED(APIStatus.BAD_REQUEST, "이미 승인/반려여부가 결정된 발행요청입니다."),
 	BAD_ISSUE_SIGN_REQUEST(APIStatus.BAD_REQUEST, "올바르지 않은 발행승인/반려 요청입니다."),
+	ACTIVE_STATUS_ALREADY_UPDATED(APIStatus.BAD_REQUEST, "현재 상태와 요청하신 상태가 동일합니다."),
+	ISSUE_IS_ENABLED(APIStatus.BAD_REQUEST, "발행 건에 대하여 일시정지가 되지 않았습니다."),
 
 	// 401
 	// UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다"),
@@ -26,6 +26,7 @@ public enum ServiceExceptionContent {
 	// 404
 	// DATA_NOT_FOUND(APIStatus.NOT_FOUND, "일치하는 데이터ID를 찾을 수 없습니다: %d"),
 	ISSUE_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 이슈를 찾을 수 없습니다."),
+	PRODUCT_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 제품을 찾을 수 없습니다."),
 
 
 	// 500

@@ -2,14 +2,13 @@ package io.saim.dash.account.general.service;
 
 import io.saim.dash.account.general.dto.SignupCompleteRequestDTO;
 import io.saim.dash.account.general.dto.SignupCompleteResponseDTO;
-import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.SignupNameRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class SignupCompleteService {
 
 	@Transactional
 	public SignupCompleteResponseDTO completeSignup(SignupCompleteRequestDTO requestDTO) {
-		SignupName user = null;
+		GeneralUser user = null;
 
 		//general_id로 기존 사용자 조회 (없으면 예외 발생)
 		if (requestDTO.getGeneralId() != null && !requestDTO.getGeneralId().isBlank()) {
@@ -42,7 +41,7 @@ public class SignupCompleteService {
 			user.setJoinedAt(LocalDateTime.now());
 		}
 
-		SignupName savedUser = signupNameRepository.save(user);
+		GeneralUser savedUser = signupNameRepository.save(user);
 
 		return new SignupCompleteResponseDTO(
 			"SUCCESS",

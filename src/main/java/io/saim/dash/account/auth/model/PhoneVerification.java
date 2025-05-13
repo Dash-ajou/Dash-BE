@@ -8,9 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "phone_verification")
+
 public class PhoneVerification {
 
 	@Id
@@ -35,51 +40,4 @@ public class PhoneVerification {
 	public PhoneVerification() { //기본 생성자
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUserPhone() {
-		return userPhone;
-	}
-
-	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
-	}
-
-	public String getUserVerifyCode() {
-		return userVerifyCode;
-	}
-
-	public void setUserVerifyCode(String userVerifyCode) {
-		this.userVerifyCode = userVerifyCode;
-	}
-
-	public LocalDateTime getExpiresIn() {
-		return expiresIn;
-	}
-
-	public void setExpiresIn(LocalDateTime expiresIn) {
-		this.expiresIn = expiresIn;
-	}
-
-	public boolean isUserVerified() {
-		return userVerified;
-	}
-
-	public void setUserVerified(boolean userVerified) {
-		this.userVerified = userVerified;
-	}
-
-	public String getRequestTime() {
-		return requestTime;
-	}
-
-	public void setRequestTime(String requestTime) {
-		this.requestTime = requestTime;
-	}
 }
