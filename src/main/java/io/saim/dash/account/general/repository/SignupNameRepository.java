@@ -1,12 +1,7 @@
 package io.saim.dash.account.general.repository;
 
-import java.util.Optional;
-
-import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.general.model.SignupName;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SignupNameRepository extends JpaRepository<GeneralUser, Long> {
-	Optional<GeneralUser> findByGeneralId(Long generalId);
-	Optional<GeneralUser> findByGeneralPhone(String generalPhone);
-	boolean existsByGeneralPhone(String generalPhone);
+public interface SignupNameRepository extends JpaRepository<SignupName, Long> {
 }

@@ -2,7 +2,7 @@ package io.saim.dash.global.interceptor;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import io.saim.dash.global.dto.CommonResponseAdvice;
+import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.exception.BadRequestException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ public class VersionInterceptor implements HandlerInterceptor {
 		String apiVersion = getRequestAPIVersion(request);
 		String clientVersion = getClientVersion(request);
 
-		CommonResponseAdvice.VersionResponseDTO versionResponseDTO = new CommonResponseAdvice.VersionResponseDTO(
+		CommonResponseDTO.VersionResponseDTO versionResponseDTO = new CommonResponseDTO.VersionResponseDTO(
 			apiVersion, clientVersion
 		);
 		request.setAttribute("version", versionResponseDTO);
