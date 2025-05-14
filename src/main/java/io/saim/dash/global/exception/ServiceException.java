@@ -10,7 +10,7 @@ public class ServiceException extends RuntimeException {
 
 	public ServiceException() {
 		super();
-		this.apiStatus = APIStatus.FAILURE;
+		this.apiStatus = APIStatus.FAILED;
 	}
 
 	public ServiceException(ServiceExceptionContent content) {
