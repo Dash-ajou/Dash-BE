@@ -37,7 +37,7 @@ public class QDUMMY_GeneralUser extends EntityPathBase<DUMMY_GeneralUser> {
     //inherited
     public final StringPath phone = _super.phone;
 
-    public final ListPath<MemberVendor, QMemberVendor> vendors = this.<MemberVendor, QMemberVendor>createList("vendors", MemberVendor.class, QMemberVendor.class, PathInits.DIRECT2);
+    public final ListPath<UserVendor, QUserVendor> vendors = this.<UserVendor, QUserVendor>createList("vendors", UserVendor.class, QUserVendor.class, PathInits.DIRECT2);
 
     public QDUMMY_GeneralUser(String variable) {
         super(DUMMY_GeneralUser.class, forVariable(variable));

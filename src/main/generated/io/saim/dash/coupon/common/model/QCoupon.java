@@ -28,9 +28,11 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final QIssueLog issueLog;
+    public final QIssue issue;
 
-    public final NumberPath<Long> productId = createNumber("productId", Long.class);
+    public final NumberPath<Long> price = createNumber("price", Long.class);
+
+    public final QProduct product;
 
     public final StringPath registerCode = createString("registerCode");
 
@@ -52,7 +54,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.issueLog = inits.isInitialized("issueLog") ? new QIssueLog(forProperty("issueLog"), inits.get("issueLog")) : null;
+        this.issue = inits.isInitialized("issue") ? new QIssue(forProperty("issue"), inits.get("issue")) : null;
+        this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
 }

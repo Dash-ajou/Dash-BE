@@ -21,53 +21,53 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class RedeemService {
 
-	private final IssueRepository issueRepository;
-	private final CouponPaymentRepository couponPaymentRepository;
-	private final CouponPaymentLogRepository couponPaymentLogRepository;
-
-	@Transactional
-	public CouponUseResult useCoupon(DUMMY_ServiceUser user, String paymentCode) {
-		if (!user.isPartner())
-			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
-
-		CouponPayment couponPayment = getCouponPayment(paymentCode);
-		Coupon coupon = couponPayment.getCoupon();
-		Issue issue = coupon.getIssue();
-
-		if (!isValidPartner())
-			throw new ServiceException();
-
-		coupon.setCouponStatus(CouponStatus.USED);
-		issue.increaseUsedCnt();
-		logCouponPayment(couponPayment);
-
-	}
-
-	private CouponPayment getCouponPayment(String paymentCode) {
-		if (!isPaymentCodeValid(paymentCode))
-			throw new ServiceException(ServiceExceptionContent.INVALID_PAYMENT_CODE);
-
-		CouponPayment couponPayment = couponPaymentRepository.findByPaymentCode(paymentCode);
-		Coupon coupon = couponPayment.getCoupon();
-		Issue issue = coupon.getIssue();
-
-		if (!isIssueStatusValid(issue))
-			throw new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS);
-
-		if (!isCouponUsable(coupon))
-			throw new ServiceException(ServiceExceptionContent.INVALID_COUPON_STATUS);
-
-		return couponPayment;
-	}
-
-	private boolean isPaymentCodeValid(String paymentCode) {
-
-		// 형식체크
-
-		// 만료여부 체크
-
-		// 기 사용여부 체크
-
-		return true;
-	}
+	// private final IssueRepository issueRepository;
+	// private final CouponPaymentRepository couponPaymentRepository;
+	// private final CouponPaymentLogRepository couponPaymentLogRepository;
+	//
+	// @Transactional
+	// public CouponUseResult useCoupon(DUMMY_ServiceUser user, String paymentCode) {
+	// 	if (!user.isPartner())
+	// 		throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+	//
+	// 	CouponPayment couponPayment = getCouponPayment(paymentCode);
+	// 	Coupon coupon = couponPayment.getCoupon();
+	// 	Issue issue = coupon.getIssue();
+	//
+	// 	if (!isValidPartner())
+	// 		throw new ServiceException();
+	//
+	// 	coupon.setCouponStatus(CouponStatus.USED);
+	// 	issue.increaseUsedCnt();
+	// 	logCouponPayment(couponPayment);
+	//
+	// }
+	//
+	// private CouponPayment getCouponPayment(String paymentCode) {
+	// 	if (!isPaymentCodeValid(paymentCode))
+	// 		throw new ServiceException(ServiceExceptionContent.INVALID_PAYMENT_CODE);
+	//
+	// 	CouponPayment couponPayment = couponPaymentRepository.findByPaymentCode(paymentCode);
+	// 	Coupon coupon = couponPayment.getCoupon();
+	// 	Issue issue = coupon.getIssue();
+	//
+	// 	if (!isIssueStatusValid(issue))
+	// 		throw new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS);
+	//
+	// 	if (!isCouponUsable(coupon))
+	// 		throw new ServiceException(ServiceExceptionContent.INVALID_COUPON_STATUS);
+	//
+	// 	return couponPayment;
+	// }
+	//
+	// private boolean isPaymentCodeValid(String paymentCode) {
+	//
+	// 	// 형식체크
+	//
+	// 	// 만료여부 체크
+	//
+	// 	// 기 사용여부 체크
+	//
+	// 	return true;
+	// }
 }

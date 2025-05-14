@@ -24,7 +24,7 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final QDUMMY_PartnerUser partner;
 
-    public final NumberPath<Integer> price = createNumber("price", Integer.class);
+    public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final NumberPath<Long> productId = createNumber("productId", Long.class);
 
