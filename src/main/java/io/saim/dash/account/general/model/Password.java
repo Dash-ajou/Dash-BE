@@ -21,7 +21,7 @@ public class Password {
 
 	@ManyToOne
 	@JoinColumn(name = "general_id", nullable = false)
-	private SignupName user;  //FK - user 테이블과 연결
+	private GeneralUser user;  //FK - user 테이블과 연결
 
 	@Column(nullable = false)
 	private String hashedPassword;  //암호화된 비밀번호 저장
