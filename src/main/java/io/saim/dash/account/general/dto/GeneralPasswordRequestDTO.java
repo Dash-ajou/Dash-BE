@@ -11,18 +11,28 @@ import lombok.Setter;
 @Setter
 public class GeneralPasswordRequestDTO {
 
-	@NotBlank(message = "사용자 ID는 필수입니다.")
-	@JsonProperty("general_id")  // ✅ JSON의 "general_id"와 매핑
+	@JsonProperty("general_id")
 	private Long generalId;
+
+	@JsonProperty("partner_id")
+	private Long partnerId;
 
 	@NotBlank(message = "비밀번호는 필수입니다.")
 	@Size(min = 8, max = 20, message = "비밀번호는 8~20자로 입력해야 합니다.")
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$",
 		message = "비밀번호는 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.")
-	@JsonProperty("password")  // ✅ JSON의 "password"와 매핑
+	@JsonProperty("password")
 	private String password;
 
 	@NotBlank(message = "비밀번호 확인은 필수입니다.")
-	@JsonProperty("password_confirm")  // ✅ JSON의 "password_confirm"과 매핑
+	@JsonProperty("password_confirm")
 	private String passwordConfirm;
+
+	public boolean isGeneralUser() {
+		return generalId != null;
+	}
+
+	public boolean isPartnerUser() {
+		return partnerId != null;
+	}
 }

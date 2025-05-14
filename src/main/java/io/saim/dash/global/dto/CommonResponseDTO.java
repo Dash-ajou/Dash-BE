@@ -1,9 +1,13 @@
 package io.saim.dash.global.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommonResponseDTO<T> {
 
 	public record VersionResponseDTO(
@@ -15,6 +19,7 @@ public class CommonResponseDTO<T> {
 	private final String clientVersion;
 	private final APIStatus status;
 	private final String message;
+	@Getter
 	private final T data;
 
 	public CommonResponseDTO(VersionResponseDTO version, APIStatus status, String message, T data) {
@@ -25,4 +30,5 @@ public class CommonResponseDTO<T> {
 		this.message = message;
 		this.data = data;
 	}
+
 }

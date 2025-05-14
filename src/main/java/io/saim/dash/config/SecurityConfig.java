@@ -3,6 +3,7 @@ package io.saim.dash.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -18,7 +19,7 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/public/**", "/auth/google", "/auth/google/callback").permitAll() //OAuth2 관련 허용
-				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify").permitAll()
+				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify", "/auth/password-reset/complete", "/auth/logout", "/general/mypage", "/general/account", "/general/account/phone", "/general/account/email-verify/request", "/general/account/email-verify/confirm", "/general/account/delete", "/signup/partner/details").permitAll()
 				.anyRequest().authenticated()  //그 외 요청은 인증 필요
 			)
 			.oauth2Login(oauth2 -> oauth2
@@ -26,8 +27,14 @@ public class SecurityConfig {
 				.defaultSuccessUrl("/dashboard", true) //로그인 성공 후 리디렉트
 				.failureUrl("/auth/google?error=true") //로그인 실패 시 이동할 경로
 			)
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) //세션 유지 설정
+			)
+			.securityContext(security -> security
+				.requireExplicitSave(false) //SecurityContext 유지 활성화
+			)
 			.logout(logout -> logout
-				.logoutSuccessUrl("/") // 로그아웃 후 이동할 URL
+				.logoutSuccessUrl("/") //로그아웃 후 이동할 URL
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 			);
