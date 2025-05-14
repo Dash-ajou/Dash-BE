@@ -145,7 +145,7 @@ public class ManageService {
 
 		Issue issue = getIssue(user, issueId);
 		if (issue.getIssueActiveStatus() != IssueActiveStatus.DISABLED)
-			throw new ServiceException(ServiceExceptionContent.ISSUE_IS_ENABLED);
+			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_DISABLED);
 
 		return true;
 	}

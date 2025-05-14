@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
@@ -39,7 +40,7 @@ public class Coupon {
 	@Column(nullable = false)
 	private String registerCode;
 
-	@Column(nullable = false)
+	@Column(nullable = false) @Setter
 	private CouponStatus couponStatus = CouponStatus.REGISTERABLE;
 
 	@Column(nullable = false)
