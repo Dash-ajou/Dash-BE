@@ -15,18 +15,24 @@ public enum ServiceExceptionContent {
 	INVALID_PAYMENT_CODE(APIStatus.BAD_REQUEST, "올바르지 않은 결제코드 형식입니다."),
 	INVALID_ISSUE_STATUS(APIStatus.BAD_REQUEST, "사용할 수 없는 쿠폰상태입니다. 쿠폰 발행처에 문의해주세요." ),
 	INVALID_COUPON_STATUS(APIStatus.BAD_REQUEST, "사용할 수 없는 쿠폰상태입니다. 쿠폰상태를 확인해주세요." ),
+	INVALID_COUPON(APIStatus.BAD_REQUEST, "유효하지 않은 쿠폰입니다."),
+	COUPON_ALREADY_USED(APIStatus.BAD_REQUEST, "이미 사용된 쿠폰입니다."),
+	COUPON_TRANSFER_NOT_ALLOWED(APIStatus.FORBIDDEN, "해당 쿠폰을 양도할 권한이 없습니다."),
+	INVALID_INPUT(APIStatus.BAD_REQUEST, "잘못된 입력값입니다. 확인 후 다시 시도해주세요.: %s"),
 
 	// 401
-	// UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다"),
+  UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),
 	// AUTHORIZATION_EXPIRED(APIStatus.UNAUTHORIZED, "인증이 만료되었습니다. 잠시 후 다시 시도해주세요"),
 
 	// 403
-	// BLOCKED_USER(APIStatus.FORBIDDEN, "차단된 사용자입니다. 관리자에게 문의해주세요"),
-	NO_PERMISSION(APIStatus.FORBIDDEN, "요청한 작업에 대한 권한이 없습니다."),
+  NO_PERMISSION(APIStatus.FORBIDDEN, "요청한 작업에 대한 권한이 없습니다."),
 	ISSUE_FORBIDDEN(APIStatus.FORBIDDEN, "접근권한이 없는 이슈입니다."),
-	TEST_METHOD_REQUESTED(APIStatus.FORBIDDEN, "사용할 수 없는 요청입니다: %s"),
+  TEST_METHOD_REQUESTED(APIStatus.FORBIDDEN, "사용할 수 없는 요청입니다: %s"),
+	// BLOCKED_USER(APIStatus.FORBIDDEN, "차단된 사용자입니다. 관리자에게 문의해주세요"),
 
 	// 404
+	COUPON_NOT_FOUND(APIStatus.NOT_FOUND, "쿠폰이 존재하지 않습니다."),
+	USER_NOT_FOUND(APIStatus.NOT_FOUND, "수신자가 존재하지 않습니다."),
 	// DATA_NOT_FOUND(APIStatus.NOT_FOUND, "일치하는 데이터ID를 찾을 수 없습니다: %d"),
 	ISSUE_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 이슈를 찾을 수 없습니다."),
 	PRODUCT_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 제품을 찾을 수 없습니다."),

@@ -23,8 +23,8 @@ public class CommonResponseDTO<T> {
 	private final T data;
 
 	public CommonResponseDTO(VersionResponseDTO version, APIStatus status, String message, T data) {
-		this.apiVersion = version.apiVersion();
-		this.clientVersion = version.clientVersion();
+		this.apiVersion = (version != null) ? version.apiVersion() : "1.0";
+		this.clientVersion = (version != null) ? version.clientVersion() : "default";
 
 		this.status = status;
 		this.message = message;

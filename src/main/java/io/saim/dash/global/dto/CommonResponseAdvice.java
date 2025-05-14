@@ -15,17 +15,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import io.saim.dash.global.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-@RestControllerAdvice(
-	basePackages = "io.saim.dash" // io.saim.dash 내부의 class method return에만 적용
-)
+@RestControllerAdvice(basePackages = "io.saim.dash") // io.saim.dash 내부의 class method return에만 적용
 public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 
 	@Autowired
@@ -41,45 +37,39 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 		Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
 		ServerHttpResponse response) {
 
-		CommonResponseDTOBuilder newResponse = new CommonResponseDTOBuilder()
-			.version((VersionResponseDTO)this.request.getAttribute("version"));
+		//VersionResponseDTO 값이 null이면 기본값을 설정
+		VersionResponseDTO version = (VersionResponseDTO) this.request.getAttribute("version");
+		if (version == null) {
+			version = new VersionResponseDTO("1.0", "1.0");
+		}
+
+		CommonResponseDTOBuilder<Object> newResponse = new CommonResponseDTOBuilder<>()
+			.version(version);
 
 		if (body instanceof ServiceException e) {
-			newResponse
-				.status(e.getApiStatus())
-				.message(e.getMessage())
-				.data(null);
-		}
-		else if (body instanceof Error e) {
-			newResponse
-				.status(APIStatus.FAILED)
-				.message(e.getMessage())
-				.data(null);
-		}
-		else {
-			newResponse
-				.status(APIStatus.SUCCESS)
-				.data(body);
+			newResponse.status(e.getApiStatus()).message(e.getMessage()).data(null);
+		} else if (body instanceof Error e) {
+			newResponse.status(APIStatus.FAILURE).message(e.getMessage()).data(null);
+		} else {
+			newResponse.status(APIStatus.SUCCESS).data(body);
 		}
 
-		CommonResponseDTO dto = newResponse.build();
-		return ResponseEntity
-			.status(dto.getStatus().getStatusCode())
-			.body(dto);
+		CommonResponseDTO<?> dto = newResponse.build();
+		return ResponseEntity.status(dto.getStatus().getStatusCode()).body(dto);
 	}
 
-	@Setter @RequiredArgsConstructor
+	@Setter
+	@Getter
+	@RequiredArgsConstructor
 	private static class CommonResponseDTO<T> {
 		private final String apiVersion;
 		private final String clientVersion;
-
-		@Getter
 		private final APIStatus status;
 		private final String message;
 		private final T data;
 	}
 
-	static class CommonResponseDTOBuilder<A extends Object> {
+	static class CommonResponseDTOBuilder<A> {
 		private String apiVersion;
 		private String clientVersion;
 		private APIStatus status;
@@ -87,18 +77,26 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 		private A data;
 
 		public CommonResponseDTOBuilder<A> version(VersionResponseDTO apiVersion) {
-			this.apiVersion = apiVersion.apiVersion;
-			this.clientVersion = apiVersion.clientVersion;
+			if (apiVersion != null) {
+				this.apiVersion = apiVersion.apiVersion;
+				this.clientVersion = apiVersion.clientVersion;
+			} else {
+				this.apiVersion = "1.0";
+				this.clientVersion = "1.0";
+			}
 			return this;
 		}
+
 		public CommonResponseDTOBuilder<A> status(APIStatus status) {
 			this.status = status;
 			return this;
 		}
+
 		public CommonResponseDTOBuilder<A> message(String message) {
 			this.message = message;
 			return this;
 		}
+
 		public CommonResponseDTOBuilder<A> data(A data) {
 			this.data = data;
 			return this;
@@ -109,8 +107,5 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 		}
 	}
 
-	public record VersionResponseDTO(
-		String apiVersion,
-		String clientVersion
-	) {}
+	public record VersionResponseDTO(String apiVersion, String clientVersion) {}
 }
