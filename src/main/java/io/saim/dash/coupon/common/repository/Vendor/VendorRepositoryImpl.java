@@ -1,0 +1,19 @@
+package io.saim.dash.coupon.common.repository.Vendor;
+
+import org.springframework.stereotype.Repository;
+
+import io.saim.dash.coupon.common.model.Vendor;
+import io.saim.dash.coupon.common.repository.jpa.VendorJpaRepository;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Repository
+public class VendorRepositoryImpl implements VendorRepository {
+
+	private final VendorJpaRepository vendorJpaRepository;
+
+	@Override
+	public void save(Vendor vendor) {
+		vendorJpaRepository.save(vendor);
+	}
+}

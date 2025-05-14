@@ -1,37 +1,30 @@
 package io.saim.dash.account.general.controller;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import io.saim.dash.account.general.dto.SignupNameRequestDTO;
-import io.saim.dash.account.general.model.SignupName;
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.service.SignupNameService;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/signup")
+@RequiredArgsConstructor
 public class SignupNameController {
 
-	@Autowired
-	private SignupNameService signupNameService;
+	private final SignupNameService signupNameService;
 
 	@PostMapping("/name")
-	public ResponseEntity<?> registerUser(@RequestBody SignupNameRequestDTO requestDTO){
-		String name = requestDTO.getGeneralName();
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupNameRequestDTO requestDTO) {
+		GeneralUser user = signupNameService.registerUser(requestDTO.getGeneralName());
 
-		SignupName user = signupNameService.registerUser(name);
-
-		return ResponseEntity.ok(Map.of(
-			"status", "success",
+		return ResponseEntity.status(201).body(Map.of(
+			"status", "SUCCESS",
 			"message", "이름이 저장되었습니다.",
-			"data", Map.of(
-				"general_id", user.getGeneralId()
-			)
+			"data", Map.of("general_id", user.getGeneralId())
 		));
 	}
 }
