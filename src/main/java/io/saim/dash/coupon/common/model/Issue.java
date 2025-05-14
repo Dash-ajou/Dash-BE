@@ -47,6 +47,7 @@ public class Issue {
 	private List<Coupon> coupons = new ArrayList<>();
 
 	private Long issueCnt;
+
 	private Long usedCnt = 0L;
 
 	@Nullable
@@ -65,5 +66,13 @@ public class Issue {
 		this.issueCnt = issueCnt;
 		this.usedCnt = usedCnt;
 		this.issueActiveStatus = issueActiveStatus;
+	}
+
+	public Long increaseUsedCnt() {
+		return ++this.usedCnt;
+	}
+
+	public Long decreaseUsedCnt() {
+		return --this.usedCnt;
 	}
 }
