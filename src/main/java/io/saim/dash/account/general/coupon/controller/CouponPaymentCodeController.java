@@ -46,7 +46,7 @@ public class CouponPaymentCodeController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 				new CommonResponseDTO<>(
 					new VersionResponseDTO("1.0", "1.0"),
-					APIStatus.FAILURE,
+					APIStatus.FAILED,
 					"결제 코드 생성 중 오류 발생",
 					null
 				)

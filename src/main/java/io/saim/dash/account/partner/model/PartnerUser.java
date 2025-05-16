@@ -1,5 +1,6 @@
 package io.saim.dash.account.partner.model;
 
+import io.saim.dash.account.common.model.ServiceUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,42 +15,49 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 @Builder
 @Table(name = "partner")
-public class PartnerUser {
+public class PartnerUser extends ServiceUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long partnerId;
+	@Column(name = "partner_id")
+	private Long id;
 
-	@Column(nullable = false)
-	private String partnerName;
+	// 명시적 getter
+	@Getter
+	@Column(name = "partner_name", nullable = false)
+	private String partnerName;  // = business name
 
-	@Column(nullable = false)
+	@Getter
+	@Column(name = "partner_address", nullable = false)
 	private String partnerAddress;
 
-	@Column(nullable = false)
-	private String ownerName;
+	@Column(name = "owner_name", nullable = false)
+	private String name;  // from ServiceUser
 
-	@Column(nullable = false)
-	private String ownerPhone;
+	@Column(name = "owner_phone", nullable = false)
+	private String phone;  // from ServiceUser
 
-	@Column(nullable = false, unique = true)
-	private String ownerEmail;
+	@Column(name = "owner_email", nullable = false, unique = true)
+	private String email;  // from ServiceUser
 
 	@Column(nullable = false)
 	private boolean isTemporary;
 
-	@Column(nullable = true)
+	@Column
 	private LocalDateTime temporaryRegisterDate;
 
 	@Column(nullable = false)
-	private LocalDateTime createdAt;
+	private LocalDateTime joinedAt;
 
-	@Getter
 	@Column(nullable = false)
 	private String password;
 
 	@PrePersist
 	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
+		this.joinedAt = LocalDateTime.now();
+	}
+
+	public String getOwnerName() {
+		return name;
 	}
 }

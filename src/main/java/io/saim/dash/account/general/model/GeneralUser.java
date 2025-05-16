@@ -1,11 +1,10 @@
 package io.saim.dash.account.general.model;
 
+import io.saim.dash.account.common.model.ServiceUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -14,30 +13,33 @@ import java.util.List;
 @Table(name = "user", uniqueConstraints = {
 	@UniqueConstraint(name = "UK_general_phone", columnNames = "general_phone")
 })
-public class GeneralUser {
+public class GeneralUser extends ServiceUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long generalId; //PK
-	private String generalType;
-	private String generalName;
-	private String generalEmail;
+	@Column(name = "general_id")
+	private Long id;
 
-	@Column(unique = true, nullable = false)
-	private String generalPhone;
+	@Column(name = "general_type")
+	private String type;
 
-	@Getter
+	@Column(name = "general_phone", unique = true, nullable = false)
+	private String phone;
+
 	@Column(nullable = false)
 	private String password = "DUMMY_PASSWORD";
 
-	private LocalDateTime joinedAt;
 	private Long vendorGroupId;
 	private Long departmentId;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
 
-	//비밀번호 검증 메서드 (입력된 비밀번호와 DB 비밀번호 비교)
+	public List<Password> getPasswordHistory() {
+		return passwords;
+	}
+
+	//비밀번호 검증 메서드
 	public boolean isPasswordValid(String rawPassword, Password password, BCryptPasswordEncoder encoder) {
 		return encoder.matches(rawPassword.trim(), password.getHashedPassword());
 	}
