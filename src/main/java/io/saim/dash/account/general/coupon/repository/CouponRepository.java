@@ -3,6 +3,8 @@ package io.saim.dash.account.general.coupon.repository;
 import io.saim.dash.account.general.coupon.model.Coupon;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
+import io.saim.dash.account.partner.dto.RequestDetailDTO;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -52,4 +54,17 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	GROUP BY p.productId, p.productName
 """)
 	List<CouponVendorDetailStatsDTO> getDetailedVendorStatsByPartnerId(@Param("partnerId") Long partnerId);
+
+	@Query("""
+SELECT new io.saim.dash.account.partner.dto.RequestDetailDTO(
+    cm.requestDetail,
+    cm.requestCount,
+    cm.totalPrice,
+    cm.approvalDate
+)
+FROM CouponRequest cm
+JOIN cm.product p
+WHERE p.partner.id = :vendorId
+""")
+	List<RequestDetailDTO> getRequestDetailsByVendorId(Long vendorId);
 }
