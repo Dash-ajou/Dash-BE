@@ -24,6 +24,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> couponId = createNumber("couponId", Long.class);
 
+    public final StringPath couponNumber = createString("couponNumber");
+
     public final EnumPath<Coupon.CouponStatus> couponStatus = createEnum("couponStatus", Coupon.CouponStatus.class);
 
     public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
