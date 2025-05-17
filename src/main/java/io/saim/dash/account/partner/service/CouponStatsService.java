@@ -1,9 +1,7 @@
 package io.saim.dash.account.partner.service;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import io.saim.dash.account.general.coupon.repository.CouponRepository;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponStatsResponseDTO;
@@ -29,5 +27,9 @@ public class CouponStatsService {
 			.usageRate(overall.getUsageRate())
 			.detailedStats(detailed)
 			.build();
+	}
+
+	public List<CouponVendorDetailStatsDTO> getDetailedStats(Long partnerId) {
+		return couponRepository.getDetailedVendorStatsByPartnerId(partnerId);
 	}
 }
