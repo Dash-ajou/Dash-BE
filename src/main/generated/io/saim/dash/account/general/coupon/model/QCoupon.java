@@ -32,6 +32,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final QProduct product;
 
+    public final ListPath<CouponRegistration, QCouponRegistration> registrations = this.<CouponRegistration, QCouponRegistration>createList("registrations", CouponRegistration.class, QCouponRegistration.class, PathInits.DIRECT2);
+
     public QCoupon(String variable) {
         this(Coupon.class, forVariable(variable), INITS);
     }

@@ -7,11 +7,11 @@ import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
+import io.saim.dash.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/general/coupons")
@@ -23,37 +23,26 @@ public class CouponTransferController {
 	@PostMapping("/{couponId}/transfer")
 	public ResponseEntity<CommonResponseDTO<CouponTransferResponseDTO>> transferCoupon(
 		@PathVariable Long couponId,
-		@RequestHeader(value = "Cookie", required = false) String sessionToken,
 		@RequestBody(required = false) CouponTransferRequestDTO requestDTO,
-		Principal principal) {
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		System.out.println("[Controller] /transfer API 호출됨");
 
-		//JSON 요청이 null이면 에러 발생
-		if (requestDTO == null) {
-			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT);
-		}
-
-		//receiverEmail이 null인지 체크
-		String receiverEmail = requestDTO.getReceiverEmail();
-		if (receiverEmail == null || receiverEmail.trim().isEmpty()) {
-			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT);
-		}
-
-		//현재 로그인한 사용자 ID 가져오기
-		if (principal == null || principal.getName() == null) {
+		if (userDetails == null || userDetails.getGeneralUser() == null) {
+			System.out.println("userDetails or generalUser is null");
 			throw new ServiceException(ServiceExceptionContent.UNAUTHORIZED);
 		}
 
-		Long senderId;
-		try {
-			senderId = Long.parseLong(principal.getName());
-		} catch (NumberFormatException e) {
-			throw new ServiceException(ServiceExceptionContent.UNAUTHORIZED);
+		if (requestDTO == null || requestDTO.getReceiverEmail() == null || requestDTO.getReceiverEmail().trim().isEmpty()) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT);
 		}
 
-		//쿠폰 양도 서비스 호출
-		CouponTransferResponseDTO responseDTO = couponTransferService.transferCoupon(couponId, receiverEmail);
+		Long senderId = userDetails.getGeneralUser().getId();
+		System.out.println("userDetails.getGeneralUser().getId() = " + senderId);
 
-		//응답 반환
+		CouponTransferResponseDTO responseDTO =
+			couponTransferService.transferCoupon(couponId, requestDTO.getReceiverEmail(), senderId);
+
 		return ResponseEntity.ok(
 			new CommonResponseDTO<>(
 				new CommonResponseDTO.VersionResponseDTO("1.0", "default"),

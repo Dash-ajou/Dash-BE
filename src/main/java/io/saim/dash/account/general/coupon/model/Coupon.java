@@ -35,6 +35,9 @@ public class Coupon {
 	@Column(name = "created_date", nullable = false)
 	private LocalDate createdDate;
 
+	@OneToMany(mappedBy = "coupon", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	private java.util.List<CouponRegistration> registrations;
+
 	public enum CouponStatus {
 		ACTIVE, EXPIRED, USED
 	}
