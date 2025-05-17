@@ -18,6 +18,8 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
 
     private static final long serialVersionUID = -1536202049L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QGeneralUser generalUser = new QGeneralUser("generalUser");
 
     public final io.saim.dash.account.common.model.QServiceUser _super = new io.saim.dash.account.common.model.QServiceUser(this);
@@ -40,6 +42,8 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
 
     public final StringPath ownerPhone = createString("ownerPhone");
 
+    public final io.saim.dash.account.partner.model.QPartnerUser partner;
+
     public final StringPath password = createString("password");
 
     public final ListPath<Password, QPassword> passwords = this.<Password, QPassword>createList("passwords", Password.class, QPassword.class, PathInits.DIRECT2);
@@ -52,15 +56,24 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
     public final NumberPath<Long> vendorGroupId = createNumber("vendorGroupId", Long.class);
 
     public QGeneralUser(String variable) {
-        super(GeneralUser.class, forVariable(variable));
+        this(GeneralUser.class, forVariable(variable), INITS);
     }
 
     public QGeneralUser(Path<? extends GeneralUser> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QGeneralUser(PathMetadata metadata) {
-        super(GeneralUser.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QGeneralUser(PathMetadata metadata, PathInits inits) {
+        this(GeneralUser.class, metadata, inits);
+    }
+
+    public QGeneralUser(Class<? extends GeneralUser> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.partner = inits.isInitialized("partner") ? new io.saim.dash.account.partner.model.QPartnerUser(forProperty("partner")) : null;
     }
 
 }

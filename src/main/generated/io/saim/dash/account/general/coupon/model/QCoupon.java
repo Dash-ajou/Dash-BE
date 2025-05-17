@@ -54,7 +54,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser")) : null;
+        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser"), inits.get("generalUser")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 

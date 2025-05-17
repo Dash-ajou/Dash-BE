@@ -1,6 +1,7 @@
 package io.saim.dash.account.general.model;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -44,6 +45,10 @@ public class GeneralUser extends ServiceUser {
 
 	private Long vendorGroupId;
 	private Long departmentId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "partner_id")
+	private PartnerUser partner;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
