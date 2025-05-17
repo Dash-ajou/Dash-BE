@@ -15,14 +15,16 @@ public class CouponService {
 
 	private final CouponRepository couponRepository;
 
-	public List<CouponResponseDTO> getCoupons(Long partnerId) {
-		List<Coupon> coupons = couponRepository.findByProduct_Partner_Id(partnerId);
+	public List<CouponResponseDTO> getCouponsByUser(Long generalUserId) {
+		// 일반 사용자 ID 기준으로 쿠폰 조회
+		List<Coupon> coupons = couponRepository.findByGeneralUser_Id(generalUserId);
+
 		return coupons.stream()
 			.map(coupon -> CouponResponseDTO.builder()
 				.couponId(coupon.getCouponId())
 				.couponName(coupon.getProduct().getProductName())
 				.partnerName(coupon.getProduct().getPartner().getPartnerName())
-				.validUntil(coupon.getCreatedDate().plusDays(30).toString()) //예시로 만료일을 30일 후로 설정
+				.validUntil(coupon.getCreatedDate().plusDays(30).toString()) // 예시: 생성일 기준 30일 유효
 				.build())
 			.collect(Collectors.toList());
 	}

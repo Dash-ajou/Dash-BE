@@ -28,6 +28,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
 
+    public final io.saim.dash.account.general.model.QGeneralUser generalUser;
+
     public final QProduct product;
 
     public QCoupon(String variable) {
@@ -48,6 +50,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 

@@ -4,8 +4,10 @@ import io.saim.dash.account.general.coupon.dto.CouponResponseDTO;
 import io.saim.dash.account.general.coupon.service.CouponService;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
+import io.saim.dash.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,10 +21,10 @@ public class CouponController {
 
 	@GetMapping
 	public ResponseEntity<CommonResponseDTO<List<CouponResponseDTO>>> getCoupons(
-		@RequestHeader("Cookie") String token
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		Long partnerId = extractPartnerIdFromToken(token); //토큰에서 partnerId 추출하는 메서드
-		List<CouponResponseDTO> coupons = couponService.getCoupons(partnerId);
+		Long generalUserId = userDetails.getGeneralUser().getId();
+		List<CouponResponseDTO> coupons = couponService.getCouponsByUser(generalUserId);
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
 			null,

@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.coupon.model;
 
+import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class Coupon {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "general_user_id", nullable = false)
+	private GeneralUser generalUser;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "coupon_status", nullable = false)
