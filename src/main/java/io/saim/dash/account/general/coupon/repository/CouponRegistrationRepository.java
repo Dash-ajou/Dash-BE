@@ -11,4 +11,5 @@ public interface CouponRegistrationRepository extends JpaRepository<CouponRegist
 	Optional<CouponRegistration> findByCoupon_CouponIdAndMemberId(Long couponId, Long memberId);
 	boolean existsByCoupon(Coupon coupon);
 	List<CouponRegistration> findByMemberId(Long memberId);
+	int countByMemberIdAndCoupon_CouponStatus(Long memberId, Coupon.CouponStatus status);
 }
