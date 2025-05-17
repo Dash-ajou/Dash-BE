@@ -26,7 +26,7 @@ public class QPassword extends EntityPathBase<Password> {
 
     public final StringPath hashedPassword = createString("hashedPassword");
 
-    public final NumberPath<Long> passwordId = createNumber("passwordId", Long.class);
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QGeneralUser user;
 

@@ -16,7 +16,7 @@ public class CouponService {
 	private final CouponRepository couponRepository;
 
 	public List<CouponResponseDTO> getCoupons(Long partnerId) {
-		List<Coupon> coupons = couponRepository.findByProduct_Partner_PartnerId(partnerId);
+		List<Coupon> coupons = couponRepository.findByProduct_Partner_Id(partnerId);
 		return coupons.stream()
 			.map(coupon -> CouponResponseDTO.builder()
 				.couponId(coupon.getCouponId())

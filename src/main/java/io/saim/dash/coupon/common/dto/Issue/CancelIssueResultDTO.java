@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.dto.Issue;
 
 import io.saim.dash.coupon.common.model.Issue;
@@ -10,3 +11,6 @@ public class CancelIssueResultDTO {
 	private final Issue issue;
 	private final Long expiredCnt;
 }
+
+
+ */

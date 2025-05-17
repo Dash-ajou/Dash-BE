@@ -3,18 +3,27 @@ package io.saim.dash.account.partner.model;
 import io.saim.dash.account.common.model.ServiceUser;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@SuperBuilder
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Builder
-@Table(name = "partner")
+@Entity
+@Table(name = "partner_user", uniqueConstraints = {
+	@UniqueConstraint(name = "UK_partner_phone", columnNames = "owner_phone")
+})
+
+@AttributeOverrides({
+	@AttributeOverride(name = "email", column = @Column(name = "owner_email", nullable = false, unique = true)),
+	@AttributeOverride(name = "name", column = @Column(name = "owner_name", nullable = false)),
+	@AttributeOverride(name = "phone", column = @Column(name = "owner_phone", nullable = false)),
+	@AttributeOverride(name = "joinedAt", column = @Column(name = "joined_at", nullable = false))
+})
+
 public class PartnerUser extends ServiceUser {
 
 	@Id
@@ -22,23 +31,23 @@ public class PartnerUser extends ServiceUser {
 	@Column(name = "partner_id")
 	private Long id;
 
-	// 명시적 getter
-	@Getter
-	@Column(name = "partner_name", nullable = false)
-	private String partnerName;  // = business name
-
-	@Getter
-	@Column(name = "partner_address", nullable = false)
-	private String partnerAddress;
-
 	@Column(name = "owner_name", nullable = false)
-	private String name;  // from ServiceUser
-
-	@Column(name = "owner_phone", nullable = false)
-	private String phone;  // from ServiceUser
+	private String name;
 
 	@Column(name = "owner_email", nullable = false, unique = true)
-	private String email;  // from ServiceUser
+	private String email;
+
+	@Column(name = "owner_phone", nullable = false)
+	private String phone;
+
+	@Column(name = "joined_at", nullable = false)
+	private LocalDateTime joinedAt;
+
+	@Column(name = "partner_name", nullable = false)
+	private String partnerName;
+
+	@Column(name = "partner_address", nullable = false)
+	private String partnerAddress;
 
 	@Column(nullable = false)
 	private boolean isTemporary;
@@ -47,17 +56,16 @@ public class PartnerUser extends ServiceUser {
 	private LocalDateTime temporaryRegisterDate;
 
 	@Column(nullable = false)
-	private LocalDateTime joinedAt;
-
-	@Column(nullable = false)
 	private String password;
 
 	@PrePersist
 	protected void onCreate() {
-		this.joinedAt = LocalDateTime.now();
+		if (this.joinedAt == null) {
+			this.joinedAt = LocalDateTime.now();
+		}
 	}
 
 	public String getOwnerName() {
-		return name;
+		return getName(); // from ServiceUser
 	}
 }

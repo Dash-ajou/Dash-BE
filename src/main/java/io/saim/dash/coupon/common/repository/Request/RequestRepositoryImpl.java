@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.repository.Request;
+/*package io.saim.dash.coupon.common.repository.Request;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,3 +90,5 @@ public class RequestRepositoryImpl implements RequestRepository {
 			.limit(size);
 	}
 }
+
+ */

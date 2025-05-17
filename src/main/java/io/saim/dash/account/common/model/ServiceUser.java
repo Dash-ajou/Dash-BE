@@ -1,34 +1,25 @@
 package io.saim.dash.account.common.model;
 
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Transient;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@MappedSuperclass
 @Getter
 @Setter
-@MappedSuperclass
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class ServiceUser {
-	private Long id;
-	private String name;
-	private String email;
-	private String phone;
-	private LocalDateTime joinedAt;
 
-	public String getName() {
-		return name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public String getPhone() {
-		return phone;
-	}
-	public LocalDateTime getJoinedAt() {
-		return joinedAt;
-	}
-	public Long getId() {
-		return id;
-	}
+	protected String name;
+	protected String email;
+	protected String phone;
+	protected LocalDateTime joinedAt;
+
+	@Transient
+	private UserType userType;
 }

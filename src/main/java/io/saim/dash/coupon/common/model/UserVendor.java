@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.model;
+/*package io.saim.dash.coupon.common.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,3 +30,5 @@ public class UserVendor {
 	@JoinColumn(name = "user_id")
 	private DUMMY_GeneralUser user;
 }
+
+ */

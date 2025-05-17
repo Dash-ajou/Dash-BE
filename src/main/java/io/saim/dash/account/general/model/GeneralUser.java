@@ -2,16 +2,20 @@ package io.saim.dash.account.general.model;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Entity
-@Table(name = "user", uniqueConstraints = {
-	@UniqueConstraint(name = "UK_general_phone", columnNames = "general_phone")
+@Table(name = "general_user", uniqueConstraints = {
+	@UniqueConstraint(name = "UK_general_phone", columnNames = "owner_phone")
 })
 public class GeneralUser extends ServiceUser {
 
@@ -20,11 +24,20 @@ public class GeneralUser extends ServiceUser {
 	@Column(name = "general_id")
 	private Long id;
 
+	@Column(name = "owner_name", nullable = false)
+	private String ownerName;
+
+	@Column(name = "owner_email", nullable = false, unique = true)
+	private String ownerEmail;
+
+	@Column(name = "owner_phone", nullable = false, unique = true)
+	private String ownerPhone;
+
+	@Column(name = "joined_at", nullable = false)
+	private LocalDateTime joinedAt;
+
 	@Column(name = "general_type")
 	private String type;
-
-	@Column(name = "general_phone", unique = true, nullable = false)
-	private String phone;
 
 	@Column(nullable = false)
 	private String password = "DUMMY_PASSWORD";
@@ -39,7 +52,6 @@ public class GeneralUser extends ServiceUser {
 		return passwords;
 	}
 
-	//비밀번호 검증 메서드
 	public boolean isPasswordValid(String rawPassword, Password password, BCryptPasswordEncoder encoder) {
 		return encoder.matches(rawPassword.trim(), password.getHashedPassword());
 	}

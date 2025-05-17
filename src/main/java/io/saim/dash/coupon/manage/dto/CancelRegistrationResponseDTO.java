@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.manage.dto;
+/*package io.saim.dash.coupon.manage.dto;
 
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
@@ -13,3 +13,5 @@ public class CancelRegistrationResponseDTO {
 		this.register = registration.getRegisteredUser();
 	}
 }
+
+ */

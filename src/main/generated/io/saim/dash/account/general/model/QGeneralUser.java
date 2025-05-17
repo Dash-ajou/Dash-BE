@@ -20,23 +20,34 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
 
     public static final QGeneralUser generalUser = new QGeneralUser("generalUser");
 
+    public final io.saim.dash.account.common.model.QServiceUser _super = new io.saim.dash.account.common.model.QServiceUser(this);
+
     public final NumberPath<Long> departmentId = createNumber("departmentId", Long.class);
 
-    public final StringPath generalEmail = createString("generalEmail");
+    //inherited
+    public final StringPath email = _super.email;
 
-    public final NumberPath<Long> generalId = createNumber("generalId", Long.class);
-
-    public final StringPath generalName = createString("generalName");
-
-    public final StringPath generalPhone = createString("generalPhone");
-
-    public final StringPath generalType = createString("generalType");
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final DateTimePath<java.time.LocalDateTime> joinedAt = createDateTime("joinedAt", java.time.LocalDateTime.class);
+
+    //inherited
+    public final StringPath name = _super.name;
+
+    public final StringPath ownerEmail = createString("ownerEmail");
+
+    public final StringPath ownerName = createString("ownerName");
+
+    public final StringPath ownerPhone = createString("ownerPhone");
 
     public final StringPath password = createString("password");
 
     public final ListPath<Password, QPassword> passwords = this.<Password, QPassword>createList("passwords", Password.class, QPassword.class, PathInits.DIRECT2);
+
+    //inherited
+    public final StringPath phone = _super.phone;
+
+    public final StringPath type = createString("type");
 
     public final NumberPath<Long> vendorGroupId = createNumber("vendorGroupId", Long.class);
 

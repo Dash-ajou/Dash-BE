@@ -1,7 +1,12 @@
 package io.saim.dash.account.auth.controller;
 
+import java.util.Map;
+
 import io.saim.dash.account.auth.dto.GoogleInfoResponseDTO;
 import io.saim.dash.account.auth.dto.GoogleResponseDTO;
+import io.saim.dash.account.auth.dto.GoogleTokenVerifyResponseDTO;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,35 +30,64 @@ public class GoogleLoginController {
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
-	//Google 로그인 URL 반환
 	@PostMapping("/google")
-	public ResponseEntity<String> loginUrlGoogle() {
-		String reqUrl = "https://accounts.google.com/o/oauth2/v2/auth"
-			+ "?client_id=" + googleClientId
-			+ "&redirect_uri=" + googleRedirectUri
-			+ "&response_type=code"
-			+ "&scope=openid%20email%20profile"
-			+ "&access_type=offline";
+	public ResponseEntity<?> verifyGoogleToken(
+		@RequestBody Map<String, String> body,
+		HttpSession session) {
 
-		return ResponseEntity.ok(reqUrl);
+		String accessToken = body.get("google_access_token");
+		GoogleInfoResponseDTO userInfo = fetchUserInfo(accessToken);
+
+		// (선택) 세션에 저장
+		session.setAttribute("user", userInfo);
+
+		return ResponseEntity.ok(
+			new GoogleTokenVerifyResponseDTO(
+				"SUCCEED",
+				"구글 인증이 완료되었습니다.",
+				new GoogleTokenVerifyResponseDTO.Data(
+					userInfo.getSub(),
+					userInfo.getEmail(),
+					userInfo.isEmail_verified()
+				)
+			)
+		);
 	}
 
-	//Google 리디렉션 처리
 	@GetMapping("/google/callback")
 	public ResponseEntity<?> handleGoogleCallback(@RequestParam("code") String code) {
 		try {
-			//Google 토큰 엔드포인트에 요청하여 액세스 토큰 받기
+			//토큰 요청
 			GoogleResponseDTO googleResponse = requestAccessToken(code);
 
-			//Google API를 호출하여 사용자 정보 가져오기
+			//사용자 정보 요청
 			GoogleInfoResponseDTO userInfo = fetchUserInfo(googleResponse.getAccess_token());
 
-			//사용자 정보 반환 (추후 DB 저장 등 추가 처리 가능)
-			return ResponseEntity.ok(userInfo);
+			//액세스 토큰과 사용자 정보를 함께 반환
+			return ResponseEntity.ok(
+				Map.of(
+					"status", "SUCCESS",
+					"message", "Google 인증 완료 및 access token 발급",
+					"data", Map.of(
+						"access_token", googleResponse.getAccess_token(),
+						"user", Map.of(
+							"sub", userInfo.getSub(),
+							"email", userInfo.getEmail(),
+							"email_verified", userInfo.isEmail_verified(),
+							"name", userInfo.getName(),
+							"picture", userInfo.getPicture()
+						)
+					)
+				)
+			);
 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body("Google OAuth2 처리 중 오류 발생: " + e.getMessage());
+				.body(Map.of(
+					"status", "FAIL",
+					"message", "Google OAuth2 처리 중 오류 발생",
+					"error", e.getMessage()
+				));
 		}
 	}
 

@@ -19,23 +19,25 @@ public class QPartnerUser extends EntityPathBase<PartnerUser> {
 
     public static final QPartnerUser partnerUser = new QPartnerUser("partnerUser");
 
-    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    public final io.saim.dash.account.common.model.QServiceUser _super = new io.saim.dash.account.common.model.QServiceUser(this);
+
+    public final StringPath email = createString("email");
+
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final BooleanPath isTemporary = createBoolean("isTemporary");
 
-    public final StringPath ownerEmail = createString("ownerEmail");
+    public final DateTimePath<java.time.LocalDateTime> joinedAt = createDateTime("joinedAt", java.time.LocalDateTime.class);
 
-    public final StringPath ownerName = createString("ownerName");
-
-    public final StringPath ownerPhone = createString("ownerPhone");
+    public final StringPath name = createString("name");
 
     public final StringPath partnerAddress = createString("partnerAddress");
-
-    public final NumberPath<Long> partnerId = createNumber("partnerId", Long.class);
 
     public final StringPath partnerName = createString("partnerName");
 
     public final StringPath password = createString("password");
+
+    public final StringPath phone = createString("phone");
 
     public final DateTimePath<java.time.LocalDateTime> temporaryRegisterDate = createDateTime("temporaryRegisterDate", java.time.LocalDateTime.class);
 

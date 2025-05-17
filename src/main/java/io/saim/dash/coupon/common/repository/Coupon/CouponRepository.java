@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.repository.Coupon;
 
 import java.util.List;
@@ -13,3 +14,5 @@ public interface CouponRepository {
 
 	Long cancelCoupons(BooleanBuilder couponFilterBuilder);
 }
+
+ */

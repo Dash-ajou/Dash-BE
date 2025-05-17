@@ -29,7 +29,7 @@ public class PartnerAccountController {
 		if (userDetails == null || !"PARTNER".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 파트너 사용자입니다.",
 				null
 			));
@@ -38,7 +38,7 @@ public class PartnerAccountController {
 		CommonResponseDTO<PartnerAccountResponseDTO> response =
 			partnerAccountService.getPartnerAccountDetails(userDetails.getUsername());
 
-		if (response.getStatus() == APIStatus.FAILURE) {
+		if (response.getStatus() == APIStatus.FAILED) {
 			return ResponseEntity.status(403).body(response);
 		}
 
@@ -54,7 +54,7 @@ public class PartnerAccountController {
 		if (userDetails == null || !"PARTNER".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 파트너 사용자입니다.",
 				null
 			));
@@ -72,7 +72,7 @@ public class PartnerAccountController {
 		))
 			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"전화번호 변경에 실패했습니다. 인증 코드를 확인하세요.",
 			null
 		));
@@ -87,7 +87,7 @@ public class PartnerAccountController {
 		if (userDetails == null || !"PARTNER".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 사용자입니다.",
 				null
 			));
@@ -105,7 +105,7 @@ public class PartnerAccountController {
 		))
 			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"회원 탈퇴에 실패했습니다.",
 			null
 		));

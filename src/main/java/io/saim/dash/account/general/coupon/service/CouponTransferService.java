@@ -7,7 +7,7 @@ import io.saim.dash.account.general.coupon.model.CouponRegistration;
 import io.saim.dash.account.general.coupon.repository.CouponRegistrationRepository;
 import io.saim.dash.account.general.coupon.repository.CouponRepository;
 import io.saim.dash.account.general.coupon.repository.CouponDeliveryRepository;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -27,7 +27,7 @@ public class CouponTransferService {
 	private final CouponRepository couponRepository;
 	private final CouponRegistrationRepository couponRegistrationRepository;
 	private final CouponDeliveryRepository couponDeliveryRepository;
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 
 	@Transactional
 	public CouponTransferResponseDTO transferCoupon(Long couponId, String receiverEmail) {
@@ -55,7 +55,7 @@ public class CouponTransferService {
 			});
 
 		//receiverEmail에 해당하는 general_id 조회
-		GeneralUser receiver = signupNameRepository.findByGeneralEmailIgnoreCase(normalizedReceiverEmail)
+		GeneralUser receiver = signupNameRepository.findByEmailIgnoreCase(normalizedReceiverEmail)
 			.orElseThrow(() -> {
 				return new ServiceException(ServiceExceptionContent.USER_NOT_FOUND);
 			});
@@ -66,14 +66,14 @@ public class CouponTransferService {
 		}
 
 		//쿠폰 소유권 이전
-		registration.setMemberId(receiver.getGeneralId());
+		registration.setMemberId(receiver.getId());
 		couponRegistrationRepository.save(registration);
 
 		//쿠폰 전달 기록 저장
 		CouponDelivery delivery = CouponDelivery.builder()
 			.coupon(coupon)
 			.senderId(senderId) //기존 소유자
-			.receiverId(receiver.getGeneralId()) //새로운 소유자
+			.receiverId(receiver.getId()) //새로운 소유자
 			.requestedAt(LocalDateTime.now())
 			.status(CouponDelivery.DeliveryStatus.COMPLETED)
 			.build();
@@ -92,7 +92,7 @@ public class CouponTransferService {
 		Object principal = authentication.getPrincipal();
 
 		if (principal instanceof GeneralUser generalUser) {
-			return generalUser.getGeneralId();
+			return generalUser.getId();
 		} else if (principal instanceof UserDetails userDetails) {
 			String userInput = userDetails.getUsername();
 
@@ -101,19 +101,19 @@ public class CouponTransferService {
 
 			if (!isEmail) {
 				//이메일이 아니라면 전화번호로 general_id 찾기
-				GeneralUser user = signupNameRepository.findByGeneralPhone(userInput.trim())
+				GeneralUser user = signupNameRepository.findByPhone(userInput.trim())
 					.orElseThrow(() -> {
 						return new ServiceException(ServiceExceptionContent.USER_NOT_FOUND);
 					});
 
-				return user.getGeneralId();
+				return user.getId();
 			}
 
-			return signupNameRepository.findByGeneralEmailIgnoreCase(userInput.trim())
+			return signupNameRepository.findByEmailIgnoreCase(userInput.trim())
 				.orElseThrow(() -> {
 					return new ServiceException(ServiceExceptionContent.USER_NOT_FOUND);
 				})
-				.getGeneralId();
+				.getId();
 		} else {
 			throw new ServiceException(ServiceExceptionContent.UNAUTHORIZED);
 		}

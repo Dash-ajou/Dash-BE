@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.dto.Coupon;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
@@ -44,3 +45,5 @@ public class CouponDTO {
 		return register_code;
 	}
 }
+
+ */

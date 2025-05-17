@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.issue.dto;
+/*package io.saim.dash.coupon.issue.dto;
 
 import java.time.LocalDateTime;
 
@@ -22,3 +22,6 @@ public class RequestVendorResponseDTO {
 		this.status = request.getStatus();
 	}
 }
+
+
+ */

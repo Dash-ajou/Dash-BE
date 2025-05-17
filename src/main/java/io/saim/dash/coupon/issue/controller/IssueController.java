@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.issue.controller;
+/*package io.saim.dash.coupon.issue.controller;
 
 import java.util.List;
 
@@ -116,3 +116,5 @@ public class IssueController {
 		return issueService.deleteIssueRequest(serviceUser, issueId);
 	}
 }
+
+ */

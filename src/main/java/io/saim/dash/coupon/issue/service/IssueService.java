@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.issue.service;
 
 import java.time.LocalDateTime;
@@ -284,3 +285,5 @@ public class IssueService {
 		return (prefix + uqn).substring(0, length);
 	}
 }
+
+ */

@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.repository.DUMMY;
 
 import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
@@ -7,3 +8,6 @@ public interface DUMMY_PartnerUserRepository {
 
 	void save(DUMMY_PartnerUser partner);
 }
+
+
+ */

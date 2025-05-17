@@ -2,7 +2,7 @@ package io.saim.dash.account.general.service;
 
 import io.saim.dash.account.general.dto.MyPageResponseDTO;
 import io.saim.dash.account.general.model.GeneralUser;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MyPageService {
 
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 
 	public MyPageResponseDTO getMyPageInfo(GeneralUser user) {
 		if (user == null) {
@@ -21,7 +21,7 @@ public class MyPageService {
 			"SUCCESS",
 			"계정 정보를 성공적으로 가져왔습니다.",
 			new MyPageResponseDTO.Data(
-				user.getGeneralName(),
+				user.getName(),
 				new MyPageResponseDTO.CouponStatus(1, 0), //예제 값, DB에서 가져오기
 				new MyPageResponseDTO.Menus()
 			)

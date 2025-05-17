@@ -30,19 +30,19 @@ public class PartnerMyPageController {
 		if (userDetails == null || userDetails.getUsername() == null) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 사용자입니다. 로그인 후 다시 시도해주세요.",
 				null
 			));
 		}
 
 		//PartnerUser 찾기 (전화번호를 기준으로 조회)
-		Optional<PartnerUser> partnerUserOpt = partnerRepository.findByOwnerPhone(userDetails.getUsername());
+		Optional<PartnerUser> partnerUserOpt = partnerRepository.findByPhone(userDetails.getUsername());
 
 		if (partnerUserOpt.isEmpty()) {
 			return ResponseEntity.status(403).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"파트너 계정을 찾을 수 없습니다.",
 				null
 			));
@@ -60,7 +60,7 @@ public class PartnerMyPageController {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"서버 내부 오류가 발생했습니다.",
 				null
 			));

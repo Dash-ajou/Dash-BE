@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.util;
+/*package io.saim.dash.coupon.common.util;
 
 import java.util.List;
 
@@ -77,3 +77,5 @@ public class ProductQueryHelper {
 		builder.and(product.partner.id.eq(partnerId));
 	}
 }
+
+ */

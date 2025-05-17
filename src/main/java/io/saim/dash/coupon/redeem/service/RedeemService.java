@@ -5,13 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponUseResult;
-import io.saim.dash.coupon.common.model.Coupon;
-import io.saim.dash.coupon.common.model.CouponPayment;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
-import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.repository.CouponPayment.CouponPaymentRepository;
 import io.saim.dash.coupon.common.repository.CouponPayment.CouponPaymentLogRepository;
-import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;

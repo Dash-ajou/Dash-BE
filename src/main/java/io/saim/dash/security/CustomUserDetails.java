@@ -20,7 +20,7 @@ public class CustomUserDetails implements UserDetails {
 	//일반 사용자 생성자
 	public CustomUserDetails(GeneralUser user) {
 		this.userType = "GENERAL";
-		this.phoneNumber = user.getGeneralPhone();
+		this.phoneNumber = user.getPhone();
 		this.password = user.getPassword();
 		this.generalUser = user;
 		this.partnerUser = null;
@@ -29,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
 	//파트너 사용자 생성자
 	public CustomUserDetails(PartnerUser user) {
 		this.userType = "PARTNER";
-		this.phoneNumber = user.getOwnerPhone();
+		this.phoneNumber = user.getPhone();
 		this.password = user.getPassword();
 		this.generalUser = null;
 		this.partnerUser = user;

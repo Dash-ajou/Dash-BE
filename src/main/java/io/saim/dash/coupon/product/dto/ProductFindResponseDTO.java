@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.product.dto;
 
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
@@ -15,3 +16,5 @@ public class ProductFindResponseDTO {
 		this.price = requestProductDTO.getPrice();
 	}
 }
+
+ */

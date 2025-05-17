@@ -1,4 +1,6 @@
+/*
 package io.saim.dash.coupon.common.dto.Issue;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,3 +34,4 @@ public class IssueResultDTO {
 		this.requets = request;
 	}
 }
+*/

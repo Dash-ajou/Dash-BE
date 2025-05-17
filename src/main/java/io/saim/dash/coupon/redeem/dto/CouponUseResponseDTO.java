@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.redeem.dto;
 
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
@@ -45,4 +46,6 @@ public class CouponUseResponseDTO {
 		);
 	}
 }
+
+ */
 

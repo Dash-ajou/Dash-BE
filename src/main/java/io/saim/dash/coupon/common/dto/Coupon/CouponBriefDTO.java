@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.dto.Coupon;
 
 import io.saim.dash.coupon.common.model.Coupon;
@@ -25,3 +26,5 @@ public class CouponBriefDTO {
 		this.expired_at = coupon.getExpiredAt().toString();
 	}
 }
+
+ */
