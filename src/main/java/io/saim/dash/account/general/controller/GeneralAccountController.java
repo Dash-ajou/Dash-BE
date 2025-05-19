@@ -28,7 +28,7 @@ public class GeneralAccountController {
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 일반 사용자입니다. 로그인 후 다시 시도해주세요.",
 				null
 			));
@@ -54,7 +54,7 @@ public class GeneralAccountController {
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 일반 사용자입니다.",
 				null
 			));
@@ -72,7 +72,7 @@ public class GeneralAccountController {
 		))
 			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"전화번호 변경에 실패했습니다. 인증 코드를 확인하세요.",
 			null
 		));
@@ -86,7 +86,7 @@ public class GeneralAccountController {
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 일반 사용자입니다.",
 				null
 			));
@@ -98,7 +98,7 @@ public class GeneralAccountController {
 		if (newEmail == null || newEmail.isBlank()) {
 			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"새로운 이메일을 입력해야 합니다.",
 				null
 			));
@@ -115,7 +115,7 @@ public class GeneralAccountController {
 		))
 			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"이메일 인증 요청을 실패했습니다.",
 			null
 		));
@@ -129,7 +129,7 @@ public class GeneralAccountController {
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 일반 사용자입니다. 로그인 후 다시 시도해주세요.",
 				null
 			));
@@ -139,7 +139,7 @@ public class GeneralAccountController {
 		if (generalUser == null) {
 			return ResponseEntity.status(500).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"사용자 정보를 가져오는 데 실패했습니다.",
 				null
 			));
@@ -152,7 +152,7 @@ public class GeneralAccountController {
 		if (newEmail == null || newEmail.isBlank() || verificationCode == null || verificationCode.isBlank()) {
 			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"이메일 및 인증 코드를 입력해야 합니다.",
 				null
 			));
@@ -174,7 +174,7 @@ public class GeneralAccountController {
 		))
 			: ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"이메일 인증에 실패했습니다. 인증 코드를 확인하세요.",
 			null
 		));
@@ -187,7 +187,7 @@ public class GeneralAccountController {
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"인증되지 않은 일반 사용자입니다.",
 				null
 			));
@@ -205,7 +205,7 @@ public class GeneralAccountController {
 		))
 			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILURE,
+			APIStatus.FAILED,
 			"회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다.",
 			null
 		));

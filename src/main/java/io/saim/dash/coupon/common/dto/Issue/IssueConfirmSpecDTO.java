@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.dto.Issue;
 
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
@@ -26,3 +27,5 @@ public class IssueConfirmSpecDTO {
 		this.issued_at = issue.getDecidedAt().toString();
 	}
 }
+
+ */

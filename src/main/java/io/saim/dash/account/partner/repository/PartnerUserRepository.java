@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface PartnerUserRepository extends JpaRepository<PartnerUser, Long> {
-	Optional<PartnerUser> findByOwnerPhone(String ownerPhone);
-	Optional<PartnerUser> findByOwnerEmail(String ownerEmail);
+
+	Optional<PartnerUser> findByPhone(String phone);
+	Optional<PartnerUser> findByEmail(String email);
 }

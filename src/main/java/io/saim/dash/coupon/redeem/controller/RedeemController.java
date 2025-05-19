@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.redeem.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -55,3 +56,5 @@ public class RedeemController {
 		return new CouponValidateResponseDTO();
 	}
 }
+
+ */

@@ -15,27 +15,26 @@ public class CouponDelivery {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "delivery_id")
 	private Long deliveryId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "coupon_id", nullable = false)
+	@JoinColumn(name = "coupon_management_id", nullable = false)
 	private Coupon coupon;
 
-	@Column(name = "sender_id", nullable = false)
+	@Column(nullable = false)
 	private Long senderId;
 
-	@Column(name = "receiver_id", nullable = false)
+	@Column(nullable = false)
 	private Long receiverId;
 
-	@Column(name = "requested_at", nullable = false)
+	@Column(nullable = false)
 	private LocalDateTime requestedAt;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false)
+	@Column(nullable = false)
 	private DeliveryStatus status;
 
 	public enum DeliveryStatus {
-		PENDING, COMPLETED, FAILED
+		PENDING, COMPLETED, REJECTED
 	}
 }

@@ -24,12 +24,12 @@ public class PartnerAccountService {
 	private final PhoneVerificationService phoneVerificationService;
 
 	public CommonResponseDTO<PartnerAccountResponseDTO> getPartnerAccountDetails(String ownerPhone) {
-		Optional<PartnerUser> partnerOpt = partnerUserRepository.findByOwnerPhone(ownerPhone);
+		Optional<PartnerUser> partnerOpt = partnerUserRepository.findByPhone(ownerPhone);
 
 		if (partnerOpt.isEmpty()) {
 			return new CommonResponseDTO<>(
 				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILURE,
+				APIStatus.FAILED,
 				"파트너 계정을 찾을 수 없습니다.",
 				null
 			);
@@ -38,8 +38,8 @@ public class PartnerAccountService {
 		PartnerUser partner = partnerOpt.get();
 		PartnerAccountResponseDTO responseDTO = new PartnerAccountResponseDTO(
 			partner.getOwnerName(),
-			partner.getOwnerPhone(),
-			partner.getOwnerEmail(),
+			partner.getPhone(),
+			partner.getEmail(),
 			partner.isTemporary() ? "임시가입 여부" : "정식가입",
 			partner.getTemporaryRegisterDate() != null ? partner.getTemporaryRegisterDate().toString() : "N/A"
 		);
@@ -61,7 +61,7 @@ public class PartnerAccountService {
 		}
 
 		//전화번호 변경
-		partnerUser.setOwnerPhone(updateDTO.getOwnerNewPhone());
+		partnerUser.setPhone(updateDTO.getOwnerNewPhone());
 		partnerUserRepository.save(partnerUser);
 
 		return true;

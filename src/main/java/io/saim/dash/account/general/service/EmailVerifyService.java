@@ -3,7 +3,7 @@ package io.saim.dash.account.general.service;
 import io.saim.dash.account.general.model.EmailVerification;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.EmailVerifyRepository;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import java.util.Random;
 public class EmailVerifyService {
 
 	private final EmailVerifyRepository emailVerificationRepository;
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 
 	//인증 코드 생성 및 이메일 전송
 	public boolean sendVerificationCode(String email) {

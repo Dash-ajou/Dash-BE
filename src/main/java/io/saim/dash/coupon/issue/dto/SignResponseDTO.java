@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.issue.dto;
+/*package io.saim.dash.coupon.issue.dto;
 
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Issue.IssueConfirmSpecDTO;
@@ -19,3 +19,5 @@ public class SignResponseDTO {
 		this.confirmSpec = confirmSpec;
 	}
 }
+
+ */

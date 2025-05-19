@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.manage.service;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,3 +61,5 @@ class ManageServiceTest {
 
 	}
 }
+
+ */

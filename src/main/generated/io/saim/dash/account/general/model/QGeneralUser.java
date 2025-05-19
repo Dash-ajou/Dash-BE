@@ -18,38 +18,62 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
 
     private static final long serialVersionUID = -1536202049L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QGeneralUser generalUser = new QGeneralUser("generalUser");
+
+    public final io.saim.dash.account.common.model.QServiceUser _super = new io.saim.dash.account.common.model.QServiceUser(this);
 
     public final NumberPath<Long> departmentId = createNumber("departmentId", Long.class);
 
-    public final StringPath generalEmail = createString("generalEmail");
+    //inherited
+    public final StringPath email = _super.email;
 
-    public final NumberPath<Long> generalId = createNumber("generalId", Long.class);
-
-    public final StringPath generalName = createString("generalName");
-
-    public final StringPath generalPhone = createString("generalPhone");
-
-    public final StringPath generalType = createString("generalType");
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final DateTimePath<java.time.LocalDateTime> joinedAt = createDateTime("joinedAt", java.time.LocalDateTime.class);
+
+    //inherited
+    public final StringPath name = _super.name;
+
+    public final StringPath ownerEmail = createString("ownerEmail");
+
+    public final StringPath ownerName = createString("ownerName");
+
+    public final StringPath ownerPhone = createString("ownerPhone");
+
+    public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
     public final StringPath password = createString("password");
 
     public final ListPath<Password, QPassword> passwords = this.<Password, QPassword>createList("passwords", Password.class, QPassword.class, PathInits.DIRECT2);
 
+    //inherited
+    public final StringPath phone = _super.phone;
+
+    public final StringPath type = createString("type");
+
     public final NumberPath<Long> vendorGroupId = createNumber("vendorGroupId", Long.class);
 
     public QGeneralUser(String variable) {
-        super(GeneralUser.class, forVariable(variable));
+        this(GeneralUser.class, forVariable(variable), INITS);
     }
 
     public QGeneralUser(Path<? extends GeneralUser> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QGeneralUser(PathMetadata metadata) {
-        super(GeneralUser.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QGeneralUser(PathMetadata metadata, PathInits inits) {
+        this(GeneralUser.class, metadata, inits);
+    }
+
+    public QGeneralUser(Class<? extends GeneralUser> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.partner = inits.isInitialized("partner") ? new io.saim.dash.account.partner.model.QPartnerUser(forProperty("partner")) : null;
     }
 
 }

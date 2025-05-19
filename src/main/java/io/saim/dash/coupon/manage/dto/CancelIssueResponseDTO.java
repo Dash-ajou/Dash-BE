@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.manage.dto;
+/*package io.saim.dash.coupon.manage.dto;
 
 import io.saim.dash.coupon.common.dto.Issue.CancelIssueResultDTO;
 import lombok.Getter;
@@ -17,3 +17,6 @@ public class CancelIssueResponseDTO {
 		this.deactivate_count = cancelIssueResultDTO.getExpiredCnt();
 	}
 }
+
+
+ */

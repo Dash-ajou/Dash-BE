@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.common.repository.Issue;
+/*package io.saim.dash.coupon.common.repository.Issue;
 
 import java.util.List;
 
@@ -22,3 +22,5 @@ public interface IssueRepository {
 
 	Issue getReferenceById(Long issueId);
 }
+
+ */

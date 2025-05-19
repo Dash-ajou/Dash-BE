@@ -24,11 +24,17 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> couponId = createNumber("couponId", Long.class);
 
+    public final StringPath couponNumber = createString("couponNumber");
+
     public final EnumPath<Coupon.CouponStatus> couponStatus = createEnum("couponStatus", Coupon.CouponStatus.class);
 
     public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
 
+    public final io.saim.dash.account.general.model.QGeneralUser generalUser;
+
     public final QProduct product;
+
+    public final ListPath<CouponRegistration, QCouponRegistration> registrations = this.<CouponRegistration, QCouponRegistration>createList("registrations", CouponRegistration.class, QCouponRegistration.class, PathInits.DIRECT2);
 
     public QCoupon(String variable) {
         this(Coupon.class, forVariable(variable), INITS);
@@ -48,6 +54,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser"), inits.get("generalUser")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 

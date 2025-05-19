@@ -4,7 +4,7 @@ import io.saim.dash.account.auth.dto.LoginResponseDTO;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.model.Password;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.security.CustomUserDetails;
@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -23,76 +22,66 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LoginService {
 
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 	private final GeneralPasswordRepository passwordRepository;
 	private final PartnerUserRepository partnerUserRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	public LoginResponseDTO login(String userPhone, String rawPassword, HttpSession session) {
-		GeneralUser generalUser = null;
-		PartnerUser partnerUser = null;
+		String requestedUserType = (String) session.getAttribute("user_type");
 
-		//일반 사용자 확인
-		Optional<GeneralUser> generalUserOpt = signupNameRepository.findByGeneralPhone(userPhone);
-		if (generalUserOpt.isPresent()) {
-			generalUser = generalUserOpt.get();
-		}
-
-		//파트너 사용자 확인
-		Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByOwnerPhone(userPhone);
-		if (partnerUserOpt.isPresent()) {
-			partnerUser = partnerUserOpt.get();
-		}
-
-		//존재하는 사용자 체크
-		if (generalUser == null && partnerUser == null) {
-			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
-		}
-
-		//비밀번호 검증
-		if (generalUser != null) { //일반 사용자 로그인
+		if ("GENERAL".equalsIgnoreCase(requestedUserType)) {
+			GeneralUser generalUser = signupNameRepository.findByPhone(userPhone)
+				.orElseThrow(() -> new IllegalArgumentException("일반 사용자로 등록되지 않은 전화번호입니다."));
 			return authenticateGeneralUser(generalUser, rawPassword, session);
-		} else { //파트너 사용자 로그인
+
+		} else if ("PARTNER".equalsIgnoreCase(requestedUserType)) {
+			PartnerUser partnerUser = partnerUserRepository.findByPhone(userPhone)
+				.orElseThrow(() -> new IllegalArgumentException("파트너 사용자로 등록되지 않은 전화번호입니다."));
 			return authenticatePartnerUser(partnerUser, rawPassword, session);
+
+		} else {
+			// fallback: user_type이 명시되지 않은 경우 기존 방식 유지
+			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
+			if (generalUserOpt.isPresent()) {
+				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
+			}
+
+			Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
+			if (partnerUserOpt.isPresent()) {
+				return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
+			}
+
+			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
 		}
 	}
 
-	//일반 사용자 로그인 처리
 	private LoginResponseDTO authenticateGeneralUser(GeneralUser user, String rawPassword, HttpSession session) {
-		//최신 비밀번호 가져오기
 		List<Password> userPasswords = passwordRepository.findByUser(user);
 		Password userPassword = Password.getLatestPassword(userPasswords);
 		if (userPassword == null || !user.isPasswordValid(rawPassword, userPassword, passwordEncoder)) {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
-		//Spring Security 인증 설정
 		setAuthentication(user);
-
-		//세션에 사용자 정보 저장
 		session.setAttribute("userType", "GENERAL");
-		session.setAttribute("userId", user.getGeneralId());
+		session.setAttribute("userId", user.getId());
 
-		return createLoginResponse(user.getGeneralName(), user.getGeneralEmail(), user.getGeneralPhone(), "GENERAL", session);
+		return createLoginResponse(user.getName(), user.getEmail(), user.getPhone(), "GENERAL", session);
 	}
 
-	//파트너 사용자 로그인 처리
 	private LoginResponseDTO authenticatePartnerUser(PartnerUser user, String rawPassword, HttpSession session) {
 		if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
-		//Spring Security 인증 설정
 		setAuthentication(user);
-
-		//세션에 사용자 정보 저장
 		session.setAttribute("userType", "PARTNER");
-		session.setAttribute("userId", user.getPartnerId());
+		session.setAttribute("userId", user.getId());
 
-		return createLoginResponse(user.getOwnerName(), user.getOwnerEmail(), user.getOwnerPhone(), "PARTNER", session);
+		return createLoginResponse(user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}
 
-	//Spring Security 인증 설정
 	private void setAuthentication(Object user) {
 		CustomUserDetails userDetails;
 
@@ -108,7 +97,6 @@ public class LoginService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-	//로그인 응답 생성
 	private LoginResponseDTO createLoginResponse(String name, String email, String phone, String userType, HttpSession session) {
 		return new LoginResponseDTO(
 			"success",

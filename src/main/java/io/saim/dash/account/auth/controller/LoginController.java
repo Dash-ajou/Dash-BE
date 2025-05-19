@@ -18,6 +18,9 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO requestDTO, HttpSession session) {
+		if (requestDTO.getUserType() != null) {
+			session.setAttribute("user_type", requestDTO.getUserType());
+		}
 		LoginResponseDTO response = authService.login(requestDTO.getUserPhone(), requestDTO.getUserPassword(), session);
 		return ResponseEntity.ok(response);
 	}

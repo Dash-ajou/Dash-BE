@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.dto.Coupon;
 
 import io.saim.dash.coupon.common.model.Coupon;
@@ -8,3 +9,6 @@ public class CouponPaymentInfo {
 	private Coupon coupon;
 	private Issue issue;
 }
+
+
+ */

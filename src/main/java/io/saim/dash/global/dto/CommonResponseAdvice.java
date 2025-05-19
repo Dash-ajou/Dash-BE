@@ -49,7 +49,7 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 		if (body instanceof ServiceException e) {
 			newResponse.status(e.getApiStatus()).message(e.getMessage()).data(null);
 		} else if (body instanceof Error e) {
-			newResponse.status(APIStatus.FAILURE).message(e.getMessage()).data(null);
+			newResponse.status(APIStatus.FAILED).message(e.getMessage()).data(null);
 		} else {
 			newResponse.status(APIStatus.SUCCESS).data(body);
 		}

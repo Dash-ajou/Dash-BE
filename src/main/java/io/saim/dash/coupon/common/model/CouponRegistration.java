@@ -1,4 +1,5 @@
-package io.saim.dash.coupon.common.model;
+/*package io.saim.dash.coupon.common.model;
+
 
 import java.time.LocalDateTime;
 
@@ -39,3 +40,4 @@ public class CouponRegistration {
 	private LocalDateTime registeredAt;
 
 }
+ */

@@ -11,7 +11,7 @@ public class GoogleInfoResponseDTO {
 	private String aud;
 	private String sub;
 	private String email;
-	private String email_verified;
+	private boolean email_verified;
 	private String at_hash;
 	private String name;
 	private String picture;

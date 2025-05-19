@@ -1,4 +1,6 @@
+/*
 package io.saim.dash.coupon.common.dto.Issue;
+
 
 import java.time.LocalDateTime;
 
@@ -31,3 +33,4 @@ public class CouponIssueLogDTO {
 		this.usedCnt = issue.getUsedCnt();
 	}
 }
+*/

@@ -26,7 +26,7 @@ public class QPassword extends EntityPathBase<Password> {
 
     public final StringPath hashedPassword = createString("hashedPassword");
 
-    public final NumberPath<Long> passwordId = createNumber("passwordId", Long.class);
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QGeneralUser user;
 
@@ -48,7 +48,7 @@ public class QPassword extends EntityPathBase<Password> {
 
     public QPassword(Class<? extends Password> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new QGeneralUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new QGeneralUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

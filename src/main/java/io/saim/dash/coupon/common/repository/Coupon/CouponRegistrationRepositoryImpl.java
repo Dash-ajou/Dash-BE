@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.repository.Coupon;
 
 import org.springframework.stereotype.Repository;
@@ -17,3 +18,5 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 		return couponRegistrationJPARepository.findByCouponId(couponId);
 	}
 }
+
+ */

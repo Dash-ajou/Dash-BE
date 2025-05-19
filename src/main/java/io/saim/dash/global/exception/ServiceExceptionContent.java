@@ -18,7 +18,8 @@ public enum ServiceExceptionContent {
 	INVALID_COUPON(APIStatus.BAD_REQUEST, "유효하지 않은 쿠폰입니다."),
 	COUPON_ALREADY_USED(APIStatus.BAD_REQUEST, "이미 사용된 쿠폰입니다."),
 	COUPON_TRANSFER_NOT_ALLOWED(APIStatus.FORBIDDEN, "해당 쿠폰을 양도할 권한이 없습니다."),
-	INVALID_INPUT(APIStatus.BAD_REQUEST, "잘못된 입력값입니다. 확인 후 다시 시도해주세요.: %s"),
+	ALREADY_REGISTERED(APIStatus.BAD_REQUEST, "이미 등록된 쿠폰입니다."),
+	INVALID_INPUT(APIStatus.BAD_REQUEST, "잘못된 입력값입니다. 확인 후 다시 시도해주세요."),
 
 	// 401
   UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),

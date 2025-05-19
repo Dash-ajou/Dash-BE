@@ -7,7 +7,7 @@ import io.saim.dash.account.auth.repository.PhoneVerificationRepository;
 import io.saim.dash.account.general.model.Password;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralPasswordRepository;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PasswordResetService {
 
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 	private final GeneralPasswordRepository passwordRepository;
 	private final PhoneVerificationRepository phoneVerificationRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
@@ -35,7 +35,7 @@ public class PasswordResetService {
 		}
 
 		//사용자 조회
-		GeneralUser user = signupNameRepository.findByGeneralPhone(requestDTO.getUserPhone())
+		GeneralUser user = signupNameRepository.findByPhone(requestDTO.getUserPhone())
 			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 전화번호입니다."));
 
 		//가장 최근 비밀번호 가져오기

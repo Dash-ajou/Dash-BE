@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.repository.DUMMY;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,3 +25,6 @@ public class DUMMY_PartnerUserRepositoryImpl implements DUMMY_PartnerUserReposit
 }
 
 interface DUMMY_PartnerUserJPARepository extends JpaRepository<DUMMY_PartnerUser, Long> {}
+
+
+ */

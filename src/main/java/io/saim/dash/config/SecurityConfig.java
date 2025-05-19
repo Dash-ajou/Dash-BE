@@ -19,7 +19,9 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/public/**", "/auth/google", "/auth/google/callback").permitAll() //OAuth2 관련 허용
-				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify", "/auth/password-reset/complete", "/auth/logout", "/general/mypage", "/general/account", "/general/account/phone", "/general/account/email-verify/request", "/general/account/email-verify/confirm", "/general/account/delete", "/signup/partner/details").permitAll()
+				.requestMatchers("/auth/phone/request", "/auth/phone/verify", "/signup/name", "/signup/password", "/signup/complete", "/auth/login","/auth/password-reset/request", "/auth/password-reset/verify", "/auth/password-reset/complete", "/auth/logout", "/general/mypage", "/general/account", "/general/account/phone", "/general/account/email-verify/request", "/general/account/email-verify/confirm", "/general/account/delete", "/signup/partner/details", "/signup/unified").permitAll()
+
+
 				.anyRequest().authenticated()  //그 외 요청은 인증 필요
 			)
 			.oauth2Login(oauth2 -> oauth2

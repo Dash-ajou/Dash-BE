@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.model;
 
 import jakarta.persistence.Column;
@@ -37,3 +38,5 @@ public class Product {
 		this.price = price;
 	}
 }
+
+ */

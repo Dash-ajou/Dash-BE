@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.repository.DUMMY;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,3 +13,6 @@ public class DUMMY_GeneralUserRepositoryImpl implements DUMMY_GeneralUserReposit
 }
 
 interface DUMMY_GeneralUserJPARepository extends JpaRepository<DUMMY_GeneralUser, Long> {}
+
+
+ */

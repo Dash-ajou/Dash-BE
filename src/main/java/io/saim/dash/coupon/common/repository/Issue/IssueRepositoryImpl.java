@@ -1,4 +1,5 @@
-package io.saim.dash.coupon.common.repository.Issue;
+/*package io.saim.dash.coupon.common.repository.Issue;
+
 
 import java.util.List;
 
@@ -72,3 +73,5 @@ public class IssueRepositoryImpl implements IssueRepository {
 		return null;
 	}
 }
+
+ */

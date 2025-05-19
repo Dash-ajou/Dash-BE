@@ -9,7 +9,7 @@ import io.saim.dash.account.general.dto.GeneralPhoneUpdateDTO;
 import io.saim.dash.account.general.model.EmailVerification;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.EmailVerifyRepository;
-import io.saim.dash.account.general.repository.SignupNameRepository;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.global.dto.APIStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GeneralAccountService {
 
-	private final SignupNameRepository signupNameRepository;
+	private final GeneralUserRepository signupNameRepository;
 	private final PhoneVerificationService phoneVerificationService;
 	private final EmailVerifyService emailVerificationService;
 	private final EmailVerifyRepository emailVerifyRepository;
@@ -29,11 +29,11 @@ public class GeneralAccountService {
 			throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
 		}
 
-		String email = (user.getGeneralEmail() == null || user.getGeneralEmail().isBlank())
-			? "등록된 이메일이 없습니다." : user.getGeneralEmail();
+		String email = (user.getEmail() == null || user.getEmail().isBlank())
+			? "등록된 이메일이 없습니다." : user.getEmail();
 
 		return new GeneralAccountResponseDTO("1.0", "1.0", APIStatus.SUCCESS, "계정 상세 정보를 성공적으로 가져왔습니다.",
-			new GeneralAccountResponseDTO.Data(user.getGeneralName(), email, user.getGeneralPhone()));
+			new GeneralAccountResponseDTO.Data(user.getName(), email, user.getPhone()));
 	}
 
 	@Transactional
@@ -50,7 +50,7 @@ public class GeneralAccountService {
 			return false;
 		}
 
-		user.setGeneralPhone(newPhone);
+		user.setPhone(newPhone);
 		signupNameRepository.save(user);
 		return true;
 	}
@@ -80,7 +80,7 @@ public class GeneralAccountService {
 			return false;
 		}
 
-		user.setGeneralEmail(confirmDTO.getNewEmail());
+		user.setEmail(confirmDTO.getNewEmail());
 		signupNameRepository.save(user);
 		emailVerifyRepository.delete(verification);
 

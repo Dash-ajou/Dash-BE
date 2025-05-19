@@ -1,3 +1,4 @@
+/*
 package io.saim.dash.coupon.common.model;
 
 import java.time.LocalDateTime;
@@ -65,3 +66,5 @@ public class Coupon {
 		this.expiredAt = expiredAt;
 	}
 }
+
+ */
