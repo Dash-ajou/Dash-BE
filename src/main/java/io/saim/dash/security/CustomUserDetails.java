@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 public class CustomUserDetails implements UserDetails {
 	private final String userType; //GENERAL 또는 PARTNER
@@ -71,6 +73,7 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	//일반 사용자 가져오기
+	@JsonIgnore
 	public GeneralUser getGeneralUser() {
 		if (!"GENERAL".equals(userType)) {
 			throw new IllegalStateException("이 객체는 일반 사용자 정보가 아닙니다.");
@@ -79,6 +82,7 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	//파트너 사용자 가져오기
+	@JsonIgnore
 	public PartnerUser getPartnerUser() {
 		if (!"PARTNER".equals(userType)) {
 			throw new IllegalStateException("이 객체는 파트너 사용자 정보가 아닙니다.");

@@ -33,21 +33,23 @@ public class UnifiedSignupService {
 		String encodedPassword = passwordEncoder.encode(dto.getPassword().trim());
 
 		if ("GENERAL".equalsIgnoreCase(dto.getUserType())) {
+			String safeEmail = dto.getGeneralEmail() != null ? dto.getGeneralEmail().trim() : "";
+
 			GeneralUser user = GeneralUser.builder()
 				.ownerName(dto.getGeneralName())
 				.name(dto.getGeneralName())
 				.ownerPhone(dto.getGeneralName())
 				.phone(dto.getGeneralPhone())
-				.ownerEmail(dto.getGeneralEmail())
-				.email(dto.getGeneralEmail())
-				.vendorGroupId(Long.parseLong(dto.getVendorGroupId()))
-				.departmentId(Long.parseLong(dto.getDepartmentId()))
+				.ownerEmail(safeEmail)
+				.email(safeEmail)
+				.vendorGroupId(1L)
+				.departmentId(1L)
 				.type(dto.getUserType())
 				.joinedAt(LocalDateTime.now())
 				.password(encodedPassword)
 				.build();
 
-			user = signupNameRepository.save(user); // ⚠️ 이때 joined_at이 null이면 에러남
+			user = signupNameRepository.save(user);
 
 			Password password = Password.builder()
 				.user(user)
