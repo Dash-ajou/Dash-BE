@@ -31,22 +31,22 @@ public class PartnerUser extends ServiceUser {
 	@Column(name = "partner_id")
 	private Long id;
 
-	@Column(name = "owner_name", nullable = false)
+	@Column(name = "owner_name", nullable = true)
 	private String name;
 
-	@Column(name = "owner_email", nullable = false, unique = true)
+	@Column(name = "owner_email", nullable = true, unique = true)
 	private String email;
 
 	@Column(name = "owner_phone", nullable = false)
 	private String phone;
 
-	@Column(name = "joined_at", nullable = false)
+	@Column(name = "joined_at", nullable = true)
 	private LocalDateTime joinedAt;
 
 	@Column(name = "partner_name", nullable = false)
 	private String partnerName;
 
-	@Column(name = "partner_address", nullable = false)
+	@Column(name = "partner_address", nullable = true)
 	private String partnerAddress;
 
 	@Column(nullable = false)
@@ -55,7 +55,7 @@ public class PartnerUser extends ServiceUser {
 	@Column
 	private LocalDateTime temporaryRegisterDate;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String password;
 
 	@PrePersist

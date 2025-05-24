@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -22,30 +24,54 @@ public class PartnerService {
 	@Transactional
 	public CommonResponseDTO<PartnerSignupResponseDTO> registerPartner(PartnerSignupRequestDTO requestDTO) {
 
-		// 1. 이메일 중복 체크
-		if (partnerRepository.findByEmail(requestDTO.getOwnerEmail()).isPresent()) {
+		//파트너 이름과 전화번호는 반드시 필요
+		if (requestDTO.getPartnerName() == null || requestDTO.getPartnerName().isBlank()) {
 			return new CommonResponseDTO<>(
 				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILED,
-				"이미 가입된 이메일입니다.",
+				"파트너 상호명은 필수 입력 항목입니다.",
 				null
 			);
 		}
 
-		// 2. 비밀번호 확인
-		if (!requestDTO.getPassword().equals(requestDTO.getPasswordConfirm())) {
+		if (requestDTO.getOwnerPhone() == null || requestDTO.getOwnerPhone().isBlank()) {
 			return new CommonResponseDTO<>(
 				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILED,
-				"비밀번호와 비밀번호 확인이 일치하지 않습니다.",
+				"전화번호는 필수 입력 항목입니다.",
 				null
 			);
 		}
 
-		// 3. 비밀번호 해시 처리
-		String hashedPassword = passwordEncoder.encode(requestDTO.getPassword());
+		//이메일 중복 체크
+		if (requestDTO.getOwnerEmail() != null && !requestDTO.getOwnerEmail().isBlank()) {
+			if (partnerRepository.findByEmail(requestDTO.getOwnerEmail()).isPresent()) {
+				return new CommonResponseDTO<>(
+					new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
+					APIStatus.FAILED,
+					"이미 가입된 이메일입니다.",
+					null
+				);
+			}
+		}
 
-		// 4. 저장
+		String rawPassword = (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank())
+			? requestDTO.getPassword()
+			: "Temp@1234";
+
+		if (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank()) {
+			if (!requestDTO.getPassword().equals(requestDTO.getPasswordConfirm())) {
+				return new CommonResponseDTO<>(
+					new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
+					APIStatus.FAILED,
+					"비밀번호와 비밀번호 확인이 일치하지 않습니다.",
+					null
+				);
+			}
+		}
+
+		String hashedPassword = passwordEncoder.encode(rawPassword);
+
 		PartnerUser partner = PartnerUser.builder()
 			.partnerName(requestDTO.getPartnerName())
 			.partnerAddress(requestDTO.getPartnerAddress())
@@ -53,7 +79,9 @@ public class PartnerService {
 			.phone(requestDTO.getOwnerPhone())
 			.email(requestDTO.getOwnerEmail())
 			.isTemporary(requestDTO.isTemporary())
-			.temporaryRegisterDate(requestDTO.getTemporaryRegisterDate())
+			.temporaryRegisterDate(requestDTO.getTemporaryRegisterDate() != null
+				? requestDTO.getTemporaryRegisterDate()
+				: LocalDateTime.now())
 			.password(hashedPassword)
 			.build();
 

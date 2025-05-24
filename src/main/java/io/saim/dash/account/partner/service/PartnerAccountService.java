@@ -37,11 +37,13 @@ public class PartnerAccountService {
 
 		PartnerUser partner = partnerOpt.get();
 		PartnerAccountResponseDTO responseDTO = new PartnerAccountResponseDTO(
-			partner.getOwnerName(),
+			partner.getOwnerName() != null ? partner.getOwnerName() : "정보 없음",
 			partner.getPhone(),
-			partner.getEmail(),
-			partner.isTemporary() ? "임시가입 여부" : "정식가입",
-			partner.getTemporaryRegisterDate() != null ? partner.getTemporaryRegisterDate().toString() : "N/A"
+			partner.getEmail() != null ? partner.getEmail() : "정보 없음",
+			partner.isTemporary() ? "임시가입" : "정식가입",
+			partner.getTemporaryRegisterDate() != null
+				? partner.getTemporaryRegisterDate().toString()
+				: "N/A"
 		);
 
 		return new CommonResponseDTO<>(
