@@ -1,6 +1,7 @@
 package io.saim.dash.account.general.service;
 
 import io.saim.dash.account.general.dto.SignupCompleteResponseDTO;
+import io.saim.dash.account.general.dto.TestDTO;
 import io.saim.dash.account.general.dto.UnifiedSignupRequestDTO;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.model.Password;
@@ -100,5 +101,9 @@ public class UnifiedSignupService {
 		} else {
 			throw new IllegalArgumentException("지원하지 않는 user_type입니다.");
 		}
+	}
+
+	public String test(TestDTO dto) {
+		return passwordEncoder.encode(dto.getPassword().trim());
 	}
 }
