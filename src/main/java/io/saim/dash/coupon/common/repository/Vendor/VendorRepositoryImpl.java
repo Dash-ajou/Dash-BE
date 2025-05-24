@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.common.repository.Vendor;
+package io.saim.dash.coupon.common.repository.Vendor;
 
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +17,3 @@ public class VendorRepositoryImpl implements VendorRepository {
 		vendorJpaRepository.save(vendor);
 	}
 }
-
- */

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import io.saim.dash.account.general.coupon.repository.CouponRepository;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponStatsResponseDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;

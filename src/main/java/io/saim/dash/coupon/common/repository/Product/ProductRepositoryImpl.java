@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.common.repository.Product;
+package io.saim.dash.coupon.common.repository.Product;
 
 
 import java.util.List;
@@ -64,4 +64,3 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.fetch();
 	}
 }
- */

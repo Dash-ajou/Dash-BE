@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.issue.service;
 
 import java.time.LocalDateTime;
@@ -11,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
@@ -22,11 +25,7 @@ import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
-import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.common.model.Product;
-import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.common.repository.Request.RequestRepository;
 
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
@@ -47,10 +46,10 @@ public class IssueService {
 	private final VendorRepository vendorRepository;
 	private final ProductRepository productRepository;
 
-	private final DUMMY_PartnerUserRepository partnerUserRepository;
+	private final PartnerUserRepository partnerUserRepository;
 
 	public List<Request> getRequestsByPartner(
-		DUMMY_ServiceUser user,
+		ServiceUser user,
 		int page, int size,
 		String createat_start, String createat_end,
 		String business_name, String owner_phone, IssueStatus status
@@ -62,15 +61,15 @@ public class IssueService {
 		);
 
 		if(user.isPartner()) {
-			assert user instanceof DUMMY_PartnerUser;
-			return requestRepository.findRequestsByPartner((DUMMY_PartnerUser)user, filterBuilder, page, size);
+			assert user instanceof PartnerUser;
+			return requestRepository.findRequestsByPartner((PartnerUser)user, filterBuilder, page, size);
 		}
 
-		assert user instanceof DUMMY_GeneralUser;
-		return requestRepository.findRequestsByVendor((DUMMY_GeneralUser)user, filterBuilder, page, size);
+		assert user instanceof GeneralUser;
+		return requestRepository.findRequestsByVendor((GeneralUser)user, filterBuilder, page, size);
 	}
 
-	public Request getRequest(Long requestId, DUMMY_ServiceUser requestUser) throws ServiceException {
+	public Request getRequest(Long requestId, ServiceUser requestUser) throws ServiceException {
 		Request request = requestRepository.getById(requestId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 
@@ -87,7 +86,7 @@ public class IssueService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public Request createIssueRequest(
-		DUMMY_ServiceUser serviceUser,
+		ServiceUser serviceUser,
 		String vendorName, String presidentName, String presidentPhone,
 		String businessName, String ownerPhone,
 		List<RequestProductCountDTO> productCounts
@@ -96,13 +95,13 @@ public class IssueService {
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		// temp: 기존 vendor 지정 없이 매 요청마다 신규 vendor 생성
-		DUMMY_GeneralUser requestUser = (DUMMY_GeneralUser) serviceUser;
+		GeneralUser requestUser = (GeneralUser) serviceUser;
 		Vendor issueVendor = createIssueVendor(
 			requestUser,
 			vendorName, presidentName, presidentPhone
 		);
 
-		DUMMY_PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
+		PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
 		Request request = Request.builder()
 			.vendor(issueVendor)
 			.partner(partnerUser)
@@ -142,7 +141,7 @@ public class IssueService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public IssueResultDTO signRequest(
-		DUMMY_ServiceUser serviceUser, Long requestId,
+		ServiceUser serviceUser, Long requestId,
 		IssueStatus status,
 		String paidAtString, List<RequestProductPriceDTO> price, Long discount
 	) {
@@ -186,7 +185,7 @@ public class IssueService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean deleteIssueRequest(
-		DUMMY_ServiceUser serviceUser, Long requestId
+		ServiceUser serviceUser, Long requestId
 	) {
 		if (serviceUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
@@ -198,7 +197,7 @@ public class IssueService {
 	}
 
 	private Vendor createIssueVendor(
-		DUMMY_GeneralUser serviceUser, String vendorName, String presidentName,
+		GeneralUser serviceUser, String vendorName, String presidentName,
 		String presidentPhone
 	) {
 		Vendor issueVendor = Vendor.builder()
@@ -213,12 +212,12 @@ public class IssueService {
 		return issueVendor;
 	}
 
-	private DUMMY_PartnerUser getRequestPartner(
+	private PartnerUser getRequestPartner(
 		String businessName, String ownerPhone
 	) {
-		DUMMY_PartnerUser partner = partnerUserRepository.findPartnerByBusinessName(businessName);
+		PartnerUser partner = partnerUserRepository.findByPartnerName(businessName).orElse(null);
 		if (partner == null) {
-			partner = DUMMY_PartnerUser.builder()
+			partner = PartnerUser.builder()
 				.name(businessName)
 				.phone(ownerPhone)
 				.build();
@@ -246,7 +245,7 @@ public class IssueService {
 		List<Coupon> createdCoupons = issue.getRequest().getRequestProducts().stream()
 			.map(requestProduct -> Coupon.builder()
 				.product(requestProduct.getProduct())
-				.registerCode(generateCouponRegisterCode(issue.getRequest(), 10))
+				.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
 				.price(requestProduct.getPrice())
 				.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
 				.issue(issue)
@@ -285,5 +284,3 @@ public class IssueService {
 		return (prefix + uqn).substring(0, length);
 	}
 }
-
- */

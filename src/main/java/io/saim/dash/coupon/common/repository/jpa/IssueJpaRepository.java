@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.repository.jpa;
 
 
@@ -9,5 +8,3 @@ import io.saim.dash.coupon.common.model.Issue;
 public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
 }
-
- */

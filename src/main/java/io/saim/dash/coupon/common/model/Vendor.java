@@ -1,10 +1,11 @@
-/*
 package io.saim.dash.coupon.common.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,20 +53,20 @@ public class Vendor {
 		this.presidentPhone = presidentPhone;
 	}
 
-	public boolean isMemberIncluded(DUMMY_ServiceUser user) {
-		if (!DUMMY_GeneralUser.isGeneralUser(user))
+	public boolean isMemberIncluded(ServiceUser user) {
+		if (!GeneralUser.isGeneralUser(user))
 			return false;
 
 		return this.getVendorUsers().contains(user);
 	}
 
-	private List<DUMMY_GeneralUser> getVendorUsers() {
+	private List<GeneralUser> getVendorUsers() {
 		return this.vendorUsers.stream()
 			.map(UserVendor::getUser)
 			.toList();
 	}
 
-	public UserVendor linkMember(DUMMY_GeneralUser user) {
+	public UserVendor linkMember(GeneralUser user) {
 		UserVendor link = UserVendor.builder()
 			.vendor(this)
 			.user(user)
@@ -76,5 +77,3 @@ public class Vendor {
 		return link;
 	}
 }
-
- */

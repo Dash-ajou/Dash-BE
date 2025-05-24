@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.common.repository.Request;
+package io.saim.dash.coupon.common.repository.Request;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +9,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
@@ -30,7 +30,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	@Override
-	public List<Request> findRequestsByVendor(DUMMY_GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
+	public List<Request> findRequestsByVendor(GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
 		List<Vendor> vendors = user.getVendors();
@@ -46,7 +46,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	@Override
-	public List<Request> findRequestsByPartner(DUMMY_PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
+	public List<Request> findRequestsByPartner(PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
 		filterBuilder.and(issue.partner.eq(user));
@@ -90,5 +90,3 @@ public class RequestRepositoryImpl implements RequestRepository {
 			.limit(size);
 	}
 }
-
- */

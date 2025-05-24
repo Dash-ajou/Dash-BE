@@ -22,4 +22,8 @@ public abstract class ServiceUser {
 
 	@Transient
 	private UserType userType;
+
+	public Boolean isPartner() {
+		return this.userType == UserType.PARTNER;
+	}
 }

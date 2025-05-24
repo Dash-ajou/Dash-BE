@@ -1,4 +1,4 @@
-package io.saim.dash.account.general.coupon.model;
+package io.saim.dash.coupon.common.model;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QProduct extends EntityPathBase<Product> {
 
-    private static final long serialVersionUID = -1288736687L;
+    private static final long serialVersionUID = 755229799L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -24,7 +24,7 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
-    public final NumberPath<Integer> price = createNumber("price", Integer.class);
+    public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final NumberPath<Long> productId = createNumber("productId", Long.class);
 

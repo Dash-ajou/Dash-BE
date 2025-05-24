@@ -1,6 +1,6 @@
 package io.saim.dash.account.general.coupon.service;
 
-import io.saim.dash.account.general.coupon.repository.CouponRepository;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;

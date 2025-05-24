@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.coupon.model;
 
+import io.saim.dash.coupon.common.model.Coupon;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

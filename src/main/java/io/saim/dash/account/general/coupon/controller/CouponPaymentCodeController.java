@@ -1,7 +1,7 @@
 package io.saim.dash.account.general.coupon.controller;
 
 import io.saim.dash.account.general.coupon.dto.CouponPaymentCodeResponseDTO;
-import io.saim.dash.account.general.coupon.model.CouponPaymentCode;
+import io.saim.dash.coupon.common.model.CouponPaymentCode;
 import io.saim.dash.account.general.coupon.service.CouponPaymentCodeService;
 import io.saim.dash.account.general.coupon.util.QrCodeGeneratorUtil;
 import io.saim.dash.global.dto.CommonResponseDTO;

@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.manage.service;
+package io.saim.dash.coupon.manage.service;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
@@ -16,9 +19,6 @@ import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
-import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
@@ -40,7 +40,7 @@ public class ManageService {
 	private final CouponRegistrationRepository couponRegistrationRepository;
 
 	public List<CouponIssueLogDTO> getIssuedRequests(
-		DUMMY_ServiceUser user,
+		ServiceUser user,
 		Integer page, Integer size,
 		String vendorName, String presidentName, String businessName, Boolean isCompletionInclude
 	) {
@@ -51,15 +51,15 @@ public class ManageService {
 
 		List<Issue> issues;
 		if (user.isPartner()) {
-			assert user instanceof DUMMY_PartnerUser;
+			assert user instanceof PartnerUser;
 			issues = issueRepository.findIssuesByPartner(
-				(DUMMY_PartnerUser)user, filterBuilder,
+				(PartnerUser)user, filterBuilder,
 				page, size
 			);
 		} else {
-			assert user instanceof DUMMY_GeneralUser;
+			assert user instanceof GeneralUser;
 			issues = issueRepository.findIssuesByVendor(
-				(DUMMY_GeneralUser) user, filterBuilder,
+				(GeneralUser) user, filterBuilder,
 				page, size
 			);
 		}
@@ -71,7 +71,7 @@ public class ManageService {
 	}
 
 	public List<CouponBriefDTO> getCouponsByIssueId(
-		DUMMY_ServiceUser user,
+		ServiceUser user,
 		Integer page, Integer size,
 		Long issueId
 	) {
@@ -86,7 +86,7 @@ public class ManageService {
 	}
 
 	public RegisteredCouponDTO getCouponByCouponId(
-		DUMMY_ServiceUser user,
+		ServiceUser user,
 		Long issueId, Long couponId
 	) {
 		if (user.isPartner())
@@ -99,7 +99,7 @@ public class ManageService {
 	}
 
 	@Transactional
-	public PauseCouponsResultDTO updateCouponsPauseStatus(DUMMY_ServiceUser user, Long issueId, IssueActiveStatus status) {
+	public PauseCouponsResultDTO updateCouponsPauseStatus(ServiceUser user, Long issueId, IssueActiveStatus status) {
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -114,7 +114,7 @@ public class ManageService {
 		return new PauseCouponsResultDTO(issue.getIssueCnt(), updatedCounts);
 	}
 
-	private Issue getIssue(DUMMY_ServiceUser user, Long issueId) {
+	private Issue getIssue(ServiceUser user, Long issueId) {
 		Issue issue = issueRepository.getById(issueId);
 		if (issue == null)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND);
@@ -126,7 +126,7 @@ public class ManageService {
 
 	@Transactional
 	public CouponRegistration cancelCouponRegistration(
-		DUMMY_ServiceUser user,
+		ServiceUser user,
 		Long issueId, Long couponId
 	) {
 		if (user.isPartner())
@@ -139,7 +139,7 @@ public class ManageService {
 		return registration;
 	}
 
-	public Boolean checkIssueCancellable(DUMMY_ServiceUser user, Long issueId) {
+	public Boolean checkIssueCancellable(ServiceUser user, Long issueId) {
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -151,7 +151,7 @@ public class ManageService {
 	}
 
 	@Transactional
-	public CancelIssueResultDTO cancelIssue(DUMMY_ServiceUser user, Long issueId) {
+	public CancelIssueResultDTO cancelIssue(ServiceUser user, Long issueId) {
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -166,5 +166,3 @@ public class ManageService {
 		return new CancelIssueResultDTO(issue, expiredCnt);
 	}
 }
-
- */

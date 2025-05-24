@@ -1,9 +1,9 @@
 package io.saim.dash.account.general.coupon.service;
 
-import io.saim.dash.account.general.coupon.model.Coupon;
-import io.saim.dash.account.general.coupon.model.CouponPaymentCode;
+import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.CouponPaymentCode;
 import io.saim.dash.account.general.coupon.repository.CouponPaymentCodeRepository;
-import io.saim.dash.account.general.coupon.repository.CouponRepository;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

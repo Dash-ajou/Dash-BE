@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.issue.service;
+package io.saim.dash.coupon.issue.service;
 
 import static org.mockito.Mockito.*;
 
@@ -17,17 +17,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.querydsl.core.BooleanBuilder;
 
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
-import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
-import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.coupon.common.model.Product;
-import io.saim.dash.coupon.common.repository.DUMMY.DUMMY_PartnerUserRepository;
 import io.saim.dash.coupon.common.repository.Request.RequestRepository;
 import io.saim.dash.coupon.common.dto.Request.RequestProductPriceDTO;
 import io.saim.dash.global.exception.ServiceException;
@@ -41,16 +41,18 @@ class IssueServiceTest {
 	IssueService issueService;
 
 	@Mock RequestRepository requestRepository;
-	@Mock IssueJpaRepository issueJpaRepository;
+	@Mock
+	IssueRepository issueRepository;
 	@Mock VendorRepository vendorRepository;
 	@Mock ProductRepository productRepository;
-	@Mock DUMMY_PartnerUserRepository partnerUserRepository;
+	@Mock
+	PartnerUserRepository partnerUserRepository;
 
 	@BeforeEach
 	void setUp() {
 		issueService = new IssueService(
 			requestRepository,
-			issueJpaRepository,
+			issueRepository,
 			vendorRepository,
 			productRepository,
 			partnerUserRepository
@@ -62,10 +64,10 @@ class IssueServiceTest {
 	void getIssueRequestByPartnerUserTest() {
 		// // given
 		Request dummyRequest = new Request();
-		DUMMY_PartnerUser partnerUser = new DUMMY_PartnerUser();
+		PartnerUser partnerUser = new PartnerUser();
 		dummyRequest.setPartner(partnerUser);
 
-		when(requestRepository.findRequestsByPartner(any(DUMMY_PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+		when(requestRepository.findRequestsByPartner(any(PartnerUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyRequest));
 
 		// when
@@ -90,12 +92,12 @@ class IssueServiceTest {
 		// given
 		Request dummyRequest = new Request();
 		Vendor vendor = new Vendor();
-		DUMMY_GeneralUser vendorUser = new DUMMY_GeneralUser();
+		GeneralUser vendorUser = new GeneralUser();
 
 		vendorUser.addVendor(vendor);
 		dummyRequest.setVendor(vendor);
 
-		when(requestRepository.findRequestsByVendor(any(DUMMY_GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
+		when(requestRepository.findRequestsByVendor(any(GeneralUser.class), any(BooleanBuilder.class), any(Integer.class), any(Integer.class)))
 			.thenReturn(List.of(dummyRequest));
 
 		// when
@@ -122,7 +124,7 @@ class IssueServiceTest {
 		// given
 		Request dummyRequest = new Request();
 		Vendor vendor = new Vendor();
-		DUMMY_GeneralUser vendorUser = new DUMMY_GeneralUser();
+		GeneralUser vendorUser = new GeneralUser();
 
 		vendorUser.addVendor(vendor);
 		dummyRequest.setVendor(vendor);
@@ -147,8 +149,8 @@ class IssueServiceTest {
 		// given
 		Long dummyissueId = 1L;
 		Request dummyRequest = new Request(); dummyRequest.setRequestId(dummyissueId);
-		DUMMY_GeneralUser userA = new DUMMY_GeneralUser();
-		DUMMY_GeneralUser userB = new DUMMY_GeneralUser();
+		GeneralUser userA = new GeneralUser();
+		GeneralUser userB = new GeneralUser();
 
 		Vendor vendor = new Vendor();
 		userA.addVendor(vendor);
@@ -170,7 +172,7 @@ class IssueServiceTest {
 	@DisplayName("일반사용자는 쿠폰의 발행요청서를 생성할 수 있다")
 	void createIssueRequestTest() {
 		// given
-		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
+		GeneralUser serviceUser = new GeneralUser();
 		List<RequestProductCountDTO> dummyRequestProducts = List.of(
 			new RequestProductCountDTO(1L, 2L),
 			new RequestProductCountDTO(2L, 10L),
@@ -200,7 +202,7 @@ class IssueServiceTest {
 	@DisplayName("일반사용자는 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
 	void signIssueRequestTest_A() {
 		// given
-		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
+		GeneralUser serviceUser = new GeneralUser();
 
 		// when
 		Assertions.assertThatThrownBy(() ->
@@ -218,8 +220,8 @@ class IssueServiceTest {
 	@DisplayName("파트너사용자는 본인에게 요청되지 않은 쿠폰 발행요청서를 승인하거나 반려할 수 없다")
 	void signIssueRequestTest_B() {
 		// given
-		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
-		DUMMY_PartnerUser serviceUserB = new DUMMY_PartnerUser();
+		PartnerUser serviceUserA = new PartnerUser();
+		PartnerUser serviceUserB = new PartnerUser();
 
 		// when
 		Request dummyRequest = new Request();
@@ -243,7 +245,7 @@ class IssueServiceTest {
 	@DisplayName("파트너사용자는 이미 결정한 쿠폰발행요청을 정정할 수 없다")
 	void signIssueRequestTest_C() {
 		// given
-		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
+		PartnerUser serviceUserA = new PartnerUser();
 		List<RequestProductPriceDTO> requestProductPriceDTOS = List.of(
 			new RequestProductPriceDTO(1L, 1000L),
 			new RequestProductPriceDTO(2L, 1000L),
@@ -284,7 +286,7 @@ class IssueServiceTest {
 	@DisplayName("파트너사용자가 쿠폰 발행요청서를 승인하면, 쿠폰은 발행요청서의 요청수량만큼 자동발행된다")
 	void signIssueRequestTest_D() {
 		// given
-		DUMMY_PartnerUser serviceUserA = new DUMMY_PartnerUser();
+		PartnerUser serviceUserA = new PartnerUser();
 		List<RequestProductPriceDTO> requestProductPriceDTOS = List.of(
 			new RequestProductPriceDTO(1L, 1000L),
 			new RequestProductPriceDTO(2L, 1000L),
@@ -297,7 +299,7 @@ class IssueServiceTest {
 		dummyRequest.setVendor(new Vendor());
 		dummyRequest.setStatus(IssueStatus.REQUESTED);
 
-		DUMMY_PartnerUser serviceUserB = new DUMMY_PartnerUser();
+		PartnerUser serviceUserB = new PartnerUser();
 		Product productA = new Product(serviceUserB, "sefes", 50000L);
 		productA.setProductId(1L);
 		Product productB = new Product(serviceUserB, "sefes", 50000L);
@@ -332,7 +334,7 @@ class IssueServiceTest {
 	@DisplayName("파트너사용자는 발행요청서를 삭제할 수 없다")
 	void deleteIssueRequestTest_A() {
 		// given
-		DUMMY_PartnerUser serviceUser = new DUMMY_PartnerUser();
+		PartnerUser serviceUser = new PartnerUser();
 
 		// when
 		Assertions.assertThatThrownBy(() ->
@@ -347,8 +349,8 @@ class IssueServiceTest {
 	@DisplayName("일반사용자는 자신이 요청한 것이 아닌 발행요청서를 삭제할 수 없다")
 	void deleteIssueRequestTest_B() {
 		// given
-		DUMMY_GeneralUser serviceUserA = new DUMMY_GeneralUser();
-		DUMMY_GeneralUser serviceUserB = new DUMMY_GeneralUser();
+		GeneralUser serviceUserA = new GeneralUser();
+		GeneralUser serviceUserB = new GeneralUser();
 		Vendor vendorA = Vendor.builder()
 			.presidentName("TEST_VG_PRESIDENT")
 			.name("TEST_VG")
@@ -380,7 +382,7 @@ class IssueServiceTest {
 	@DisplayName("일반사용자는 자신이 요청한 발행요청서를 삭제할 수 있다")
 	void deleteIssueRequestTest_C() {
 		// given
-		DUMMY_GeneralUser serviceUser = new DUMMY_GeneralUser();
+		GeneralUser serviceUser = new GeneralUser();
 		Vendor vendorA = Vendor.builder()
 			.presidentName("TEST_VG_PRESIDENT")
 			.name("TEST_VG")
@@ -400,6 +402,3 @@ class IssueServiceTest {
 			.isTrue();
 	}
 }
-
-
- */

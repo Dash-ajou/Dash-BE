@@ -1,5 +1,6 @@
-/*package io.saim.dash.coupon.common.model;
+package io.saim.dash.coupon.common.model;
 
+import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +29,5 @@ public class UserVendor {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private DUMMY_GeneralUser user;
+	private GeneralUser user;
 }
-
- */

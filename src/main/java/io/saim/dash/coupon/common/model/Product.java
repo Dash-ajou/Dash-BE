@@ -1,6 +1,6 @@
-/*
 package io.saim.dash.coupon.common.model;
 
+import io.saim.dash.account.partner.model.PartnerUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,7 +23,7 @@ public class Product {
 
 	@OneToOne
 	@JoinColumn(name = "partner_id", nullable = false)
-	private DUMMY_PartnerUser partner;
+	private PartnerUser partner;
 
 	@Column(name = "product_name", nullable = false)
 	private String productName;
@@ -32,11 +32,9 @@ public class Product {
 	private Long price;
 
 	@Builder
-	public Product(DUMMY_PartnerUser partner, String productName, Long price) {
+	public Product(PartnerUser partner, String productName, Long price) {
 		this.partner = partner;
 		this.productName = productName;
 		this.price = price;
 	}
 }
-
- */
