@@ -33,7 +33,7 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 	}
 
 	@Override
-	public ResponseEntity<CommonResponseDTO<?>> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+	public CommonResponseDTO<?> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 		Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
 		ServerHttpResponse response) {
 
@@ -48,14 +48,18 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
 
 		if (body instanceof ServiceException e) {
 			newResponse.status(e.getApiStatus()).message(e.getMessage()).data(null);
+		} else if (body instanceof  Exception e) {
+			newResponse.status(APIStatus.FAILED).message(e.getMessage()).data(null);
 		} else if (body instanceof Error e) {
 			newResponse.status(APIStatus.FAILED).message(e.getMessage()).data(null);
 		} else {
 			newResponse.status(APIStatus.SUCCESS).data(body);
 		}
 
-		CommonResponseDTO<?> dto = newResponse.build();
-		return ResponseEntity.status(dto.getStatus().getStatusCode()).body(dto);
+		return newResponse.build();
+
+		// CommonResponseDTO<?> dto = newResponse.build();
+		// return ResponseEntity.status(dto.getStatus().getStatusCode()).body(dto);
 	}
 
 	@Setter
