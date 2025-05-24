@@ -36,17 +36,8 @@ public class UnifiedSignupRequestDTO {
 	@JsonProperty("general_phone")
 	private String generalPhone;
 
-	@NotBlank
 	@JsonProperty("general_email")
 	private String generalEmail;
-
-	@NotBlank
-	@JsonProperty("vendor_group_id")
-	private String vendorGroupId;
-
-	@NotBlank
-	@JsonProperty("department_id")
-	private String departmentId;
 
 	@JsonProperty("partner_name")
 	private String partnerName;
