@@ -22,7 +22,7 @@ public class QCouponDelivery extends EntityPathBase<CouponDelivery> {
 
     public static final QCouponDelivery couponDelivery = new QCouponDelivery("couponDelivery");
 
-    public final QCoupon coupon;
+    public final io.saim.dash.coupon.common.model.QCoupon coupon;
 
     public final NumberPath<Long> deliveryId = createNumber("deliveryId", Long.class);
 
@@ -52,7 +52,7 @@ public class QCouponDelivery extends EntityPathBase<CouponDelivery> {
 
     public QCouponDelivery(Class<? extends CouponDelivery> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
+        this.coupon = inits.isInitialized("coupon") ? new io.saim.dash.coupon.common.model.QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
     }
 
 }

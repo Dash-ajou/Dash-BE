@@ -68,4 +68,8 @@ public class PartnerUser extends ServiceUser {
 	public String getOwnerName() {
 		return getName(); // from ServiceUser
 	}
+
+	public static boolean isPartnerUser(ServiceUser serviceUser) {
+		return serviceUser instanceof PartnerUser;
+	}
 }

@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.redeem.dto;
 
 import io.saim.dash.coupon.common.constant.CodeType;
@@ -40,5 +39,3 @@ public class CouponValidateResponseDTO {
 		);
 	}
 }
-
- */

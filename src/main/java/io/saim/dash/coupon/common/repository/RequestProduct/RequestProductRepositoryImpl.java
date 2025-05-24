@@ -1,7 +1,8 @@
-/*
 package io.saim.dash.coupon.common.repository.RequestProduct;
 
 import java.util.List;
+
+import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,6 +12,7 @@ import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import io.saim.dash.coupon.common.repository.jpa.RequestProductJpaRepository;
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class RequestProductRepositoryImpl implements RequestProductRepository {
 
@@ -33,4 +35,3 @@ public class RequestProductRepositoryImpl implements RequestProductRepository {
 	}
 }
 
- */

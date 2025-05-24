@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import io.saim.dash.account.general.coupon.dto.ReceivedCouponDTO;
-import io.saim.dash.account.general.coupon.model.Coupon;
+import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.account.general.coupon.model.CouponDelivery;
 import io.saim.dash.account.general.coupon.repository.CouponDeliveryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class ReceivedCouponQueryService {
 				return ReceivedCouponDTO.builder()
 					.couponId(coupon.getCouponId())
 					.couponName(coupon.getProduct().getProductName())
-					.partnerName(coupon.getGeneralUser().getOwnerName())  // 또는 vendorName 필드에 따라 조정
-					.validUntil(coupon.getCreatedDate().plusMonths(3).toString())  // 예시: 유효기간 3개월
+					.partnerName(coupon.getIssue().getRequest().getPartner().getOwnerName())  // 또는 vendorName 필드에 따라 조정
+					.validUntil(coupon.getCreatedAt().plusMonths(3).toString())  // 예시: 유효기간 3개월
 					.couponStatus(coupon.getCouponStatus().name())
 					.build();
 			})

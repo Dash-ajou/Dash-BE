@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.common.repository.jpa;
+package io.saim.dash.coupon.common.repository.jpa;
 
 
 
@@ -8,4 +8,4 @@ import io.saim.dash.coupon.common.model.CouponPayment;
 
 public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPayment, String> {
 
-} */
+}

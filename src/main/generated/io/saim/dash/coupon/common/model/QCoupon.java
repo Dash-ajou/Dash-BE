@@ -1,4 +1,4 @@
-package io.saim.dash.account.general.coupon.model;
+package io.saim.dash.coupon.common.model;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QCoupon extends EntityPathBase<Coupon> {
 
-    private static final long serialVersionUID = 1661878404L;
+    private static final long serialVersionUID = 896528814L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -24,17 +24,19 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> couponId = createNumber("couponId", Long.class);
 
-    public final StringPath couponNumber = createString("couponNumber");
+    public final EnumPath<io.saim.dash.coupon.common.constant.CouponStatus> couponStatus = createEnum("couponStatus", io.saim.dash.coupon.common.constant.CouponStatus.class);
 
-    public final EnumPath<Coupon.CouponStatus> couponStatus = createEnum("couponStatus", Coupon.CouponStatus.class);
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
-    public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> expiredAt = createDateTime("expiredAt", java.time.LocalDateTime.class);
 
-    public final io.saim.dash.account.general.model.QGeneralUser generalUser;
+    public final QIssue issue;
+
+    public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final QProduct product;
 
-    public final ListPath<CouponRegistration, QCouponRegistration> registrations = this.<CouponRegistration, QCouponRegistration>createList("registrations", CouponRegistration.class, QCouponRegistration.class, PathInits.DIRECT2);
+    public final StringPath registrationCode = createString("registrationCode");
 
     public QCoupon(String variable) {
         this(Coupon.class, forVariable(variable), INITS);
@@ -54,7 +56,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser"), inits.get("generalUser")) : null;
+        this.issue = inits.isInitialized("issue") ? new QIssue(forProperty("issue"), inits.get("issue")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 

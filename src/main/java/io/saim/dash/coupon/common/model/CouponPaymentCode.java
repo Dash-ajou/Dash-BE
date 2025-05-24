@@ -1,4 +1,4 @@
-package io.saim.dash.account.general.coupon.model;
+package io.saim.dash.coupon.common.model;
 
 import jakarta.persistence.*;
 import lombok.*;

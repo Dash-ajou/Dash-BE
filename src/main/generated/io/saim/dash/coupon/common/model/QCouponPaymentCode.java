@@ -1,4 +1,4 @@
-package io.saim.dash.account.general.coupon.model;
+package io.saim.dash.coupon.common.model;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QCouponPaymentCode extends EntityPathBase<CouponPaymentCode> {
 
-    private static final long serialVersionUID = 817139183L;
+    private static final long serialVersionUID = -567320955L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

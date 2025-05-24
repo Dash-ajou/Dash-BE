@@ -1,4 +1,4 @@
-package io.saim.dash.account.general.coupon.model;
+package io.saim.dash.coupon.common.model;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QCouponRegistration extends EntityPathBase<CouponRegistration> {
 
-    private static final long serialVersionUID = -1265838243L;
+    private static final long serialVersionUID = -1234429561L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -24,9 +24,11 @@ public class QCouponRegistration extends EntityPathBase<CouponRegistration> {
 
     public final QCoupon coupon;
 
-    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+    public final BooleanPath isValid = createBoolean("isValid");
 
-    public final DatePath<java.time.LocalDate> registeredDate = createDate("registeredDate", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> registeredAt = createDateTime("registeredAt", java.time.LocalDateTime.class);
+
+    public final io.saim.dash.account.general.model.QGeneralUser registeredUser;
 
     public final NumberPath<Long> registrationId = createNumber("registrationId", Long.class);
 
@@ -49,6 +51,7 @@ public class QCouponRegistration extends EntityPathBase<CouponRegistration> {
     public QCouponRegistration(Class<? extends CouponRegistration> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
+        this.registeredUser = inits.isInitialized("registeredUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("registeredUser"), inits.get("registeredUser")) : null;
     }
 
 }

@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.repository.Product;
 
 import java.util.List;
@@ -19,5 +18,3 @@ public interface ProductRepository {
 
 	List<Product> findByFilter(BooleanBuilder filter, Long page, Long size);
 }
-
- */

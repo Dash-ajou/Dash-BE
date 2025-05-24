@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.model;
 
 import java.time.LocalDateTime;
@@ -7,6 +6,8 @@ import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import jakarta.persistence.CascadeType;
@@ -44,7 +45,7 @@ public class Request {
 	private Vendor vendor;
 
 	@ManyToOne(optional = false)
-	private DUMMY_PartnerUser partner;
+	private PartnerUser partner;
 
 	@Column(nullable = false)
 	private IssueStatus status = IssueStatus.REQUESTED;
@@ -64,13 +65,11 @@ public class Request {
 		this.requestProducts.add(requestProduct);
 	}
 
-	public boolean isRequestedPartner(DUMMY_ServiceUser partner) {
-		if (!DUMMY_PartnerUser.isPartnerUser(partner))
+	public boolean isRequestedPartner(ServiceUser partner) {
+		if (!PartnerUser.isPartnerUser(partner))
 			return false;
 
 		return this.partner.equals(partner);
 	}
 
 }
-
- */

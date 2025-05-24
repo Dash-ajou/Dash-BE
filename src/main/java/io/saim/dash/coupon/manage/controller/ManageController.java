@@ -1,4 +1,4 @@
-/*package io.saim.dash.coupon.manage.controller;
+package io.saim.dash.coupon.manage.controller;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CancelIssueResultDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.CouponRegistration;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.manage.dto.CancelIssueResponseDTO;
 import io.saim.dash.coupon.manage.dto.CancelRegistrationResponseDTO;
 import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
@@ -37,7 +37,7 @@ public class ManageController {
 
 	@GetMapping("/list")
 	public PagingResponse<IssuedRequestResponseDTO> getApprovedIssues(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@RequestParam(required = false, defaultValue = "1") Integer page,
 		@RequestParam(required = false, defaultValue = "10") Integer size,
 		@RequestParam(required = false) String vendor_name,
@@ -63,7 +63,7 @@ public class ManageController {
 
 	@GetMapping("/{issue_id}/list")
 	public PagingResponse<CouponBriefDTO> getIssuedCoupons(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@PathVariable Long issue_id,
 		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false) Integer size
@@ -83,7 +83,7 @@ public class ManageController {
 	@Deprecated
 	@GetMapping("/{issue_id}/{coupon_id}/register")
 	public RegisteredCouponDTO deprecatedGetCouponSpec(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@PathVariable Long issue_id,
 		@PathVariable Long coupon_id
 	) {
@@ -92,7 +92,7 @@ public class ManageController {
 
 	@GetMapping("/{issue_id}/{coupon_id}")
 	public RegisteredCouponDTO getCouponSpec(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@PathVariable Long issue_id,
 		@PathVariable Long coupon_id
 	) {
@@ -107,7 +107,7 @@ public class ManageController {
 
 	@PatchMapping("/{issue_id}/status")
 	public PauseCouponsResponseDTO updateCouponUsableStatus(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long issue_id,
 		@RequestBody UpdateUsableStatusRequestDTO updateRequestDTO
 	) {
@@ -120,7 +120,7 @@ public class ManageController {
 
 	@PostMapping("/{issue_id}/{coupon_id}/cancel")
 	public CancelRegistrationResponseDTO cancelCouponRegistration(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long issue_id,
 		@PathVariable Long coupon_id
 	) {
@@ -130,7 +130,7 @@ public class ManageController {
 
 	@PostMapping("/{issue_id}/cancel/request")
 	public void requestIssueCancellation(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long issue_id
 	) {
 		manageService.checkIssueCancellable(user, issue_id);
@@ -141,12 +141,10 @@ public class ManageController {
 
 	@PostMapping("/{issue_id}/cancel")
 	public CancelIssueResponseDTO cancelIssue(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long issue_id
 	) {
 		CancelIssueResultDTO cancelResult = manageService.cancelIssue(user, issue_id);
 		return new CancelIssueResponseDTO(cancelResult);
 	}
 }
-
- */

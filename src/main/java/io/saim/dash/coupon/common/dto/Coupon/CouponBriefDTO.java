@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.dto.Coupon;
 
 import io.saim.dash.coupon.common.model.Coupon;
@@ -18,13 +17,11 @@ public class CouponBriefDTO {
 	private final String expired_at; // 쿠폰 만료일자
 
 	public CouponBriefDTO(Coupon coupon) {
-		this.coupon_id = coupon.getId();
+		this.coupon_id = coupon.getCouponId();
 		this.issue_id = coupon.getIssue().getIssueId();
 		this.product_id = coupon.getProduct().getProductId();
-		this.register_code = coupon.getRegisterCode();
+		this.register_code = coupon.getRegistrationCode();
 		this.status = coupon.getCouponStatus();
 		this.expired_at = coupon.getExpiredAt().toString();
 	}
 }
-
- */

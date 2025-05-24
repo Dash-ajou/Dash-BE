@@ -1,7 +1,8 @@
-/*
 package io.saim.dash.coupon.common.model;
 
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CurrentTimestamp;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import jakarta.persistence.Column;
@@ -28,7 +29,7 @@ public class Coupon {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long couponId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "issue_id")
@@ -39,13 +40,16 @@ public class Coupon {
 	private Product product;
 
 	@Column(nullable = false)
-	private String registerCode;
+	private String registrationCode;
 
 	@Column(nullable = false) @Setter
 	private CouponStatus couponStatus = CouponStatus.REGISTERABLE;
 
 	@Column(nullable = false)
 	private Long price;
+
+	@CurrentTimestamp
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
@@ -55,16 +59,14 @@ public class Coupon {
 	public Coupon(
 		Issue issue,
 		Product product,
-		String registerCode, CouponStatus couponStatus,
+		String registrationCode, CouponStatus couponStatus,
 		Long price, LocalDateTime expiredAt
 	) {
 		this.issue = issue;
 		this.product = product;
-		this.registerCode = registerCode;
+		this.registrationCode = registrationCode;
 		this.couponStatus = couponStatus;
 		this.price = price;
 		this.expiredAt = expiredAt;
 	}
 }
-
- */

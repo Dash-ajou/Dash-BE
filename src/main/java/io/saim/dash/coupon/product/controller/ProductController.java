@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.product.controller;
 
 import java.util.List;
@@ -10,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.coupon.product.dto.ProductFindResponseDTO;
 import io.saim.dash.coupon.product.service.ProductService;
 import io.saim.dash.global.dto.PagingResponse;
@@ -26,7 +25,7 @@ public class ProductController {
 
 	@GetMapping("/list")
 	public PagingResponse<ProductFindResponseDTO> findProducts(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long request_id,
 		@PathVariable Long partner_id,
 		@PathVariable String product_name,
@@ -46,6 +45,3 @@ public class ProductController {
 		);
 	}
 }
-
-
- */

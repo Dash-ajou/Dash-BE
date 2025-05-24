@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.repository.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +8,3 @@ public interface VendorJpaRepository extends JpaRepository<Vendor, Long> {
 
 }
 
- */

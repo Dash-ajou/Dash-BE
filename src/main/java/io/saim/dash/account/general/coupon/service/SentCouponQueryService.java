@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.saim.dash.account.general.coupon.dto.SentCouponResponseDTO;
-import io.saim.dash.account.general.coupon.model.Coupon;
+import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.account.general.coupon.model.CouponDelivery;
 import io.saim.dash.account.general.coupon.repository.CouponDeliveryRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,8 @@ public class SentCouponQueryService {
 				return SentCouponResponseDTO.builder()
 					.couponId(coupon.getCouponId())
 					.couponName(coupon.getProduct().getProductName())
-					.partnerName(coupon.getGeneralUser().getOwnerName())
-					.validUntil(coupon.getCreatedDate().plusDays(180).toString())
+					.partnerName(coupon.getIssue().getRequest().getPartner().getPartnerName())
+					.validUntil(coupon.getExpiredAt().toString())
 					.couponStatus(delivery.getStatus().name())
 					.build();
 			})

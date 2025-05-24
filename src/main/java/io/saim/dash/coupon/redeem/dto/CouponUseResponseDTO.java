@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.redeem.dto;
 
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
@@ -27,25 +26,4 @@ public class CouponUseResponseDTO {
 	private final String used_at;
 	private final VendorDTO vendor;
 	private final ProductDTO product;
-
-	// 	DUMMY
-	public CouponUseResponseDTO() {
-		this.result = true;
-		this.id = 213456L;
-		this.used_at = "2025-01-07 03:46:19";
-		this.vendor = new VendorDTO(
-			"Bobby Gutkowski",
-			"Assunta_Wehner35@yahoo.com",
-			"(415) 529-8392"
-		);
-		this.product = new ProductDTO(
-			87542090L,
-			69952994L,
-			"Bespoke Bronze Shirt",
-			660L
-		);
-	}
 }
-
- */
-

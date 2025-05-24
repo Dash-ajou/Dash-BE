@@ -1,25 +1,17 @@
-/*package io.saim.dash.coupon.common.repository.Issue;
-
+package io.saim.dash.coupon.common.repository.Issue;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import io.saim.dash.coupon.common.constant.IssueActiveStatus;
-import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
-import io.saim.dash.coupon.common.model.Coupon;
-import io.saim.dash.coupon.common.model.DUMMY_GeneralUser;
-import io.saim.dash.coupon.common.model.DUMMY_PartnerUser;
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
-import io.saim.dash.coupon.common.model.Request;
-import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -33,7 +25,7 @@ public class IssueRepositoryImpl implements IssueRepository {
 	private final IssueJpaRepository issueJpaRepository;
 
 	@Override
-	public List<Issue> findIssuesByPartner(DUMMY_PartnerUser user, BooleanBuilder filter, Integer page, Integer size) {
+	public List<Issue> findIssuesByPartner(PartnerUser user, BooleanBuilder filter, Integer page, Integer size) {
 		QRequest request = QRequest.request;
 		filter.and(request.partner.eq(user));
 
@@ -41,7 +33,7 @@ public class IssueRepositoryImpl implements IssueRepository {
 	}
 
 	@Override
-	public List<Issue> findIssuesByVendor(DUMMY_GeneralUser user, BooleanBuilder filter, Integer page, Integer size) {
+	public List<Issue> findIssuesByVendor(GeneralUser user, BooleanBuilder filter, Integer page, Integer size) {
 		QRequest request = QRequest.request;
 		filter.and(request.vendor.in(user.getVendors()));
 		return getIssuedRequests(filter);
@@ -73,5 +65,3 @@ public class IssueRepositoryImpl implements IssueRepository {
 		return null;
 	}
 }
-
- */

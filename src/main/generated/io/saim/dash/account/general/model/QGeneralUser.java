@@ -55,6 +55,8 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
 
     public final NumberPath<Long> vendorGroupId = createNumber("vendorGroupId", Long.class);
 
+    public final ListPath<io.saim.dash.coupon.common.model.UserVendor, io.saim.dash.coupon.common.model.QUserVendor> vendors = this.<io.saim.dash.coupon.common.model.UserVendor, io.saim.dash.coupon.common.model.QUserVendor>createList("vendors", io.saim.dash.coupon.common.model.UserVendor.class, io.saim.dash.coupon.common.model.QUserVendor.class, PathInits.DIRECT2);
+
     public QGeneralUser(String variable) {
         this(GeneralUser.class, forVariable(variable), INITS);
     }

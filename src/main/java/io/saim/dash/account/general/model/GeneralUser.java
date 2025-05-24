@@ -2,11 +2,14 @@ package io.saim.dash.account.general.model;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.model.UserVendor;
+import io.saim.dash.coupon.common.model.Vendor;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -50,8 +53,15 @@ public class GeneralUser extends ServiceUser {
 	@JoinColumn(name = "partner_id")
 	private PartnerUser partner;
 
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private List<UserVendor> vendors = new ArrayList<>();
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
+
+	public static boolean isGeneralUser(ServiceUser serviceUser) {
+		return serviceUser instanceof GeneralUser;
+	}
 
 	public List<Password> getPasswordHistory() {
 		return passwords;
@@ -59,5 +69,16 @@ public class GeneralUser extends ServiceUser {
 
 	public boolean isPasswordValid(String rawPassword, Password password, BCryptPasswordEncoder encoder) {
 		return encoder.matches(rawPassword.trim(), password.getHashedPassword());
+	}
+
+	public void addVendor(Vendor vendor) {
+		UserVendor link = vendor.linkMember(this);
+		this.vendors.add(link);
+	}
+
+	public List<Vendor> getVendors() {
+		return this.vendors.stream()
+			.map(UserVendor::getVendor)
+			.toList();
 	}
 }

@@ -19,7 +19,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 	"io.saim.dash.account.auth.repository",
 	"io.saim.dash.account.general.repository",
 	"io.saim.dash.account.partner.repository",
-	"io.saim.dash.account.general.coupon.repository"
+	"io.saim.dash.account.general.coupon.repository",
+	"io.saim.dash.coupon.common.repository"
 })
 
 public class DashApplication {

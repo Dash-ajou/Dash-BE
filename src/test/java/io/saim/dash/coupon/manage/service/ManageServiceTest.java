@@ -7,13 +7,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import io.saim.dash.coupon.common.repository.Manage.ManageRequestRepository;
+// import io.saim.dash.coupon.common.repository.Manage.ManageRequestRepository;
 
 class ManageServiceTest {
 
 	ManageService manageService;
 
-	@Mock ManageRequestRepository manageRequestRepository;
+	// @Mock ManageRequestRepository manageRequestRepository;
 
 	@Test
 	@DisplayName("[로그인: 파트너] 본인이 승인하여 발급된 쿠폰들에 대한 발행내역을 조회할 수 있다")

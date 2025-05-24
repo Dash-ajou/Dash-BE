@@ -1,4 +1,3 @@
-/*
 package io.saim.dash.coupon.common.model;
 
 
@@ -33,4 +32,3 @@ public class CouponPayment {
 	@Column(nullable = false)
 	private LocalDateTime expiredAt;
 }
- */

@@ -1,10 +1,11 @@
-/*package io.saim.dash.coupon.issue.controller;
+package io.saim.dash.coupon.issue.controller;
 
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
@@ -15,7 +16,6 @@ import io.saim.dash.coupon.issue.dto.RequestCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.RequestBriefResponseDTO;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.SignResponseDTO;
-import io.saim.dash.coupon.common.model.DUMMY_ServiceUser;
 import io.saim.dash.global.dto.PagingResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +30,7 @@ public class IssueController {
 
 	@GetMapping("/list")
 	public PagingResponse<RequestBriefResponseDTO> getIssues(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) String createat_start,
@@ -58,7 +58,7 @@ public class IssueController {
 
 	@GetMapping("/spec/{issueId}")
 	public RequestBriefResponseDTO getIssueRequestSpec(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@PathVariable Long issueId
 	) {
 		Request request = issueService.getRequest(issueId, user);
@@ -67,7 +67,7 @@ public class IssueController {
 
 	@PostMapping("/create")
 	public RequestBriefResponseDTO createIssue(
-		@AuthenticationPrincipal DUMMY_ServiceUser user,
+		@AuthenticationPrincipal ServiceUser user,
 		@RequestBody RequestCreateRequestDTO RequestCreateRequestDTO
 	) {
 		VendorDTO vendor = RequestCreateRequestDTO.getVendor();
@@ -85,7 +85,7 @@ public class IssueController {
 
 	@PostMapping("/{issueId}/sign")
 	public SignResponseDTO signIssue(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@PathVariable Long issueId,
 		@RequestBody RequestSignRequestDTO RequestSignRequestDTO
 	) {
@@ -110,11 +110,9 @@ public class IssueController {
 
 	@DeleteMapping("/{issueId}")
 	public Boolean deleteIssue(
-		@AuthenticationPrincipal DUMMY_ServiceUser serviceUser,
+		@AuthenticationPrincipal ServiceUser serviceUser,
 		@PathVariable Long issueId
 	) {
 		return issueService.deleteIssueRequest(serviceUser, issueId);
 	}
 }
-
- */
