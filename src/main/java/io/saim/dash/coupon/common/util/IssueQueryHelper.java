@@ -10,15 +10,14 @@ import io.saim.dash.coupon.common.model.QRequest;
 public class IssueQueryHelper {
 	public static BooleanBuilder createFilterBuilder(
 		String createat_start, String createat_end,
-		String business_name, String owner_phone, IssueStatus status,
-		QRequest issueReq
+		String business_name, String owner_phone, IssueStatus status
 	) {
 		BooleanBuilder builder = new BooleanBuilder();
 
-		addCreateAtFilter(builder, issueReq, createat_start, createat_end);
-		addBusinesNameFilter(builder, issueReq, business_name);
-		addBusinesOwnerPnFilter(builder, issueReq, owner_phone);
-		addIssueStatuFilter(builder, issueReq, status);
+		// addCreateAtFilter(builder, QRequest.request, createat_start, createat_end);
+		// addBusinesNameFilter(builder, QRequest.request, business_name);
+		// addBusinesOwnerPnFilter(builder, QRequest.request, owner_phone);
+		// addIssueStatuFilter(builder, QRequest.request, status);
 
 		return builder;
 	}

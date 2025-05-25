@@ -54,7 +54,7 @@ public class GeneralUser extends ServiceUser {
 	private PartnerUser partner;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<UserVendor> vendors = new ArrayList<>();
+	private List<UserVendor> userVendors = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
@@ -73,11 +73,11 @@ public class GeneralUser extends ServiceUser {
 
 	public void addVendor(Vendor vendor) {
 		UserVendor link = vendor.linkMember(this);
-		this.vendors.add(link);
+		this.userVendors.add(link);
 	}
 
-	public List<Vendor> getVendors() {
-		return this.vendors.stream()
+	public List<Vendor> getUserVendors() {
+		return this.userVendors.stream()
 			.map(UserVendor::getVendor)
 			.toList();
 	}
