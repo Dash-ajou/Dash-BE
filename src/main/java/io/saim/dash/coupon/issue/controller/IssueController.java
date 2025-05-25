@@ -96,10 +96,12 @@ public class IssueController {
 
 	@PostMapping("/{issueId}/sign")
 	public SignResponseDTO signIssue(
-		@AuthenticationPrincipal ServiceUser serviceUser,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId,
 		@RequestBody RequestSignRequestDTO RequestSignRequestDTO
 	) {
+		ServiceUser serviceUser = customUserDetails.getPartnerUser();
+
 		IssueResultDTO issueResult = issueService.signRequest(
 			serviceUser, issueId,
 			RequestSignRequestDTO.getStatus(),
@@ -121,9 +123,10 @@ public class IssueController {
 
 	@DeleteMapping("/{issueId}")
 	public Boolean deleteIssue(
-		@AuthenticationPrincipal ServiceUser serviceUser,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId
 	) {
+		ServiceUser serviceUser = customUserDetails.getGeneralUser();
 		return issueService.deleteIssueRequest(serviceUser, issueId);
 	}
 }

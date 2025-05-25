@@ -80,6 +80,7 @@ public class IssueService {
 			if (!request.isRequestedPartner(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
 		} else {
+			System.out.println(request.getVendor().getVendorId());
 			if (!request.getVendor().isMemberIncluded(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
 		}
@@ -207,12 +208,15 @@ public class IssueService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean deleteIssueRequest(
-		ServiceUser serviceUser, Long requestId
+		ServiceUser loginUser, Long requestId
 	) {
-		if (serviceUser.isPartner())
+		if (loginUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Request request = getRequest(requestId, serviceUser);
+		GeneralUser requestedUser = generalUserRepository.findById(((GeneralUser)loginUser).getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+
+		Request request = getRequest(requestId, requestedUser);
 		requestRepository.delete(request);
 
 		return true;
