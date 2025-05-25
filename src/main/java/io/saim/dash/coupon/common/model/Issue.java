@@ -46,6 +46,7 @@ public class Issue {
 	)
 	private List<Coupon> coupons = new ArrayList<>();
 
+	@Setter
 	private Long issueCnt;
 
 	private Long usedCnt = 0L;

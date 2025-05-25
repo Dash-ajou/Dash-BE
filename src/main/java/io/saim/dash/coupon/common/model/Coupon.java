@@ -36,7 +36,7 @@ public class Coupon {
 	@JoinColumn(name = "issue_id")
 	private Issue issue;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "product_id")
 	private Product product;
 

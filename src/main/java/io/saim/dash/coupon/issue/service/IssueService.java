@@ -2,6 +2,7 @@ package io.saim.dash.coupon.issue.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class IssueService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 
-	public List<Request> getRequestsByPartner(
+	public List<Request> getRequests(
 		ServiceUser user,
 		int page, int size,
 		String createat_start, String createat_end,
@@ -123,14 +124,14 @@ public class IssueService {
 
 	private void addProductsToRequest(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts, Request request) {
 		List<Product> products = getProducts(partnerUser, productCounts);
-		Map<String, Long> requestProductCounts = getMappedProductCounts(productCounts, products);
+		Map<String, Long> requestProductCounts = getMappedProductCounts(productCounts);
 
 		products.forEach(product -> request.addRequestProduct(
 			product, requestProductCounts.get(product.getProductName())
 		));
 	}
 
-	private static Map<String, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts, List<Product> referenceProducts) {
+	private static Map<String, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts) {
 		Map<String, Long> requestProductCounts = productCounts.stream()
 			.collect(Collectors.toMap(
 				RequestProductCountDTO::getProductName, RequestProductCountDTO::getCount
@@ -176,6 +177,7 @@ public class IssueService {
 
 		PartnerUser serviceUser = partnerUserRepository.findById(((PartnerUser)loginUser).getId())
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+		System.out.println("[signRequest()]" + serviceUser.getUserType());
 		serviceUser.setUserType(UserType.PARTNER); // TODO: 원인미상의 usertype drop
 
 		System.out.println("[ID]" + serviceUser.getId());
@@ -280,23 +282,34 @@ public class IssueService {
 			.build();
 
 		List<Coupon> issuedCoupons = createCoupons(issue);
+		issue.setIssueCnt(Integer.toUnsignedLong(issuedCoupons.size()));
 		issue.addCoupons(issuedCoupons);
 		issueRepository.save(issue);
 		return new IssueResultDTO(issue);
 	}
 
 	private static List<Coupon> createCoupons(Issue issue) {
-		List<Coupon> createdCoupons = issue.getRequest().getRequestProducts().stream()
-			.map(requestProduct -> Coupon.builder()
-				.product(requestProduct.getProduct())
-				.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
-				.price(requestProduct.getPrice())
-				.couponStatus(CouponStatus.REGISTERABLE)
-				.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
-				.issue(issue)
-				.build()
-			)
-			.toList();
+		Map<Long, Long> requestProductsCount = issue.getRequest().getRequestProducts().stream()
+			.collect(Collectors.toMap(
+				(val) -> val.getProduct().getProductId(), RequestProduct::getQuantity)
+			);
+
+		List<Coupon> createdCoupons = new ArrayList<>();
+		issue.getRequest().getRequestProducts().forEach(requestProduct -> {
+			Long count = requestProductsCount.get(requestProduct.getProduct().getProductId());
+			for (int i = 0; i < count; i++) {
+				createdCoupons.add(
+					Coupon.builder()
+					.product(requestProduct.getProduct())
+					.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
+					.price(requestProduct.getPrice())
+					.couponStatus(CouponStatus.REGISTERABLE)
+					.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
+					.issue(issue)
+					.build()
+				);
+			}
+		});
 		return createdCoupons;
 	}
 
@@ -321,11 +334,11 @@ public class IssueService {
 
 	private static String generateCouponRegisterCode(Request request, int length) {
 		if (length < 10) length = 10;
-
-		int basecode = request.hashCode();
-		String prefix = Integer.toString(basecode).substring(0, 5);
-		String uqn = Integer.toString((basecode + (int)(Math.random() % 1000) % 1000));
-
-		return (prefix + uqn).substring(0, length);
+		StringBuilder codeBuilder = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			int digit = (int)(Math.random() * 10);
+			codeBuilder.append(digit);
+		}
+		return codeBuilder.toString();
 	}
 }

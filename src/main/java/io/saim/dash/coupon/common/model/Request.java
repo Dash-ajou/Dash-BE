@@ -47,6 +47,7 @@ public class Request {
 	private Vendor vendor;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "partner_partner_id", nullable = false)
 	private PartnerUser partner;
 
 	@Column(nullable = false)
