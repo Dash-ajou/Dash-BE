@@ -4,13 +4,16 @@ import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Issue.IssueConfirmSpecDTO;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter @NoArgsConstructor
 public class SignResponseDTO {
-	private final Boolean result;
-	private final IssueStatus status;
+	private Boolean result;
+	private IssueStatus status;
 
 	@Nullable
-	private final IssueConfirmSpecDTO confirmSpec;
+	private IssueConfirmSpecDTO confirmSpec;
 
 	@Builder
 	public SignResponseDTO(Boolean result, IssueStatus status, @Nullable IssueConfirmSpecDTO confirmSpec) {

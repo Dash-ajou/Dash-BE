@@ -57,8 +57,6 @@ public class Vendor {
 		if (user.isPartner())
 			return false;
 
-		System.out.println(this.getVendorUsers());
-		System.out.println(user);
 		return this.getVendorUsers().contains(user);
 	}
 

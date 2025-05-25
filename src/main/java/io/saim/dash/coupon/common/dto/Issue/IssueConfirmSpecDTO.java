@@ -3,15 +3,18 @@ package io.saim.dash.coupon.common.dto.Issue;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter @NoArgsConstructor
 public class IssueConfirmSpecDTO {
-	private final Long request_id;
-	private final Long issue_id;
-	private final String paid_at;
-	private final IssueActiveStatus status;
-	private final Long issue_count;
-	private final Long paid_price;
-	private final String issued_at;
+	private Long request_id;
+	private Long issue_id;
+	private String paid_at;
+	private IssueActiveStatus status;
+	private Long issue_count;
+	private Long paid_price;
+	private String issued_at;
 
 	public IssueConfirmSpecDTO(IssueResultDTO issueResultDTO) {
 		Issue issue = issueResultDTO.getIssue();
