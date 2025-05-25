@@ -39,4 +39,7 @@ public class PartnerSignupRequestDTO {
 
 	@JsonProperty("temporary_register_date")
 	private LocalDateTime temporaryRegisterDate;
+
+	@JsonProperty("user_type")
+	private final String userType = "PARTNER";
 }

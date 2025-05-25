@@ -28,37 +28,19 @@ public class LoginService {
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	public LoginResponseDTO login(String userPhone, String rawPassword, HttpSession session) {
-		String requestedUserType = (String) session.getAttribute("user_type");
-
-		if (requestedUserType == null || requestedUserType.isBlank()) {
-			Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
-			if (partnerUserOpt.isPresent()) {
-				session.setAttribute("user_type", "PARTNER");
-				return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
-			}
-
-			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
-			if (generalUserOpt.isPresent()) {
-				session.setAttribute("user_type", "GENERAL");
-				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
-			}
-
-			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
+		Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
+		if (partnerUserOpt.isPresent()) {
+			session.setAttribute("user_type", "PARTNER");
+			return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
 		}
 
-		if ("GENERAL".equalsIgnoreCase(requestedUserType)) {
-			GeneralUser generalUser = signupNameRepository.findByPhone(userPhone)
-				.orElseThrow(() -> new IllegalArgumentException("일반 사용자로 등록되지 않은 전화번호입니다."));
-			return authenticateGeneralUser(generalUser, rawPassword, session);
-
-		} else if ("PARTNER".equalsIgnoreCase(requestedUserType)) {
-			PartnerUser partnerUser = partnerUserRepository.findByPhone(userPhone)
-				.orElseThrow(() -> new IllegalArgumentException("파트너 사용자로 등록되지 않은 전화번호입니다."));
-			return authenticatePartnerUser(partnerUser, rawPassword, session);
-
-		} else {
-			throw new IllegalArgumentException("지원하지 않는 사용자 타입입니다.");
+		Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
+		if (generalUserOpt.isPresent()) {
+			session.setAttribute("user_type", "GENERAL");
+			return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
 		}
+
+		throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
 	}
 
 	private LoginResponseDTO authenticateGeneralUser(GeneralUser user, String rawPassword, HttpSession session) {
@@ -80,9 +62,9 @@ public class LoginService {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
+		setAuthentication(user);
 		session.setAttribute("userType", "PARTNER");
 		session.setAttribute("userId", user.getId());
-		setAuthentication(user);
 
 		return createLoginResponse(user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}

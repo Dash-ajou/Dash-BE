@@ -1,5 +1,6 @@
 package io.saim.dash.account.partner.service;
 
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.dto.PartnerSignupRequestDTO;
 import io.saim.dash.account.partner.dto.PartnerSignupResponseDTO;
 import io.saim.dash.account.partner.model.PartnerUser;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class PartnerService {
 
 	private final PartnerUserRepository partnerRepository;
+	private final GeneralUserRepository generalUserRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Transactional
@@ -29,6 +31,11 @@ public class PartnerService {
 
 		if (requestDTO.getOwnerPhone() == null || requestDTO.getOwnerPhone().isBlank()) {
 			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("전화번호"));
+		}
+
+		//일반 사용자와 전화번호 중복 방지
+		if (generalUserRepository.findByPhone(requestDTO.getOwnerPhone()).isPresent()) {
+			throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("전화번호"));
 		}
 
 		if (requestDTO.getOwnerEmail() != null && !requestDTO.getOwnerEmail().isBlank()) {

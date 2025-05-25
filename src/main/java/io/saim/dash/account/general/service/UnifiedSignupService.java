@@ -48,6 +48,11 @@ public class UnifiedSignupService {
 		String encodedPassword = passwordEncoder.encode(dto.getPassword().trim());
 
 		if ("GENERAL".equalsIgnoreCase(dto.getUserType())) {
+			//파트너 사용자와 전화번호 중복 방지
+			if (partnerUserRepository.findByPhone(dto.getGeneralPhone()).isPresent()) {
+				throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
+			}
+
 			String safeName = dto.getGeneralName() != null && !dto.getGeneralName().isBlank()
 				? dto.getGeneralName().trim() : "이름없음";
 

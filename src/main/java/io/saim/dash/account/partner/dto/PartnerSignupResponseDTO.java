@@ -13,4 +13,5 @@ public class PartnerSignupResponseDTO {
 	private String partnerAddress;
 	private boolean isTemporary;
 	private String temporaryRegisterDate;
+	private final String userType = "PARTNER";
 }
