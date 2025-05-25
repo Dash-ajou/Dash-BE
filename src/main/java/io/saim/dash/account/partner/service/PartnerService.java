@@ -4,9 +4,12 @@ import io.saim.dash.account.partner.dto.PartnerSignupRequestDTO;
 import io.saim.dash.account.partner.dto.PartnerSignupResponseDTO;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
-import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
+import io.saim.dash.global.dto.APIStatus;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,49 +27,29 @@ public class PartnerService {
 	@Transactional
 	public CommonResponseDTO<PartnerSignupResponseDTO> registerPartner(PartnerSignupRequestDTO requestDTO) {
 
-		//파트너 이름과 전화번호는 반드시 필요
+		//필수값 검증
 		if (requestDTO.getPartnerName() == null || requestDTO.getPartnerName().isBlank()) {
-			return new CommonResponseDTO<>(
-				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILED,
-				"파트너 상호명은 필수 입력 항목입니다.",
-				null
-			);
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("파트너 상호명"));
 		}
-
 		if (requestDTO.getOwnerPhone() == null || requestDTO.getOwnerPhone().isBlank()) {
-			return new CommonResponseDTO<>(
-				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-				APIStatus.FAILED,
-				"전화번호는 필수 입력 항목입니다.",
-				null
-			);
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("전화번호"));
 		}
 
 		//이메일 중복 체크
 		if (requestDTO.getOwnerEmail() != null && !requestDTO.getOwnerEmail().isBlank()) {
 			if (partnerRepository.findByEmail(requestDTO.getOwnerEmail()).isPresent()) {
-				return new CommonResponseDTO<>(
-					new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-					APIStatus.FAILED,
-					"이미 가입된 이메일입니다.",
-					null
-				);
+				throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("이메일"));
 			}
 		}
 
+		//비밀번호 검증 및 기본값 처리
 		String rawPassword = (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank())
 			? requestDTO.getPassword()
 			: "Temp@1234";
 
 		if (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank()) {
 			if (!requestDTO.getPassword().equals(requestDTO.getPasswordConfirm())) {
-				return new CommonResponseDTO<>(
-					new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-					APIStatus.FAILED,
-					"비밀번호와 비밀번호 확인이 일치하지 않습니다.",
-					null
-				);
+				throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("비밀번호 확인"));
 			}
 		}
 
@@ -85,21 +68,28 @@ public class PartnerService {
 			.password(hashedPassword)
 			.build();
 
-		PartnerUser savedPartner = partnerRepository.save(partner);
+		try {
+			PartnerUser savedPartner = partnerRepository.save(partner);
 
-		return new CommonResponseDTO<>(
-			new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
-			APIStatus.SUCCESS,
-			"파트너 정보가 성공적으로 저장되었습니다.",
-			new PartnerSignupResponseDTO(
-				savedPartner.getId(),
-				savedPartner.getPartnerName(),
-				savedPartner.getPartnerAddress(),
-				savedPartner.isTemporary(),
-				savedPartner.getTemporaryRegisterDate() != null ?
-					savedPartner.getTemporaryRegisterDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-					: null
-			)
-		);
+			return new CommonResponseDTO<>(
+				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
+				APIStatus.SUCCESS,
+				"파트너 정보가 성공적으로 저장되었습니다.",
+				new PartnerSignupResponseDTO(
+					savedPartner.getId(),
+					savedPartner.getPartnerName(),
+					savedPartner.getPartnerAddress(),
+					savedPartner.isTemporary(),
+					savedPartner.getTemporaryRegisterDate() != null ?
+						savedPartner.getTemporaryRegisterDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+						: null
+				)
+			);
+
+		} catch (DataIntegrityViolationException e) {
+			throw new ServiceException(ServiceExceptionContent.DUPLICATE_PHONE);
+		} catch (Exception e) {
+			throw new ServiceException(ServiceExceptionContent.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
