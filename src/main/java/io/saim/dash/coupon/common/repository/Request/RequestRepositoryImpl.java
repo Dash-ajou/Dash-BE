@@ -40,20 +40,20 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 		filterBuilder.and(issue.vendor.in(vendors));
 
-		JPAQuery<Request> issueJPAQuery = getIssueJPAQuery(filterBuilder, issue);
+		JPAQuery<Request> issueJPAQuery = getRequestJPAQuery(filterBuilder, issue);
 		addPaginateOptions(issueJPAQuery, page, size);
 		return issueJPAQuery.fetch();
 	}
 
 	@Override
 	public List<Request> findRequestsByPartner(PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
-		QRequest issue = QRequest.request;
+		QRequest request = QRequest.request;
 
-		filterBuilder.and(issue.partner.eq(user));
+		filterBuilder.and(request.partner.eq(user));
 
-		JPAQuery<Request> issueJPAQuery = getIssueJPAQuery(filterBuilder, issue);
-		addPaginateOptions(issueJPAQuery, page, size);
-		return issueJPAQuery.fetch();
+		JPAQuery<Request> requestJPAQuery = getRequestJPAQuery(filterBuilder, request);
+		addPaginateOptions(requestJPAQuery, page, size);
+		return requestJPAQuery.fetch();
 	}
 
 	@Override
@@ -71,11 +71,11 @@ public class RequestRepositoryImpl implements RequestRepository {
 		return requestJpaRepository.getReferenceById(requestId);
 	}
 
-	private JPAQuery<Request> getIssueJPAQuery(BooleanBuilder filterBuilder, QRequest issue) {
+	private JPAQuery<Request> getRequestJPAQuery(BooleanBuilder filterBuilder, QRequest request) {
 		return queryFactory
-			.selectFrom(issue)
+			.selectFrom(request)
 			.where(filterBuilder)
-			.orderBy(issue.createdAt.desc()); // 최신요청 순
+			.orderBy(request.createdAt.desc()); // 최신요청 순
 	}
 
 	private static void addPaginateOptions(JPAQuery<Request> issueJPAQuery, int page, int size) {

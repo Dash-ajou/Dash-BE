@@ -71,7 +71,7 @@ class IssueServiceTest {
 			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<Request> requests = issueService.getRequestsByPartner(
+		List<Request> requests = issueService.getRequests(
 			partnerUser, 0, 0,
 			null, null, null, null, null
 		);
@@ -101,7 +101,7 @@ class IssueServiceTest {
 			.thenReturn(List.of(dummyRequest));
 
 		// when
-		List<Request> requests = issueService.getRequestsByPartner(
+		List<Request> requests = issueService.getRequests(
 			vendorUser, 0, 0,
 			null, null, null, null, null
 		);

@@ -43,7 +43,7 @@ public class IssueController {
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
-		List<Request> userRequestList = issueService.getRequestsByPartner(
+		List<Request> userRequestList = issueService.getRequests(
 			loginUser,
 			page, size,
 			createat_start, createat_end,
