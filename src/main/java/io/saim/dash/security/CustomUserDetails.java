@@ -1,5 +1,6 @@
 package io.saim.dash.security;
 
+import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class CustomUserDetails implements UserDetails {
 		this.password = user.getPassword();
 		this.generalUser = user;
 		this.partnerUser = null;
+		user.setUserType(UserType.GENERAL);
 	}
 
 	//파트너 사용자 생성자
@@ -35,6 +37,7 @@ public class CustomUserDetails implements UserDetails {
 		this.password = user.getPassword();
 		this.generalUser = null;
 		this.partnerUser = user;
+		user.setUserType(UserType.PARTNER);
 	}
 
 	@Override
