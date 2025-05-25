@@ -17,6 +17,7 @@ import io.saim.dash.coupon.issue.dto.RequestBriefResponseDTO;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
 import io.saim.dash.coupon.issue.dto.SignResponseDTO;
 import io.saim.dash.global.dto.PagingResponse;
+import io.saim.dash.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 import io.saim.dash.coupon.issue.service.IssueService;
@@ -30,7 +31,7 @@ public class IssueController {
 
 	@GetMapping("/list")
 	public PagingResponse<RequestBriefResponseDTO> getIssues(
-		@AuthenticationPrincipal ServiceUser user,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) String createat_start,
@@ -39,6 +40,9 @@ public class IssueController {
 		@RequestParam(required = false) String owner_phone,
 		@RequestParam(required = false) IssueStatus status
 	) {
+		ServiceUser user = customUserDetails.getGeneralUser();
+		if (user == null) user = customUserDetails.getPartnerUser();
+
 		List<Request> userRequestList = issueService.getRequestsByPartner(
 			user,
 			page, size,
@@ -46,8 +50,9 @@ public class IssueController {
 			business_name, owner_phone, status
 		);
 
+		ServiceUser finalUser = user;
 		List<RequestBriefResponseDTO> issueRequestList = userRequestList.stream()
-			.map(request -> new RequestBriefResponseDTO(request, user.isPartner()))
+			.map(request -> new RequestBriefResponseDTO(request, finalUser.isPartner()))
 			.toList();
 
 		return new PagingResponse<>(
@@ -58,22 +63,28 @@ public class IssueController {
 
 	@GetMapping("/spec/{issueId}")
 	public RequestBriefResponseDTO getIssueRequestSpec(
-		@AuthenticationPrincipal ServiceUser user,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId
 	) {
+		ServiceUser user = customUserDetails.getGeneralUser();
+		if (user == null) user = customUserDetails.getPartnerUser();
+
 		Request request = issueService.getRequest(issueId, user);
 		return new RequestBriefResponseDTO(request, user.isPartner());
 	}
 
-	@PostMapping("/create")
-	public RequestBriefResponseDTO createIssue(
-		@AuthenticationPrincipal ServiceUser user,
+	@PostMapping("/request")
+	public RequestBriefResponseDTO createRequest(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestBody RequestCreateRequestDTO RequestCreateRequestDTO
 	) {
+		ServiceUser user = customUserDetails.getGeneralUser();
+		if (user == null) user = customUserDetails.getPartnerUser();
+
 		VendorDTO vendor = RequestCreateRequestDTO.getVendor();
 		PartnerDTO partner = RequestCreateRequestDTO.getPartner();
 
-		Request request = issueService.createIssueRequest(
+		Request request = issueService.createRequest(
 			user,
 			vendor.getVendorName(), vendor.getPresidentName(), vendor.getPresidentPhone(),
 			partner.getBusinessName(), partner.getOwnerPhone(),

@@ -71,5 +71,4 @@ public class ProductService {
 			page, size
 		);
 	}
-
 }

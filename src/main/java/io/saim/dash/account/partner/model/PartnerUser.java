@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -41,9 +43,10 @@ public class PartnerUser extends ServiceUser {
 	private String phone;
 
 	@Column(name = "joined_at", nullable = true)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime joinedAt;
 
-	@Column(name = "partner_name", nullable = true)
+	@Column(name = "partner_name", nullable = false)
 	private String partnerName;
 
 	@Column(name = "partner_address", nullable = true)
@@ -53,9 +56,10 @@ public class PartnerUser extends ServiceUser {
 	private boolean isTemporary;
 
 	@Column
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime temporaryRegisterDate;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String password;
 
 	@PrePersist

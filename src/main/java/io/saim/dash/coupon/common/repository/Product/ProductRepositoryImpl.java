@@ -1,9 +1,11 @@
 package io.saim.dash.coupon.common.repository.Product;
 
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductRepositoryImpl implements ProductRepository {
 
 	private final JPAQueryFactory queryFactory;
+	private final JdbcTemplate jdbcTemplate;
 	private final ProductJpaRepository productJpaRepository;
 
 	@Override
@@ -53,8 +56,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 	public List<Product> findByFilter(BooleanBuilder filter, Long page, Long size) {
 		QProduct product = QProduct.product;
 
-		if (page <= 0) page = 1L;
-		if (size <= 10) size = 10L;
+		if (page == null || page <= 0) page = 1L;
+		if (size == null || size <= 10) size = 10L;
 		else if (size % 10 != 0) size = (size/10)*10;
 
 		return queryFactory
@@ -62,5 +65,20 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.where(filter)
 			.offset(page * size).limit(size)
 			.fetch();
+	}
+
+	@Override
+	public void saveAll(List<Product> newProducts) {
+		String sql = "INSERT INTO product (product_name, price, partner_id)"+
+			"VALUES (?, ?, ?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			newProducts,
+			newProducts.size(),
+			(PreparedStatement ps, Product product) -> {
+				ps.setString(1, product.getProductName());
+				ps.setString(2, product.getPrice().toString());
+				ps.setString(3, product.getPartner().getId().toString());
+			});
 	}
 }
