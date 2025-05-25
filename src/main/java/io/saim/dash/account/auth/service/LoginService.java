@@ -31,16 +31,16 @@ public class LoginService {
 		String requestedUserType = (String) session.getAttribute("user_type");
 
 		if (requestedUserType == null || requestedUserType.isBlank()) {
-			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
-			if (generalUserOpt.isPresent()) {
-				session.setAttribute("user_type", "GENERAL");
-				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
-			}
-
 			Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
 			if (partnerUserOpt.isPresent()) {
 				session.setAttribute("user_type", "PARTNER");
 				return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
+			}
+
+			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
+			if (generalUserOpt.isPresent()) {
+				session.setAttribute("user_type", "GENERAL");
+				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
 			}
 
 			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
