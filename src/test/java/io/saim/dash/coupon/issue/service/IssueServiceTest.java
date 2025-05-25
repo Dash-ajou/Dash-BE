@@ -112,7 +112,7 @@ class IssueServiceTest {
 			System.out.println(requestedVendor != null);
 
 			Assertions.assertThat(
-				vendorUser.getUserVendors()
+				vendorUser.getVendors()
 						.contains(requestedVendor)
 			).isTrue();
 		});
@@ -140,7 +140,7 @@ class IssueServiceTest {
 				.getRequest(1L, vendorUser)
 				.getVendor()
 		)
-		.isIn(vendorUser.getUserVendors());
+		.isIn(vendorUser.getVendors());
 	}
 
 	@Test
@@ -154,7 +154,7 @@ class IssueServiceTest {
 
 		Vendor vendor = new Vendor();
 		userA.addVendor(vendor);
-		dummyRequest.setVendor(userA.getUserVendors().getFirst());
+		dummyRequest.setVendor(userA.getVendors().getFirst());
 
 		when(requestRepository.getById(any(Long.class)))
 			.thenReturn(Optional.of(dummyRequest));
@@ -195,7 +195,7 @@ class IssueServiceTest {
 		// then
 		Assertions.assertThat(
 			createdRequest.getVendor()
-		).isIn(serviceUser.getUserVendors());
+		).isIn(serviceUser.getVendors());
 	}
 
 	@Test

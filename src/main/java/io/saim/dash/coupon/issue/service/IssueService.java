@@ -25,7 +25,6 @@ import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
-import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
@@ -55,6 +54,7 @@ public class IssueService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 
+	@Transactional
 	public List<Request> getRequests(
 		ServiceUser user,
 		int page, int size,
