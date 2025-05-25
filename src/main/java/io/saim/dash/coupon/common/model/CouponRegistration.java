@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,12 +31,11 @@ public class CouponRegistration {
 	@Column(name = "registration_id")
 	private Long registrationId;
 
-	@Setter
-	@OneToOne
+	@Setter @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(nullable = false, name = "register_id")
 	private GeneralUser registeredUser;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(nullable = false, name = "coupon_id")
 	private Coupon coupon;
 
