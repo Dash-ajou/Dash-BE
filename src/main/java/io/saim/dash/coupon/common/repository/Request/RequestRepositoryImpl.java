@@ -11,6 +11,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.account.partner.model.QPartnerUser;
+import io.saim.dash.coupon.common.model.QVendor;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Vendor;
@@ -33,7 +35,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	public List<Request> findRequestsByVendor(GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
-		List<Vendor> vendors = user.getVendors();
+		List<Vendor> vendors = user.getUserVendors();
 		if (!vendors.isEmpty()) {
 			throw new NullPointerException("No Vendor Found");
 		}
@@ -48,7 +50,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 	@Override
 	public List<Request> findRequestsByPartner(PartnerUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest request = QRequest.request;
-
 		filterBuilder.and(request.partner.eq(user));
 
 		JPAQuery<Request> requestJPAQuery = getRequestJPAQuery(filterBuilder, request);
@@ -74,19 +75,19 @@ public class RequestRepositoryImpl implements RequestRepository {
 	private JPAQuery<Request> getRequestJPAQuery(BooleanBuilder filterBuilder, QRequest request) {
 		return queryFactory
 			.selectFrom(request)
+			.join(request.vendor, QVendor.vendor)
+			.join(request.partner, QPartnerUser.partnerUser)
 			.where(filterBuilder)
 			.orderBy(request.createdAt.desc()); // 최신요청 순
 	}
 
 	private static void addPaginateOptions(JPAQuery<Request> issueJPAQuery, int page, int size) {
-
 		if (page <= 0) page = 1;
 		if (size <= 10) size = 10;
-		else if (size % 10 != 0) size = (size/10)*10;
 
 		issueJPAQuery
 			// Pagination
-			.offset(page * size)
+			.offset((page-1) * size)
 			.limit(size);
 	}
 }

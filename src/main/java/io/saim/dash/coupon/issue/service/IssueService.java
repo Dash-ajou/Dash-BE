@@ -63,8 +63,7 @@ public class IssueService {
 	) {
 		BooleanBuilder filterBuilder = IssueQueryHelper.createFilterBuilder(
 			createat_start, createat_end,
-			business_name, owner_phone, status,
-			QRequest.request
+			business_name, owner_phone, status
 		);
 
 		if(user.isPartner()) {
@@ -92,7 +91,7 @@ public class IssueService {
 		return request;
 	}
 
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	@Transactional(rollbackFor = Exception.class)
 	public Request createRequest(
 		ServiceUser serviceUser,
 		String vendorName, String presidentName, String presidentPhone,
@@ -104,12 +103,13 @@ public class IssueService {
 
 		// temp: 기존 vendor 지정 없이 매 요청마다 신규 vendor 생성
 		GeneralUser requestUser = (GeneralUser) serviceUser;
+
 		Vendor issueVendor = createIssueVendor(
 			requestUser,
 			vendorName, presidentName, presidentPhone
 		);
-
 		PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
+
 		Request request = Request.builder()
 			.vendor(issueVendor)
 			.partner(partnerUser)
@@ -259,16 +259,24 @@ public class IssueService {
 		String businessName, String ownerPhone
 	) {
 		PartnerUser partner = partnerUserRepository.findByPhone(ownerPhone).orElse(null);
-		if (partner == null) {
-			partner = PartnerUser.builder()
-				.partnerName(businessName)
-				.phone(ownerPhone)
-				.isTemporary(true)
-				.temporaryRegisterDate(LocalDateTime.now())
-				.build();
+		if (partner != null) return partner;
 
-			partnerUserRepository.save(partner);
-		}
+		System.out.println("===========++CREATE===============");
+
+		partner = PartnerUser.builder()
+			.partnerName(businessName)
+			.phone(ownerPhone)
+			.isTemporary(true)
+			.temporaryRegisterDate(LocalDateTime.now())
+			.build();
+		partnerUserRepository.save(partner);
+
+		System.out.println("===========++CREATED===============");
+
+		System.out.println(partner.getId());
+
+		System.out.println("===========++CREATED===============");
+
 		return partner;
 	}
 

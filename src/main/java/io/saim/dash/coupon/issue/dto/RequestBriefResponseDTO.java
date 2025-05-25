@@ -23,7 +23,7 @@ public class RequestBriefResponseDTO {
 	private IssueStatus status;
 
 	public RequestBriefResponseDTO(Request request, Boolean isPartnerResponse) {
-		if (!isPartnerResponse) this.partner = request.getPartner();
+		this.partner = request.getPartner();
 
 		this.request_id = request.getRequestId();
 		this.created_at = request.getCreatedAt();

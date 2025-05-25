@@ -46,8 +46,8 @@ public class Request {
 	@JoinColumn(name = "vendor_id", nullable = false)
 	private Vendor vendor;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "partner_partner_id", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "partner_id", nullable = false)
 	private PartnerUser partner;
 
 	@Column(nullable = false)

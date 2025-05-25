@@ -35,7 +35,7 @@ public class IssueRepositoryImpl implements IssueRepository {
 	@Override
 	public List<Issue> findIssuesByVendor(GeneralUser user, BooleanBuilder filter, Integer page, Integer size) {
 		QRequest request = QRequest.request;
-		filter.and(request.vendor.in(user.getVendors()));
+		filter.and(request.vendor.in(user.getUserVendors()));
 		return getIssuedRequests(filter);
 	}
 
