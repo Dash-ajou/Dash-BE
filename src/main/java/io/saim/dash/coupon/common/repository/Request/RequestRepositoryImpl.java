@@ -15,6 +15,7 @@ import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.model.QVendor;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
+import io.saim.dash.coupon.common.model.UserVendor;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.repository.jpa.RequestJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,9 @@ public class RequestRepositoryImpl implements RequestRepository {
 	public List<Request> findRequestsByVendor(GeneralUser user, BooleanBuilder filterBuilder, int page, int size) {
 		QRequest issue = QRequest.request;
 
-		List<Vendor> vendors = user.getUserVendors();
-		if (!vendors.isEmpty()) {
+		List<Vendor> vendors = user.getVendors();
+
+		if (vendors.isEmpty()) {
 			throw new NullPointerException("No Vendor Found");
 		}
 

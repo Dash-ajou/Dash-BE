@@ -53,7 +53,7 @@ public class GeneralUser extends ServiceUser {
 	@JoinColumn(name = "partner_id")
 	private PartnerUser partner;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<UserVendor> userVendors = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -76,7 +76,8 @@ public class GeneralUser extends ServiceUser {
 		this.userVendors.add(link);
 	}
 
-	public List<Vendor> getUserVendors() {
+	public List<Vendor> getVendors() {
+		System.out.println(this.userVendors.size());
 		return this.userVendors.stream()
 			.map(UserVendor::getVendor)
 			.toList();
