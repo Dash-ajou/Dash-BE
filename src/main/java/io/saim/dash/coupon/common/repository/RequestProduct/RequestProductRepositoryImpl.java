@@ -23,8 +23,8 @@ public class RequestProductRepositoryImpl implements RequestProductRepository {
 	public List<RequestProduct> findByFilter(BooleanBuilder filter, Long page, Long size) {
 		QRequestProduct requestProduct = QRequestProduct.requestProduct;
 
-		if (page <= 0) page = 1L;
-		if (size <= 10) size = 10L;
+		if (page == null || page <= 0) page = 1L;
+		if (size == null || size <= 10) size = 10L;
 		else if (size % 10 != 0) size = (size/10)*10;
 
 		return queryFactory

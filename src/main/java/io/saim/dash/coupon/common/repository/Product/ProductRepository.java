@@ -17,4 +17,6 @@ public interface ProductRepository {
 	Product getReferenceById(Long productId);
 
 	List<Product> findByFilter(BooleanBuilder filter, Long page, Long size);
+
+	void saveAll(List<Product> newProducts);
 }

@@ -1,7 +1,10 @@
 package io.saim.dash.coupon.product.dto;
 
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter @RequiredArgsConstructor
 public class ProductFindResponseDTO {
 	private final Long product_id;
 	private final Long partner_id;

@@ -3,6 +3,7 @@ package io.saim.dash.coupon.issue.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
@@ -47,6 +49,7 @@ public class IssueService {
 	private final ProductRepository productRepository;
 
 	private final PartnerUserRepository partnerUserRepository;
+	private final GeneralUserRepository generalUserRepository;
 
 	public List<Request> getRequestsByPartner(
 		ServiceUser user,
@@ -84,8 +87,8 @@ public class IssueService {
 		return request;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
-	public Request createIssueRequest(
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public Request createRequest(
 		ServiceUser serviceUser,
 		String vendorName, String presidentName, String presidentPhone,
 		String businessName, String ownerPhone,
@@ -107,35 +110,54 @@ public class IssueService {
 			.partner(partnerUser)
 			.build();
 
-		addProductsToRequest(productCounts, request);
+		addProductsToRequest(partnerUser, productCounts, request);
 
 		requestRepository.save(request);
 
 		return request;
 	}
 
-	private void addProductsToRequest(List<RequestProductCountDTO> productCounts, Request request) {
-		List<Product> products = getProducts(productCounts);
-		Map<Long, Long> requestProductCounts = getMappedProductCounts(productCounts);
+	private void addProductsToRequest(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts, Request request) {
+		List<Product> products = getProducts(partnerUser, productCounts);
+		Map<String, Long> requestProductCounts = getMappedProductCounts(productCounts, products);
 
 		products.forEach(product -> request.addRequestProduct(
-			product, requestProductCounts.get(product.getProductId())
+			product, requestProductCounts.get(product.getProductName())
 		));
 	}
 
-	private static Map<Long, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts) {
-		Map<Long, Long> requestProductCounts = productCounts.stream()
+	private static Map<String, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts, List<Product> referenceProducts) {
+		Map<String, Long> requestProductCounts = productCounts.stream()
 			.collect(Collectors.toMap(
-				RequestProductCountDTO::getProductId, RequestProductCountDTO::getCount
+				RequestProductCountDTO::getProductName, RequestProductCountDTO::getCount
 			));
 		return requestProductCounts;
 	}
 
-	private List<Product> getProducts(List<RequestProductCountDTO> productCounts) {
+	private List<Product> getProducts(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts) {
 		List<Long> productIds = productCounts.stream()
 			.map(RequestProductCountDTO::getProductId)
 			.toList();
+
+		// 이미 존재하는 productId 추출
 		List<Product> products = productRepository.findAllById(productIds);
+		Set<Long> existingIds = products.stream()
+			.map(Product::getProductId)
+			.collect(Collectors.toSet());
+
+		// 존재하지 않는 ID에 대해 새 Product 생성
+		List<Product> newProducts = productCounts.stream()
+			.filter(dto -> !existingIds.contains(dto.getProductId()))
+			.map(dto -> Product.builder()
+				.partner(partnerUser)
+				.productName(dto.getProductName()) // 임시 이름
+				.price(0L)
+				.build())
+			.collect(Collectors.toList());
+
+		// 기존 + 새 상품을 합침
+		products.addAll(newProducts);
+
 		return products;
 	}
 
@@ -197,9 +219,12 @@ public class IssueService {
 	}
 
 	private Vendor createIssueVendor(
-		GeneralUser serviceUser, String vendorName, String presidentName,
+		GeneralUser loginnedUser, String vendorName, String presidentName,
 		String presidentPhone
 	) {
+		GeneralUser requestUser = generalUserRepository.findById(loginnedUser.getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+
 		Vendor issueVendor = Vendor.builder()
 			.name(vendorName)
 			.presidentName(presidentName)
@@ -207,7 +232,7 @@ public class IssueService {
 			.build();
 
 		vendorRepository.save(issueVendor);
-		serviceUser.addVendor(issueVendor);
+		requestUser.addVendor(issueVendor);
 
 		return issueVendor;
 	}
@@ -218,8 +243,10 @@ public class IssueService {
 		PartnerUser partner = partnerUserRepository.findByPartnerName(businessName).orElse(null);
 		if (partner == null) {
 			partner = PartnerUser.builder()
-				.name(businessName)
+				.partnerName(businessName)
 				.phone(ownerPhone)
+				.isTemporary(true)
+				.temporaryRegisterDate(LocalDateTime.now())
 				.build();
 
 			partnerUserRepository.save(partner);

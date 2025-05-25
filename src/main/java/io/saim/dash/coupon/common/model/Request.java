@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.IssueStatus;
@@ -37,8 +39,8 @@ public class Request {
 	private Long requestId;
 
 	@Column(nullable = false)
-	@CreatedDate
-	private LocalDateTime createdAt;
+	@CreatedDate @Builder.Default
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "vendor_id", nullable = false)
@@ -48,12 +50,14 @@ public class Request {
 	private PartnerUser partner;
 
 	@Column(nullable = false)
+	@Builder.Default
 	private IssueStatus status = IssueStatus.REQUESTED;
 
 	@OneToMany(
 		mappedBy = "request", fetch = FetchType.LAZY,
 		cascade = CascadeType.ALL, orphanRemoval = true
 	)
+	@Builder.Default
 	private List<RequestProduct> requestProducts = new ArrayList<>();
 
 	public void addRequestProduct(Product product, Long quantity) {

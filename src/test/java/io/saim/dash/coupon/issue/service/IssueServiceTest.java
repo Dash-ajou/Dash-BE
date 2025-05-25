@@ -170,7 +170,7 @@ class IssueServiceTest {
 
 	@Test
 	@DisplayName("일반사용자는 쿠폰의 발행요청서를 생성할 수 있다")
-	void createIssueRequestTest() {
+	void createRequestTest() {
 		// given
 		GeneralUser serviceUser = new GeneralUser();
 		List<RequestProductCountDTO> dummyRequestProducts = List.of(
@@ -187,7 +187,7 @@ class IssueServiceTest {
 
 		// when
 
-		Request createdRequest = issueService.createIssueRequest(serviceUser,
+		Request createdRequest = issueService.createRequest(serviceUser,
 			vendorName, presidentName, presidentPhone, businessName, ownerPhone,
 			dummyRequestProducts
 		);
