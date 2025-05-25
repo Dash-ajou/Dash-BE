@@ -1,6 +1,7 @@
 package io.saim.dash.coupon.issue.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
+import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
@@ -76,6 +79,7 @@ public class IssueService {
 		Request request = requestRepository.getById(requestId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 
+		System.out.println("[getRequest()]" + requestUser.getUserType());
 		if (requestUser.isPartner()) {
 			if (!request.isRequestedPartner(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
@@ -161,14 +165,22 @@ public class IssueService {
 		return products;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public IssueResultDTO signRequest(
-		ServiceUser serviceUser, Long requestId,
+		ServiceUser loginUser, Long requestId,
 		IssueStatus status,
 		String paidAtString, List<RequestProductPriceDTO> price, Long discount
 	) {
-		if (!serviceUser.isPartner())
+		if (!loginUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		PartnerUser serviceUser = partnerUserRepository.findById(((PartnerUser)loginUser).getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+		serviceUser.setUserType(UserType.PARTNER); // TODO: 원인미상의 usertype drop
+
+		System.out.println("[ID]" + serviceUser.getId());
+		System.out.println("[EMAIL]" + serviceUser.getEmail());
+		System.out.println("[TEMP]" + serviceUser.isTemporary());
 
 		if (
 			(status == IssueStatus.APPROVED && (paidAtString == null || price.isEmpty())) ||
@@ -187,7 +199,8 @@ public class IssueService {
 		if (status == IssueStatus.DENIED)
 			return new IssueResultDTO(request);
 
-		return issueCoupon(request, LocalDateTime.parse(paidAtString), paidPrice);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return issueCoupon(request, LocalDateTime.parse(paidAtString, formatter), paidPrice);
 	}
 
 	private void updateProductPriceInfo(Request request, List<RequestProductPriceDTO> price) {
@@ -207,12 +220,15 @@ public class IssueService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean deleteIssueRequest(
-		ServiceUser serviceUser, Long requestId
+		ServiceUser loginUser, Long requestId
 	) {
-		if (serviceUser.isPartner())
+		if (loginUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Request request = getRequest(requestId, serviceUser);
+		GeneralUser requestedUser = generalUserRepository.findById(((GeneralUser)loginUser).getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+
+		Request request = getRequest(requestId, requestedUser);
 		requestRepository.delete(request);
 
 		return true;
@@ -240,7 +256,7 @@ public class IssueService {
 	private PartnerUser getRequestPartner(
 		String businessName, String ownerPhone
 	) {
-		PartnerUser partner = partnerUserRepository.findByPartnerName(businessName).orElse(null);
+		PartnerUser partner = partnerUserRepository.findByPhone(ownerPhone).orElse(null);
 		if (partner == null) {
 			partner = PartnerUser.builder()
 				.partnerName(businessName)
@@ -264,6 +280,7 @@ public class IssueService {
 			.build();
 
 		List<Coupon> issuedCoupons = createCoupons(issue);
+		issue.addCoupons(issuedCoupons);
 		issueRepository.save(issue);
 		return new IssueResultDTO(issue);
 	}
@@ -274,6 +291,7 @@ public class IssueService {
 				.product(requestProduct.getProduct())
 				.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
 				.price(requestProduct.getPrice())
+				.couponStatus(CouponStatus.REGISTERABLE)
 				.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
 				.issue(issue)
 				.build()

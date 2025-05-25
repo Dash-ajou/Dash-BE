@@ -55,7 +55,7 @@ public class Issue {
 	private Long paidPrice;
 
 	@CreatedDate
-	private LocalDateTime decidedAt;
+	private LocalDateTime decidedAt = LocalDateTime.now();
 
 	@Builder
 	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
@@ -66,6 +66,7 @@ public class Issue {
 		this.issueCnt = issueCnt;
 		this.usedCnt = usedCnt;
 		this.issueActiveStatus = issueActiveStatus;
+		this.decidedAt = LocalDateTime.now();
 	}
 
 	public Long increaseUsedCnt() {
@@ -74,5 +75,9 @@ public class Issue {
 
 	public Long decreaseUsedCnt() {
 		return --this.usedCnt;
+	}
+
+	public void addCoupons(List<Coupon> issuedCoupons) {
+		this.coupons.addAll(issuedCoupons);
 	}
 }

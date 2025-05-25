@@ -54,7 +54,7 @@ public class Vendor {
 	}
 
 	public boolean isMemberIncluded(ServiceUser user) {
-		if (!GeneralUser.isGeneralUser(user))
+		if (user.isPartner())
 			return false;
 
 		return this.getVendorUsers().contains(user);

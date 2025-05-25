@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
@@ -40,17 +41,16 @@ public class IssueController {
 		@RequestParam(required = false) String owner_phone,
 		@RequestParam(required = false) IssueStatus status
 	) {
-		ServiceUser user = customUserDetails.getGeneralUser();
-		if (user == null) user = customUserDetails.getPartnerUser();
+		ServiceUser loginUser = getLoginUser(customUserDetails);
 
 		List<Request> userRequestList = issueService.getRequestsByPartner(
-			user,
+			loginUser,
 			page, size,
 			createat_start, createat_end,
 			business_name, owner_phone, status
 		);
 
-		ServiceUser finalUser = user;
+		ServiceUser finalUser = loginUser;
 		List<RequestBriefResponseDTO> issueRequestList = userRequestList.stream()
 			.map(request -> new RequestBriefResponseDTO(request, finalUser.isPartner()))
 			.toList();
@@ -78,8 +78,7 @@ public class IssueController {
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestBody RequestCreateRequestDTO RequestCreateRequestDTO
 	) {
-		ServiceUser user = customUserDetails.getGeneralUser();
-		if (user == null) user = customUserDetails.getPartnerUser();
+		ServiceUser user = getLoginUser(customUserDetails);
 
 		VendorDTO vendor = RequestCreateRequestDTO.getVendor();
 		PartnerDTO partner = RequestCreateRequestDTO.getPartner();
@@ -96,12 +95,14 @@ public class IssueController {
 
 	@PostMapping("/{issueId}/sign")
 	public SignResponseDTO signIssue(
-		@AuthenticationPrincipal ServiceUser serviceUser,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId,
 		@RequestBody RequestSignRequestDTO RequestSignRequestDTO
 	) {
+		ServiceUser user = getLoginUser(customUserDetails);
+
 		IssueResultDTO issueResult = issueService.signRequest(
-			serviceUser, issueId,
+			user, issueId,
 			RequestSignRequestDTO.getStatus(),
 			RequestSignRequestDTO.getPayment().getPaidAt(),
 			RequestSignRequestDTO.getPayment().getPrices(),
@@ -121,9 +122,21 @@ public class IssueController {
 
 	@DeleteMapping("/{issueId}")
 	public Boolean deleteIssue(
-		@AuthenticationPrincipal ServiceUser serviceUser,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId
 	) {
-		return issueService.deleteIssueRequest(serviceUser, issueId);
+		ServiceUser user = getLoginUser(customUserDetails);
+		return issueService.deleteIssueRequest(user, issueId);
+	}
+
+	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {
+		ServiceUser user;
+		try {
+			user = customUserDetails.getGeneralUser();
+		} catch (Exception e) {
+			user = customUserDetails.getPartnerUser();
+		}
+		user.setUserType(UserType.valueOf(customUserDetails.getUserType()));
+		return user;
 	}
 }
