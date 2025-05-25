@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 public class PartnerSignupRequestDTO {
 
-	@NotBlank
+	@NotBlank(message = "비밀번호는 필수입니다.")
 	@JsonProperty("password")
 	private String password;
 
-	@NotBlank
+	@NotBlank(message = "비밀번호 확인은 필수입니다.")
 	@JsonProperty("password_confirm")
 	private String passwordConfirm;
 
@@ -27,6 +27,7 @@ public class PartnerSignupRequestDTO {
 	@JsonProperty("owner_name")
 	private String ownerName;
 
+	@NotBlank(message = "전화번호는 필수입니다.")
 	@JsonProperty("owner_phone")
 	private String ownerPhone;
 

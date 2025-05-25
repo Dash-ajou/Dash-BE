@@ -27,15 +27,10 @@ public class PartnerService {
 	@Transactional
 	public CommonResponseDTO<PartnerSignupResponseDTO> registerPartner(PartnerSignupRequestDTO requestDTO) {
 
-		//필수값 검증
-		if (requestDTO.getPartnerName() == null || requestDTO.getPartnerName().isBlank()) {
-			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("파트너 상호명"));
-		}
 		if (requestDTO.getOwnerPhone() == null || requestDTO.getOwnerPhone().isBlank()) {
 			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("전화번호"));
 		}
 
-		//이메일 중복 체크
 		if (requestDTO.getOwnerEmail() != null && !requestDTO.getOwnerEmail().isBlank()) {
 			if (partnerRepository.findByEmail(requestDTO.getOwnerEmail()).isPresent()) {
 				throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("이메일"));
@@ -43,17 +38,17 @@ public class PartnerService {
 		}
 
 		//비밀번호 검증 및 기본값 처리
-		String rawPassword = (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank())
-			? requestDTO.getPassword()
-			: "Temp@1234";
-
-		if (requestDTO.getPassword() != null && !requestDTO.getPassword().isBlank()) {
-			if (!requestDTO.getPassword().equals(requestDTO.getPasswordConfirm())) {
-				throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("비밀번호 확인"));
-			}
+		if (requestDTO.getPassword() == null || requestDTO.getPassword().isBlank()) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("비밀번호"));
+		}
+		if (requestDTO.getPasswordConfirm() == null || requestDTO.getPasswordConfirm().isBlank()) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("비밀번호 확인"));
+		}
+		if (!requestDTO.getPassword().equals(requestDTO.getPasswordConfirm())) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT.replaceArg("비밀번호 확인"));
 		}
 
-		String hashedPassword = passwordEncoder.encode(rawPassword);
+		String hashedPassword = passwordEncoder.encode(requestDTO.getPassword());
 
 		PartnerUser partner = PartnerUser.builder()
 			.partnerName(requestDTO.getPartnerName())

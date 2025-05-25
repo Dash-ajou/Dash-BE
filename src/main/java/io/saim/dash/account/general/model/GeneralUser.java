@@ -28,13 +28,13 @@ public class GeneralUser extends ServiceUser {
 	@Column(name = "general_id")
 	private Long id;
 
-	@Column(name = "owner_name", nullable = false)
+	@Column(name = "owner_name", nullable = true)
 	private String ownerName;
 
-	@Column(name = "owner_email", nullable = false, unique = true)
+	@Column(name = "owner_email", nullable = true, unique = true)
 	private String ownerEmail;
 
-	@Column(name = "owner_phone", nullable = false, unique = true)
+	@Column(name = "owner_phone", nullable = true, unique = true)
 	private String ownerPhone;
 
 	@Column(name = "joined_at", nullable = false)

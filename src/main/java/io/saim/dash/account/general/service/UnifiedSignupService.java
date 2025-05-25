@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,20 @@ public class UnifiedSignupService {
 
 	@Transactional
 	public SignupCompleteResponseDTO signup(UnifiedSignupRequestDTO dto) {
+		if (dto.getUserType() == null || dto.getUserType().isBlank()) {
+			if (dto.getOwnerPhone() != null && !dto.getOwnerPhone().isBlank()) {
+				dto.setUserType("PARTNER");
+			} else if (dto.getGeneralPhone() != null && !dto.getGeneralPhone().isBlank()) {
+				dto.setUserType("GENERAL");
+			} else {
+				throw new IllegalArgumentException("user_type을 유추할 수 없습니다. 전화번호 정보가 부족합니다.");
+			}
+		}
+
+		if (dto.getPassword() == null || dto.getPasswordConfirm() == null ||
+			dto.getPassword().isBlank() || dto.getPasswordConfirm().isBlank()) {
+			throw new IllegalArgumentException("비밀번호와 비밀번호 확인은 모두 필수입니다.");
+		}
 		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
@@ -33,13 +48,20 @@ public class UnifiedSignupService {
 		String encodedPassword = passwordEncoder.encode(dto.getPassword().trim());
 
 		if ("GENERAL".equalsIgnoreCase(dto.getUserType())) {
-			String safeEmail = dto.getGeneralEmail() != null ? dto.getGeneralEmail().trim() : "";
+			String safeName = dto.getGeneralName() != null && !dto.getGeneralName().isBlank()
+				? dto.getGeneralName().trim() : "이름없음";
+
+			String safePhone = dto.getGeneralPhone() != null && !dto.getGeneralPhone().isBlank()
+				? dto.getGeneralPhone().trim() : "00000000000";
+
+			String safeEmail = dto.getGeneralEmail() != null && !dto.getGeneralEmail().isBlank()
+				? dto.getGeneralEmail().trim() : UUID.randomUUID().toString().substring(0, 8) + "@dummy.com";
 
 			GeneralUser user = GeneralUser.builder()
-				.ownerName(dto.getGeneralName())
-				.name(dto.getGeneralName())
-				.ownerPhone(dto.getGeneralName())
-				.phone(dto.getGeneralPhone())
+				.ownerName(safeName)
+				.name(safeName)
+				.ownerPhone(safePhone)
+				.phone(safePhone)
 				.ownerEmail(safeEmail)
 				.email(safeEmail)
 				.vendorGroupId(1L)
