@@ -38,6 +38,11 @@ public class PartnerService {
 			throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("전화번호"));
 		}
 
+		PartnerUser existingPartner = partnerRepository.findByPhone(requestDTO.getOwnerPhone()).orElse(null);
+		if (existingPartner != null && !existingPartner.isTemporary()) {
+			throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("전화번호"));
+		}
+
 		if (requestDTO.getOwnerEmail() != null && !requestDTO.getOwnerEmail().isBlank()) {
 			if (partnerRepository.findByEmail(requestDTO.getOwnerEmail()).isPresent()) {
 				throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED.replaceArg("이메일"));
@@ -57,33 +62,45 @@ public class PartnerService {
 
 		String hashedPassword = passwordEncoder.encode(requestDTO.getPassword());
 
-		PartnerUser partner = PartnerUser.builder()
-			.partnerName(requestDTO.getPartnerName())
-			.partnerAddress(requestDTO.getPartnerAddress())
-			.name(requestDTO.getOwnerName())
-			.phone(requestDTO.getOwnerPhone())
-			.email(requestDTO.getOwnerEmail())
-			.isTemporary(requestDTO.isTemporary())
-			.temporaryRegisterDate(requestDTO.getTemporaryRegisterDate() != null
-				? requestDTO.getTemporaryRegisterDate()
-				: LocalDateTime.now())
-			.password(hashedPassword)
-			.build();
-
 		try {
-			PartnerUser savedPartner = partnerRepository.save(partner);
+			PartnerUser partner;
+
+			if (existingPartner != null && existingPartner.isTemporary()) {
+				existingPartner.setPartnerName(requestDTO.getPartnerName());
+				existingPartner.setPartnerAddress(requestDTO.getPartnerAddress());
+				existingPartner.setName(requestDTO.getOwnerName());
+				existingPartner.setEmail(requestDTO.getOwnerEmail());
+				existingPartner.setPassword(hashedPassword);
+				existingPartner.setTemporary(false);
+				existingPartner.setTemporaryRegisterDate(LocalDateTime.now());
+
+				partner = partnerRepository.save(existingPartner);
+			} else {
+				partner = PartnerUser.builder()
+					.partnerName(requestDTO.getPartnerName())
+					.partnerAddress(requestDTO.getPartnerAddress())
+					.name(requestDTO.getOwnerName())
+					.phone(requestDTO.getOwnerPhone())
+					.email(requestDTO.getOwnerEmail())
+					.isTemporary(false)
+					.temporaryRegisterDate(LocalDateTime.now())
+					.password(hashedPassword)
+					.build();
+
+				partner = partnerRepository.save(partner);
+			}
 
 			return new CommonResponseDTO<>(
 				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
 				APIStatus.SUCCESS,
 				"파트너 정보가 성공적으로 저장되었습니다.",
 				new PartnerSignupResponseDTO(
-					savedPartner.getId(),
-					savedPartner.getPartnerName(),
-					savedPartner.getPartnerAddress(),
-					savedPartner.isTemporary(),
-					savedPartner.getTemporaryRegisterDate() != null ?
-						savedPartner.getTemporaryRegisterDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+					partner.getId(),
+					partner.getPartnerName(),
+					partner.getPartnerAddress(),
+					partner.isTemporary(),
+					partner.getTemporaryRegisterDate() != null ?
+						partner.getTemporaryRegisterDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 						: null
 				)
 			);
