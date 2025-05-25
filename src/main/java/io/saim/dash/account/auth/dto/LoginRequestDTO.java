@@ -21,7 +21,6 @@ public class LoginRequestDTO {
 	@JsonProperty("user_password")
 	private String userPassword;
 
-	@NotBlank(message = "사용자 타입은 필수입니다.")
 	@JsonProperty("user_type")
 	private String userType;
 }

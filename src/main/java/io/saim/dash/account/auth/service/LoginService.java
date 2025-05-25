@@ -30,6 +30,22 @@ public class LoginService {
 	public LoginResponseDTO login(String userPhone, String rawPassword, HttpSession session) {
 		String requestedUserType = (String) session.getAttribute("user_type");
 
+		if (requestedUserType == null || requestedUserType.isBlank()) {
+			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
+			if (generalUserOpt.isPresent()) {
+				session.setAttribute("user_type", "GENERAL");
+				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
+			}
+
+			Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
+			if (partnerUserOpt.isPresent()) {
+				session.setAttribute("user_type", "PARTNER");
+				return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
+			}
+
+			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
+		}
+
 		if ("GENERAL".equalsIgnoreCase(requestedUserType)) {
 			GeneralUser generalUser = signupNameRepository.findByPhone(userPhone)
 				.orElseThrow(() -> new IllegalArgumentException("일반 사용자로 등록되지 않은 전화번호입니다."));
@@ -41,18 +57,7 @@ public class LoginService {
 			return authenticatePartnerUser(partnerUser, rawPassword, session);
 
 		} else {
-			// fallback: user_type이 명시되지 않은 경우 기존 방식 유지
-			Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
-			if (generalUserOpt.isPresent()) {
-				return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
-			}
-
-			Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
-			if (partnerUserOpt.isPresent()) {
-				return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
-			}
-
-			throw new IllegalArgumentException("등록되지 않은 전화번호입니다.");
+			throw new IllegalArgumentException("지원하지 않는 사용자 타입입니다.");
 		}
 	}
 

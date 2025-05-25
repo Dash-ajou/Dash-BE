@@ -16,7 +16,6 @@ import lombok.Setter;
 @Builder
 public class UnifiedSignupRequestDTO {
 
-	@NotBlank
 	@JsonProperty("general_name")
 	private String generalName;
 
@@ -28,7 +27,6 @@ public class UnifiedSignupRequestDTO {
 	@JsonProperty("password_confirm")
 	private String passwordConfirm;
 
-	@NotBlank
 	@JsonProperty("user_type")
 	private String userType;
 
