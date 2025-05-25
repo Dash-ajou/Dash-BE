@@ -80,9 +80,9 @@ public class LoginService {
 			throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
 		}
 
-		setAuthentication(user);
 		session.setAttribute("userType", "PARTNER");
 		session.setAttribute("userId", user.getId());
+		setAuthentication(user);
 
 		return createLoginResponse(user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}
