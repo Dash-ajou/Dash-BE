@@ -17,6 +17,7 @@ import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.QCoupon;
+import io.saim.dash.coupon.common.model.QCouponRegistration;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QProduct;
 import io.saim.dash.coupon.common.model.QRequest;
@@ -70,21 +71,13 @@ public class CouponRepositoryImpl implements CouponRepository {
 	@Override
 	public List<Coupon> findByGeneralUserId(Long generalUserId) {
 		QCoupon c = QCoupon.coupon;
-		QIssue i = QIssue.issue;
-		QRequest r = QRequest.request;
-		QVendor v = QVendor.vendor;
-		QUserVendor uv = QUserVendor.userVendor;
-		QGeneralUser gu = QGeneralUser.generalUser;
+		QCouponRegistration cr = QCouponRegistration.couponRegistration;
 
 		return queryFactory
 			.select(c)
 			.from(c)
-			.join(c.issue, i)
-			.join(i.request, r)
-			.join(r.vendor, v)
-			.join(v.vendorUsers, uv)
-			.join(uv.user, gu)
-			.where(gu.id.eq(generalUserId))
+			.join(cr).on(cr.coupon.eq(c))
+			.where(cr.registeredUser.id.eq(generalUserId))
 			.fetch();
 	}
 
