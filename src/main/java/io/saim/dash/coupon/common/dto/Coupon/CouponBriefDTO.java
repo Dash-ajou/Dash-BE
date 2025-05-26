@@ -1,5 +1,9 @@
 package io.saim.dash.coupon.common.dto.Coupon;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.saim.dash.coupon.common.model.Coupon;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +18,9 @@ public class CouponBriefDTO {
 	private final long product_id; // 상품ID
 	private final String register_code; // 쿠폰등록코드
 	private final CouponStatus status; // 쿠폰상태
-	private final String expired_at; // 쿠폰 만료일자
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private final LocalDateTime expired_at; // 쿠폰 만료일자
 
 	public CouponBriefDTO(Coupon coupon) {
 		this.coupon_id = coupon.getCouponId();
@@ -22,6 +28,6 @@ public class CouponBriefDTO {
 		this.product_id = coupon.getProduct().getProductId();
 		this.register_code = coupon.getRegistrationCode();
 		this.status = coupon.getCouponStatus();
-		this.expired_at = coupon.getExpiredAt().toString();
+		this.expired_at = coupon.getExpiredAt();
 	}
 }

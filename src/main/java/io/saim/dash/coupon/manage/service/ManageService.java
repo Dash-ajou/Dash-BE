@@ -80,7 +80,13 @@ public class ManageService {
 		Integer page, Integer size,
 		Long issueId
 	) {
-		ServiceUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+		ServiceUser user;
+		if (loginUser.isPartner()) {
+			user = partnerUserRepository.getById(((PartnerUser)loginUser).getId());
+		} else {
+			user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+		}
+		user.setUserType(loginUser.getUserType());
 
 		getIssue(user, issueId);
 		List<Coupon> savedCoupons = couponRepository.findCouponsByIssueId(
@@ -127,13 +133,14 @@ public class ManageService {
 		return new PauseCouponsResultDTO(issue.getIssueCnt(), updatedCounts);
 	}
 
-	private Issue getIssue(ServiceUser loginUser, Long issueId) {
-		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
-
+	private Issue getIssue(ServiceUser user, Long issueId) {
 		Issue issue = issueRepository.getById(issueId);
 		if (issue == null)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND);
-		if (!issue.getRequest().getVendor().isMemberIncluded(user))
+		if (!user.isPartner() && !issue.getRequest().getVendor().isMemberIncluded(user))
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		if (user.isPartner() && !issue.getRequest().getPartner().equals(user))
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		return issue;
