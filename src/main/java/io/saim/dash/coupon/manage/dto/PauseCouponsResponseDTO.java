@@ -3,13 +3,17 @@ package io.saim.dash.coupon.manage.dto;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@Builder @Getter
 public class PauseCouponsResponseDTO {
-	private final Long issue_id;
-	private final Long issue_count;
-	private final Long deactive_count;
-	private final Long active_count;
+	private Long issue_id;
+	private Long issue_count;
+	private Long deactive_count;
+	private Long active_count;
 
 	public PauseCouponsResponseDTO(Long issueId, IssueActiveStatus status, PauseCouponsResultDTO pauseCouponsResultDTO) {
 		this.issue_id = issueId;
