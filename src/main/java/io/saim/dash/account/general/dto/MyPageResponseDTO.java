@@ -1,5 +1,7 @@
 package io.saim.dash.account.general.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +27,10 @@ public class MyPageResponseDTO {
 	@Setter
 	@AllArgsConstructor
 	public static class CouponStatus {
+		@JsonProperty("usable_coupons")
 		private int usableCoupons;
+
+		@JsonProperty("used_coupons")
 		private int usedCoupons;
 	}
 
