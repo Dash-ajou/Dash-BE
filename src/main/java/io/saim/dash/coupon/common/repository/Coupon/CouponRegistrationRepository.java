@@ -16,7 +16,7 @@ public interface CouponRegistrationRepository {
 
 	boolean existsByCoupon(Coupon coupon);
 
-	List<CouponRegistration> findByMemberIdAndCouponStatus(Long memberId, CouponStatus status);
+	List<CouponRegistration> findByRegisteredUserIdAndIsValid(Long userId, Boolean isValid);
 
 	void save(CouponRegistration couponRegistration);
 }

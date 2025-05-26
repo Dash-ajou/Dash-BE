@@ -15,8 +15,8 @@ public class CouponStatusService {
 	private final CouponRegistrationRepository couponRegistrationRepository;
 
 	public Map<String, Integer> getCouponStatus(Long userId) {
-		int usable = couponRegistrationRepository.findByMemberIdAndCouponStatus(userId, CouponStatus.USABLE).size();
-		int used = couponRegistrationRepository.findByMemberIdAndCouponStatus(userId, CouponStatus.USED).size();
+		int usable = couponRegistrationRepository.findByRegisteredUserIdAndIsValid(userId, true).size();
+		int used = couponRegistrationRepository.findByRegisteredUserIdAndIsValid(userId, false).size();
 
 		Map<String, Integer> result = new HashMap<>();
 		result.put("usable_count", usable);
