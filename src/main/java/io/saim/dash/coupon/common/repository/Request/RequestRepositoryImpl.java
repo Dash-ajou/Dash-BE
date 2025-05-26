@@ -12,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.model.QPartnerUser;
+import io.saim.dash.coupon.common.model.QUserVendor;
 import io.saim.dash.coupon.common.model.QVendor;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.model.QRequest;
@@ -70,6 +71,11 @@ public class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	@Override
+	public void flush() {
+		requestJpaRepository.flush();
+	}
+
+	@Override
 	public Request getReferenceById(Long requestId) {
 		return requestJpaRepository.getReferenceById(requestId);
 	}
@@ -78,7 +84,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 		return queryFactory
 			.selectFrom(request)
 			.join(request.vendor, QVendor.vendor)
-			.join(request.partner, QPartnerUser.partnerUser)
 			.where(filterBuilder)
 			.orderBy(request.createdAt.desc()); // 최신요청 순
 	}

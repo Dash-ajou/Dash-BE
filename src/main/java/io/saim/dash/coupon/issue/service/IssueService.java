@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import com.querydsl.core.BooleanBuilder;
 
@@ -53,6 +54,7 @@ public class IssueService {
 
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
+	private final NativeWebRequest nativeWebRequest;
 
 	@Transactional
 	public List<Request> getRequests(
@@ -68,11 +70,21 @@ public class IssueService {
 
 		if(user.isPartner()) {
 			assert user instanceof PartnerUser;
-			return requestRepository.findRequestsByPartner((PartnerUser)user, filterBuilder, page, size);
+			PartnerUser serviceUser = partnerUserRepository.findById(((PartnerUser)user).getId()).orElse(null);
+			if (serviceUser == null) {
+				throw new ServiceException(ServiceExceptionContent.USER_NOT_FOUND);
+			}
+
+			return requestRepository.findRequestsByPartner(serviceUser, filterBuilder, page, size);
 		}
 
 		assert user instanceof GeneralUser;
-		return requestRepository.findRequestsByVendor((GeneralUser)user, filterBuilder, page, size);
+		GeneralUser serviceUser = generalUserRepository.findById(((GeneralUser)user).getId()).orElse(null);
+		if (serviceUser == null) {
+			throw new ServiceException(ServiceExceptionContent.USER_NOT_FOUND);
+		}
+
+		return requestRepository.findRequestsByVendor(serviceUser, filterBuilder, page, size);
 	}
 
 	public Request getRequest(Long requestId, ServiceUser requestUser) throws ServiceException {
@@ -117,6 +129,7 @@ public class IssueService {
 		addProductsToRequest(partnerUser, productCounts, request);
 
 		requestRepository.save(request);
+		requestRepository.flush();
 
 		return request;
 	}
