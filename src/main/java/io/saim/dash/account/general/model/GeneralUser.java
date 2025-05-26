@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -81,5 +82,18 @@ public class GeneralUser extends ServiceUser {
 		return this.userVendors.stream()
 			.map(UserVendor::getVendor)
 			.toList();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		GeneralUser that = (GeneralUser) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
 	}
 }
