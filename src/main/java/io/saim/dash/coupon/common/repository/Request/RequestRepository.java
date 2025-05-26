@@ -22,6 +22,8 @@ public interface RequestRepository {
 
 	void delete(Request request);
 
+	void flush();
+
 	// List<Issue> getIssueByUserId(Long userId);
 
 	Request getReferenceById(Long requestId);

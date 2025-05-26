@@ -25,12 +25,12 @@ public class RequestProductRepositoryImpl implements RequestProductRepository {
 
 		if (page == null || page <= 0) page = 1L;
 		if (size == null || size <= 10) size = 10L;
-		else if (size % 10 != 0) size = (size/10)*10;
+		// else if (size % 10 != 0) size = (size/10)*10;
 
 		return queryFactory
 			.selectFrom(requestProduct)
 			.where(filter)
-			.offset(page * size).limit(size)
+			.offset((page-1) * size).limit(size)
 			.fetch();
 	}
 }
