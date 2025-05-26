@@ -79,7 +79,6 @@ public class IssueService {
 		Request request = requestRepository.getById(requestId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 
-		System.out.println("[getRequest()]" + requestUser.getUserType());
 		if (requestUser.isPartner()) {
 			if (!request.isRequestedPartner(requestUser))
 				throw new ServiceException(ServiceExceptionContent.ISSUE_FORBIDDEN);
@@ -286,6 +285,7 @@ public class IssueService {
 			.paidAt(paidAt)
 			.paidPrice(paidPrice)
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
+			.usedCnt(0L)
 			.issueActiveStatus(IssueActiveStatus.ENABLED)
 			.build();
 

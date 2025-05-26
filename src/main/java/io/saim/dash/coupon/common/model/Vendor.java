@@ -56,8 +56,12 @@ public class Vendor {
 	public boolean isMemberIncluded(ServiceUser user) {
 		if (user.isPartner())
 			return false;
+		if (!(user instanceof GeneralUser generalUser))
+			return false;
 
-		return this.getVendorUsers().contains(user);
+		return this.vendorUsers.stream()
+			.map(UserVendor::getUser)
+			.anyMatch(vu -> vu.getId().equals(generalUser.getId()));
 	}
 
 	private List<GeneralUser> getVendorUsers() {

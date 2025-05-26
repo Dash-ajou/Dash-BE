@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -54,6 +56,7 @@ public class Coupon {
 
 	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime expiredAt = LocalDateTime.now().plusMonths(1);
 
 	@Builder

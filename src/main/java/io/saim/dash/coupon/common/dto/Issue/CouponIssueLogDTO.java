@@ -3,6 +3,8 @@ package io.saim.dash.coupon.common.dto.Issue;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Issue;
@@ -17,6 +19,8 @@ public class CouponIssueLogDTO {
 	private PartnerUser partner;
 	private Long issueId;
 	private IssueActiveStatus issueActiveStatus;
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime issuedAt;
 	private Long issueCnt;
 	private Long usedCnt;

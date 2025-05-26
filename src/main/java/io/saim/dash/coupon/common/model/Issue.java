@@ -6,11 +6,16 @@ import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,7 +38,9 @@ public class Issue {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long issueId;
 
-	@Embedded @Setter
+	@Enumerated(EnumType.STRING)
+	@Setter
+	@Column(name = "issue_active_status")
 	private IssueActiveStatus issueActiveStatus;
 
 	@OneToOne(fetch = FetchType.EAGER)

@@ -16,6 +16,7 @@ import io.saim.dash.coupon.issue.dto.RequestSignRequestDTO;
 import io.saim.dash.coupon.issue.dto.RequestCreateRequestDTO;
 import io.saim.dash.coupon.issue.dto.RequestBriefResponseDTO;
 import io.saim.dash.coupon.common.dto.Issue.IssueResultDTO;
+import io.saim.dash.coupon.issue.dto.RequestSpecResponseDTO;
 import io.saim.dash.coupon.issue.dto.SignResponseDTO;
 import io.saim.dash.global.dto.PagingResponse;
 import io.saim.dash.security.CustomUserDetails;
@@ -62,15 +63,14 @@ public class IssueController {
 	}
 
 	@GetMapping("/spec/{issueId}")
-	public RequestBriefResponseDTO getIssueRequestSpec(
+	public RequestSpecResponseDTO getIssueRequestSpec(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@PathVariable Long issueId
 	) {
-		ServiceUser user = customUserDetails.getGeneralUser();
-		if (user == null) user = customUserDetails.getPartnerUser();
+		ServiceUser user = getLoginUser(customUserDetails);
 
 		Request request = issueService.getRequest(issueId, user);
-		return new RequestBriefResponseDTO(request, user.isPartner());
+		return new RequestSpecResponseDTO(request, user.isPartner());
 	}
 
 	@PostMapping("/request")

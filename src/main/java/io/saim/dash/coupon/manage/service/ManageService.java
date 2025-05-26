@@ -9,7 +9,9 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
@@ -38,6 +40,8 @@ public class ManageService {
 	private final IssueRepository issueRepository;
 	private final CouponRepository couponRepository;
 	private final CouponRegistrationRepository couponRegistrationRepository;
+	private final PartnerUserRepository partnerUserRepository;
+	private final GeneralUserRepository generalUserRepository;
 
 	public List<CouponIssueLogDTO> getIssuedRequests(
 		ServiceUser user,
@@ -51,15 +55,16 @@ public class ManageService {
 
 		List<Issue> issues;
 		if (user.isPartner()) {
-			assert user instanceof PartnerUser;
+			PartnerUser partnerUser = partnerUserRepository.getById(((PartnerUser)user).getId());
+
 			issues = issueRepository.findIssuesByPartner(
-				(PartnerUser)user, filterBuilder,
+				partnerUser, filterBuilder,
 				page, size
 			);
 		} else {
-			assert user instanceof GeneralUser;
+			GeneralUser generalUser = generalUserRepository.getById(((GeneralUser)user).getId());
 			issues = issueRepository.findIssuesByVendor(
-				(GeneralUser) user, filterBuilder,
+				generalUser, filterBuilder,
 				page, size
 			);
 		}
@@ -71,10 +76,18 @@ public class ManageService {
 	}
 
 	public List<CouponBriefDTO> getCouponsByIssueId(
-		ServiceUser user,
+		ServiceUser loginUser,
 		Integer page, Integer size,
 		Long issueId
 	) {
+		ServiceUser user;
+		if (loginUser.isPartner()) {
+			user = partnerUserRepository.getById(((PartnerUser)loginUser).getId());
+		} else {
+			user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+		}
+		user.setUserType(loginUser.getUserType());
+
 		getIssue(user, issueId);
 		List<Coupon> savedCoupons = couponRepository.findCouponsByIssueId(
 			issueId
@@ -86,9 +99,11 @@ public class ManageService {
 	}
 
 	public RegisteredCouponDTO getCouponByCouponId(
-		ServiceUser user,
+		ServiceUser loginUser,
 		Long issueId, Long couponId
 	) {
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -99,7 +114,11 @@ public class ManageService {
 	}
 
 	@Transactional
-	public PauseCouponsResultDTO updateCouponsPauseStatus(ServiceUser user, Long issueId, IssueActiveStatus status) {
+	public PauseCouponsResultDTO updateCouponsPauseStatus(
+		ServiceUser loginUser, Long issueId, IssueActiveStatus status
+	) {
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -118,7 +137,10 @@ public class ManageService {
 		Issue issue = issueRepository.getById(issueId);
 		if (issue == null)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND);
-		if (!issue.getRequest().getVendor().isMemberIncluded(user))
+		if (!user.isPartner() && !issue.getRequest().getVendor().isMemberIncluded(user))
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		if (user.isPartner() && !issue.getRequest().getPartner().equals(user))
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		return issue;
@@ -126,9 +148,11 @@ public class ManageService {
 
 	@Transactional
 	public CouponRegistration cancelCouponRegistration(
-		ServiceUser user,
+		ServiceUser loginUser,
 		Long issueId, Long couponId
 	) {
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -139,7 +163,9 @@ public class ManageService {
 		return registration;
 	}
 
-	public Boolean checkIssueCancellable(ServiceUser user, Long issueId) {
+	public Boolean checkIssueCancellable(ServiceUser loginUser, Long issueId) {
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -151,7 +177,9 @@ public class ManageService {
 	}
 
 	@Transactional
-	public CancelIssueResultDTO cancelIssue(ServiceUser user, Long issueId) {
+	public CancelIssueResultDTO cancelIssue(ServiceUser loginUser, Long issueId) {
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
