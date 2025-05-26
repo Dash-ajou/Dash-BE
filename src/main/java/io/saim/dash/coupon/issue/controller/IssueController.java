@@ -104,9 +104,7 @@ public class IssueController {
 		IssueResultDTO issueResult = issueService.signRequest(
 			user, issueId,
 			RequestSignRequestDTO.getStatus(),
-			RequestSignRequestDTO.getPayment().getPaidAt(),
-			RequestSignRequestDTO.getPayment().getPrices(),
-			RequestSignRequestDTO.getPayment().getDiscount()
+			RequestSignRequestDTO.getPayment()
 		);
 
 		IssueStatus updatedStatus = issueResult.getRequets().getStatus();

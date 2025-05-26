@@ -23,6 +23,7 @@ import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
+import io.saim.dash.coupon.common.dto.Request.RequestPaymentInfo;
 import io.saim.dash.coupon.common.dto.Request.RequestProductCountDTO;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
@@ -182,7 +183,7 @@ public class IssueService {
 	public IssueResultDTO signRequest(
 		ServiceUser loginUser, Long requestId,
 		IssueStatus status,
-		String paidAtString, List<RequestProductPriceDTO> price, Long discount
+		RequestPaymentInfo paymentInfo
 	) {
 		if (!loginUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
@@ -196,22 +197,29 @@ public class IssueService {
 		System.out.println("[EMAIL]" + serviceUser.getEmail());
 		System.out.println("[TEMP]" + serviceUser.isTemporary());
 
-		if (
-			(status == IssueStatus.APPROVED && (paidAtString == null || price.isEmpty())) ||
-			(status == IssueStatus.REQUESTED)
-		)
+		if (status == IssueStatus.REQUESTED)
 			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
 
 		Request request = getRequest(requestId, serviceUser);
 		if (request.getStatus() != IssueStatus.REQUESTED)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_ALREADY_SIGNED);
 
+		if (status == IssueStatus.DENIED) {
+			updateIssueRequestStatus(request, status);
+			return new IssueResultDTO(request);
+		}
+
+		if (paymentInfo == null)
+			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
+
+		String paidAtString = paymentInfo.getPaidAt();
+		List<RequestProductPriceDTO> price = paymentInfo.getPrices();
+		Long discount = paymentInfo.getDiscount();
+
 		updateProductPriceInfo(request, price);
 		Long paidPrice = getPaidPrice(price, discount);
 
 		updateIssueRequestStatus(request, status);
-		if (status == IssueStatus.DENIED)
-			return new IssueResultDTO(request);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		return issueCoupon(request, LocalDateTime.parse(paidAtString, formatter), paidPrice);
