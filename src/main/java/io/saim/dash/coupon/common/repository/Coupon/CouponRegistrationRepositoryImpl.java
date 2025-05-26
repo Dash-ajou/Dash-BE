@@ -72,23 +72,15 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 	}
 
 	@Override
-	public List<CouponRegistration> findByMemberIdAndCouponStatus(Long memberId, CouponStatus status) {
+	public List<CouponRegistration> findByRegisteredUserIdAndIsValid(Long userId, Boolean isValid) {
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
-		QCoupon coupon = QCoupon.coupon;
-		QVendor vendor = QVendor.vendor;
-		QUserVendor userVendor = QUserVendor.userVendor;
 		QGeneralUser generalUser = QGeneralUser.generalUser;
 
 		return queryFactory.selectFrom(couponRegistration)
-			.leftJoin(couponRegistration.coupon, coupon)
-			.leftJoin(coupon.issue, QIssue.issue)
-			.leftJoin(QIssue.issue.request, QRequest.request)
-			.leftJoin(QRequest.request.vendor, vendor)
-			.leftJoin(vendor.vendorUsers, userVendor)
-			.leftJoin(userVendor.user, generalUser)
+			.join(couponRegistration.registeredUser, generalUser)
 			.where(
-				generalUser.id.eq(memberId),
-				couponRegistration.coupon.couponStatus.eq(status)
+				generalUser.id.eq(userId),
+				couponRegistration.isValid.eq(isValid)
 			)
 			.fetch();
 	}
