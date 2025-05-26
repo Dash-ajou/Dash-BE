@@ -1,6 +1,7 @@
 package io.saim.dash.account.partner.model;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -76,5 +77,18 @@ public class PartnerUser extends ServiceUser {
 
 	public static boolean isPartnerUser(ServiceUser serviceUser) {
 		return serviceUser instanceof PartnerUser;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PartnerUser that = (PartnerUser) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
 	}
 }
