@@ -87,7 +87,7 @@ public class GeneralUser extends ServiceUser {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || !(o instanceof GeneralUser)) return false;
 		GeneralUser that = (GeneralUser) o;
 		return Objects.equals(getId(), that.getId());
 	}
