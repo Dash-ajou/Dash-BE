@@ -110,11 +110,11 @@ public class CouponRepositoryImpl implements CouponRepository {
 			return Optional.empty();
 		}
 
-		CouponStatsDTO dto = new CouponStatsDTO(
-			result.get(0, Long.class),
-			result.get(1, Long.class),
-			result.get(2, Long.class)
-		);
+		long total = Optional.ofNullable(result.get(0, Number.class)).map(Number::longValue).orElse(0L);
+		long used = Optional.ofNullable(result.get(1, Number.class)).map(Number::longValue).orElse(0L);
+		long usable = Optional.ofNullable(result.get(2, Number.class)).map(Number::longValue).orElse(0L);
+
+		CouponStatsDTO dto = new CouponStatsDTO(total, used, usable);
 
 		return Optional.of(dto);
 	}
