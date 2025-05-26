@@ -13,6 +13,8 @@ import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.model.QCoupon;
 import io.saim.dash.coupon.common.model.QCouponRegistration;
+import io.saim.dash.coupon.common.model.QIssue;
+import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.QUserVendor;
 import io.saim.dash.coupon.common.model.QVendor;
 import io.saim.dash.coupon.common.repository.jpa.CouponRegistrationJpaRepository;
@@ -72,13 +74,18 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 	@Override
 	public List<CouponRegistration> findByMemberIdAndCouponStatus(Long memberId, CouponStatus status) {
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
+		QCoupon coupon = QCoupon.coupon;
 		QVendor vendor = QVendor.vendor;
 		QUserVendor userVendor = QUserVendor.userVendor;
 		QGeneralUser generalUser = QGeneralUser.generalUser;
+
 		return queryFactory.selectFrom(couponRegistration)
-			.join(couponRegistration.coupon.issue.request.vendor, vendor)
-			.join(vendor.vendorUsers, userVendor)
-			.join(userVendor.user, generalUser)
+			.leftJoin(couponRegistration.coupon, coupon)
+			.leftJoin(coupon.issue, QIssue.issue)
+			.leftJoin(QIssue.issue.request, QRequest.request)
+			.leftJoin(QRequest.request.vendor, vendor)
+			.leftJoin(vendor.vendorUsers, userVendor)
+			.leftJoin(userVendor.user, generalUser)
 			.where(
 				generalUser.id.eq(memberId),
 				couponRegistration.coupon.couponStatus.eq(status)
