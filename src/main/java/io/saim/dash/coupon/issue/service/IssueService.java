@@ -285,6 +285,7 @@ public class IssueService {
 			.paidAt(paidAt)
 			.paidPrice(paidPrice)
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
+			.usedCnt(0L)
 			.issueActiveStatus(IssueActiveStatus.ENABLED)
 			.build();
 
