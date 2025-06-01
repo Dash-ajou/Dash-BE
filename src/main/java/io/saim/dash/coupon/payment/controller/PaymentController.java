@@ -72,9 +72,12 @@ public class PaymentController {
 
 	@PostMapping("/validate")
 	public CouponValidateResponseDTO validateCoupon(
-		@AuthenticationPrincipal ServiceUser user,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestBody CouponValidateRequestDTO request
 	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		paymentService.validateCoupon(loginUser, request.getCode());
+
 		return new CouponValidateResponseDTO();
 	}
 

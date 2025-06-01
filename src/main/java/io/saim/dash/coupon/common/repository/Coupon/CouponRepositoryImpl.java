@@ -24,6 +24,8 @@ import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.QUserVendor;
 import io.saim.dash.coupon.common.model.QVendor;
 import io.saim.dash.coupon.common.repository.jpa.CouponJpaRepository;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -81,8 +83,9 @@ public class CouponRepositoryImpl implements CouponRepository {
 			.fetch();
 	}
 
-	public Optional<Coupon> findByRegistrationCode(String couponRegistrationCode) {
-		return couponJpaRepository.findByRegistrationCode(couponRegistrationCode);
+	public Coupon findByRegistrationCode(String couponRegistrationCode) {
+		return couponJpaRepository.findByRegistrationCode(couponRegistrationCode)
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.COUPON_NOT_FOUND));
 	}
 
 	@Override

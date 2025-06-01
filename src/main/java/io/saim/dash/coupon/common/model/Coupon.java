@@ -1,12 +1,17 @@
 package io.saim.dash.coupon.common.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
+import io.saim.dash.coupon.common.model.mapping.RequestProduct;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,5 +77,12 @@ public class Coupon {
 		this.couponStatus = couponStatus;
 		this.price = price;
 		this.expiredAt = expiredAt;
+	}
+
+	public RequestProduct getRequestProduct() {
+		return this.issue.getRequest().getRequestProducts().stream()
+			.filter(v -> v.getProduct().equals(this.getProduct()))
+			.findFirst()
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.INVALID_COUPON));
 	}
 }

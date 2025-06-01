@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.repository.GeneralUserRepository;
+import io.saim.dash.coupon.common.constant.CodeType;
+import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.jpa.CouponPaymentCodeJpaRepository;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
@@ -34,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class PaymentService {
 
-	private final IssueRepository issueRepository;
+	private final CouponRepository couponRepository;
 	private final PartnerUserRepository partnerUserRepository;
 	private final CouponRegistrationRepository couponRegistrationRepository;
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
@@ -42,6 +46,7 @@ public class PaymentService {
 
 	private static final DateTimeFormatter FORMATTER =
 		DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private final GeneralUserRepository generalUserRepository;
 
 	public PagingResponse<PaymentLogResponse> getLogs(
 		ServiceUser user,
@@ -122,6 +127,12 @@ public class PaymentService {
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		return partnerUserRepository.findById(((PartnerUser)loginUser).getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+	}
+
+	private ServiceUser getAPIAccessUser(ServiceUser loginUser) {
+		if (loginUser.isPartner()) return this.getPartnerAPIAccessUser(loginUser);
+		return generalUserRepository.findById(((GeneralUser)loginUser).getId())
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
 	}
 
@@ -223,4 +234,31 @@ public class PaymentService {
 		return couponPaymentLog;
 	}
 
+	public CouponCodeInfo validateCoupon(ServiceUser loginUser, String code) {
+
+		CodeType codeType = checkCodeType(code);
+		Coupon coupon = getCouponByCode(code, codeType);
+
+		return new CouponCodeInfo(codeType, coupon);
+	}
+
+	private Coupon getCouponByCode(String code, CodeType codeType) {
+		Coupon coupon;
+		if (codeType == CodeType.PAYMENT_CODE) {
+			CouponPaymentCode couponPaymentCodeInfo = getCouponPaymentCodeInfo(code);
+			coupon = couponPaymentCodeInfo.getCoupon();
+		} else {
+			coupon = couponRepository.findByRegistrationCode(code);
+		}
+
+		if (coupon == null)
+			throw new ServiceException(ServiceExceptionContent.COUPON_NOT_FOUND);
+
+		return coupon;
+	}
+
+	private CodeType checkCodeType(String code) {
+		if (isPaymentCodeValid(code)) return CodeType.PAYMENT_CODE;
+		return CodeType.REGISTER_CODE;
+	}
 }
