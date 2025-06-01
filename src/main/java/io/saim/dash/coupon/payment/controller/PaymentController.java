@@ -14,6 +14,7 @@ import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 import io.saim.dash.coupon.payment.dto.CouponUseCancelRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponUseCancelResponseDTO;
+import io.saim.dash.coupon.payment.dto.CouponUseRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponUseResponseDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateResponseDTO;
@@ -32,11 +33,10 @@ public class PaymentController {
 	private final PaymentService paymentService;
 	private final ImageService imageService;
 
-
 	@GetMapping("/list")
 	public PagingResponse<PaymentLogResponse> listLogs(
 		@AuthenticationPrincipal ServiceUser user,
-		@RequestParam(value = "redeem_id",  required = false) Long   redeemId,
+		@RequestParam(value = "request_id",  required = false) Long   redeemId,
 		@RequestParam(value = "user_name",  required = false) String userName,
 		@RequestParam(value = "page",       required = false, defaultValue = "1")  int page,
 		@RequestParam(value = "size",       required = false, defaultValue = "10") int size
@@ -50,10 +50,12 @@ public class PaymentController {
 	@PostMapping("/use")
 	public CouponUseResponseDTO useCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@RequestParam(value="payment_code") String paymentCode
+		@RequestBody CouponUseRequestDTO couponUseRequestDTO
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
-		CouponPaymentLog couponPaymentLog = paymentService.useCoupon(loginUser, paymentCode);
+		CouponPaymentLog couponPaymentLog = paymentService.useCoupon(
+			loginUser, couponUseRequestDTO.getPaymentCode()
+		);
 
 		return new CouponUseResponseDTO(couponPaymentLog);
 	}
@@ -61,11 +63,13 @@ public class PaymentController {
 	@PostMapping("/cancel")
 	public CouponUseCancelResponseDTO cancelCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@RequestParam(value="payment_code") String paymentCode,
-		@RequestParam(value="payment_id") Long paymentId
+		@RequestBody CouponUseCancelRequestDTO couponUseCancelRequestDTO
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
-		CouponPaymentLog paymentLog = paymentService.cancelCoupon(loginUser, paymentCode, paymentId);
+		CouponPaymentLog paymentLog = paymentService.cancelCoupon(
+			loginUser,
+			couponUseCancelRequestDTO.getPaymentCode(), couponUseCancelRequestDTO.getPaymentId()
+		);
 
 		return new CouponUseCancelResponseDTO(paymentLog);
 	}
