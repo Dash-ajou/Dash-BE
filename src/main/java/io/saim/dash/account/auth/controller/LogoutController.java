@@ -1,5 +1,6 @@
 package io.saim.dash.account.auth.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +15,9 @@ import java.util.Map;
 public class LogoutController {
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout() {
-		// 현재 사용자 인증 정보 삭제
+	public ResponseEntity<?> logout(HttpSession session) {
 		SecurityContextHolder.clearContext();
+		session.invalidate();
 
 		return ResponseEntity.ok(Map.of(
 			"status", "SUCCEED",

@@ -4,10 +4,9 @@ import io.saim.dash.account.general.coupon.dto.CouponResponseDTO;
 import io.saim.dash.account.general.coupon.service.CouponService;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
-import io.saim.dash.security.CustomUserDetails;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,10 +19,19 @@ public class CouponController {
 	private final CouponService couponService;
 
 	@GetMapping
-	public ResponseEntity<CommonResponseDTO<List<CouponResponseDTO>>> getCoupons(
-		@AuthenticationPrincipal CustomUserDetails userDetails
-	) {
-		Long generalUserId = userDetails.getGeneralUser().getId();
+	public ResponseEntity<CommonResponseDTO<List<CouponResponseDTO>>> getCoupons(HttpSession session) {
+		Long generalUserId = (Long) session.getAttribute("user_id");
+
+		if (generalUserId == null) {
+			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
+				null,
+				null,
+				APIStatus.FAILED,
+				"로그인이 필요합니다.",
+				null
+			));
+		}
+
 		List<CouponResponseDTO> coupons = couponService.getCouponsByUser(generalUserId);
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
@@ -35,8 +43,7 @@ public class CouponController {
 		));
 	}
 
-	//토큰에서 partnerId 추출하는 메서드 (구현 필요)
 	private Long extractPartnerIdFromToken(String token) {
-		return 1L; //임시로 1번 파트너 ID 반환
+		return 1L;
 	}
 }

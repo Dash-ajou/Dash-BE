@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -28,7 +29,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 	@AttributeOverride(name = "joinedAt", column = @Column(name = "joined_at", nullable = true))
 })
 
-public class PartnerUser extends ServiceUser {
+public class PartnerUser extends ServiceUser implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +75,7 @@ public class PartnerUser extends ServiceUser {
 	}
 
 	public String getOwnerName() {
-		return getName(); // from ServiceUser
+		return getName();
 	}
 
 	public static boolean isPartnerUser(ServiceUser serviceUser) {

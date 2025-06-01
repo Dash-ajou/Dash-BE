@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.model;
 
+import java.io.Serializable;
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.model.UserVendor;
@@ -22,7 +23,9 @@ import java.util.Objects;
 @Table(name = "general_user", uniqueConstraints = {
 	@UniqueConstraint(name = "UK_general_phone", columnNames = "owner_phone")
 })
-public class GeneralUser extends ServiceUser {
+public class GeneralUser extends ServiceUser implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

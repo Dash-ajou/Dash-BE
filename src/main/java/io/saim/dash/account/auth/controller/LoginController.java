@@ -21,7 +21,14 @@ public class LoginController {
 		if (requestDTO.getUserType() != null) {
 			session.setAttribute("user_type", requestDTO.getUserType());
 		}
-		LoginResponseDTO response = authService.login(requestDTO.getUserPhone(), requestDTO.getUserPassword(), session);
+
+		LoginResponseDTO response = authService.login(
+			requestDTO.getUserPhone(),
+			requestDTO.getUserPassword(),
+			session
+		);
+
+		session.setAttribute("user_id", response.getData().getUser().getUserId());
 		return ResponseEntity.ok(response);
 	}
 }
