@@ -133,6 +133,17 @@ public class PaymentService {
 		return couponPayment;
 	}
 
+	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, Long paymentId, CouponPaymentCode payment) {
+		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentId);
+		couponPaymentLog.setStatus(PaymentStatus.CANCELLED);
+		couponPaymentLog.setCanceledAt(LocalDateTime.now());
+
+		payment.getCoupon().setCouponStatus(CouponStatus.USABLE);
+		payment.getCoupon().getIssue().decreaseUsedCnt();
+
+		return couponPaymentLog;
+	}
+
 	private CouponPaymentLog createCouponPaymentLog(PartnerUser partnerUser, CouponPaymentCode paymentCode) {
 		CouponRegistration couponRegistration = couponRegistrationRepository.findByCoupon(paymentCode.getCoupon());
 		GeneralUser couponOwner = couponRegistration.getRegisteredUser();
@@ -191,4 +202,25 @@ public class PaymentService {
 
 		return couponPaymentCode;
 	}
+
+	@Transactional
+	public CouponPaymentLog cancelCoupon(ServiceUser loginUser, String paymentCode, Long paymentId) {
+		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
+
+		CouponPaymentCode couponPaymentCodeInfo = getCouponPaymentCodeInfo(paymentCode);
+		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentId, couponPaymentCodeInfo);
+
+		// TODO: 알림 추가
+
+		return paymentLog;
+	}
+
+	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, Long paymentId) {
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findById(paymentId);
+		if (!couponPaymentLog.getPartner().equals(partnerUser))
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		return couponPaymentLog;
+	}
+
 }

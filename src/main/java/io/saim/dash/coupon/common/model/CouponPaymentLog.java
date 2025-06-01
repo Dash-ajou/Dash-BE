@@ -49,7 +49,10 @@ public class CouponPaymentLog {
 	@Column(name = "used_at", nullable = false)
 	private LocalDateTime usedAt;
 
-	@Enumerated(EnumType.STRING)
+	@Column(name = "canceled_at") @Setter
+	private LocalDateTime canceledAt;
+
+	@Enumerated(EnumType.STRING) @Setter
 	@Column(name = "status", length = 10, nullable = false)
 	private PaymentStatus status;
 

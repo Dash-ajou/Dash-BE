@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 import io.saim.dash.coupon.common.repository.jpa.CouponPaymentLogJpaRepository;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -17,5 +19,10 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 		couponPaymentLogJpaRepository.save(couponPayment);
 	}
 
+	@Override
+	public CouponPaymentLog findById(Long paymentLogId) {
+		return couponPaymentLogJpaRepository.findById(paymentLogId)
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND));
+	}
 
 }

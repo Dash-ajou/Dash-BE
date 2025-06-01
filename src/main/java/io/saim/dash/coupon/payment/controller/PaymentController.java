@@ -59,11 +59,15 @@ public class PaymentController {
 	}
 
 	@PostMapping("/cancel")
-	public CouponUseCancelResponseDTO useCancelCoupon(
-		@AuthenticationPrincipal ServiceUser user,
-		@RequestBody CouponUseCancelRequestDTO request
+	public CouponUseCancelResponseDTO cancelCoupon(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@RequestParam(value="payment_code") String paymentCode,
+		@RequestParam(value="payment_id") Long paymentId
 	) {
-		return new CouponUseCancelResponseDTO();
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		CouponPaymentLog paymentLog = paymentService.cancelCoupon(loginUser, paymentCode, paymentId);
+
+		return new CouponUseCancelResponseDTO(paymentLog);
 	}
 
 	@PostMapping("/validate")
