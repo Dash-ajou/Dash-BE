@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PaymentLogResponse {
+public class PaymentLogResponseDTO {
 	private final Long          redeemId;
 	private final String        paymentCode;
 	private final String        usedAt;

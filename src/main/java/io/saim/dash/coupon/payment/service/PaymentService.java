@@ -2,9 +2,12 @@ package io.saim.dash.coupon.payment.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
@@ -26,11 +29,9 @@ import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponPaymentLogRepository;
-import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
-import io.saim.dash.coupon.payment.dto.PaymentLogResponse;
-import io.saim.dash.global.dto.PagingResponse;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
+import io.saim.dash.coupon.common.util.PaymentQueryHelper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,30 +49,21 @@ public class PaymentService {
 		DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	private final GeneralUserRepository generalUserRepository;
 
-	public PagingResponse<PaymentLogResponse> getLogs(
-		ServiceUser user,
-		Long redeemId,
-		String userName,
-		int page,
-		int size
+	public List<CouponPaymentLog> getLogs(
+		ServiceUser loginUser,
+		int page, int size,
+		Long paymentId, String paymentCode,
+		Long couponId, String userName
 	) {
-		// TODO: user 권한 검증
+		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 
-		return null;
+		BooleanBuilder filterBuilder =  PaymentQueryHelper.createPaymentLogSearchFilterBuilder(
+			paymentId, paymentCode,
+			couponId,
+			userName
+		);
 
-		// PageRequest paging = PageRequest.of(page - 1, size);
-		// Page<RedeemLog> logs = couponPaymentLogRepository.findLogs(redeemId, userName, paging);
-		//
-		// List<RedeemLogResponse> dtos = logs.stream()
-		// 	.map(log -> new RedeemLogResponse(
-		// 		log.getRedeemId(),
-		// 		log.getPayment().getCode(),
-		// 		log.getUsedAt().format(FORMATTER),
-		// 		log.getStatus()
-		// 	))
-		// 	.collect(Collectors.toList());
-		//
-		// return new PagingResponse<>(page, size, dtos);
+		return couponPaymentLogRepository.findByFilter(partnerUser, filterBuilder, page, size);
 	}
 
 	// @Transactional

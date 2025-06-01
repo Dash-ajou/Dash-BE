@@ -1,8 +1,10 @@
 package io.saim.dash.coupon.payment.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +20,7 @@ import io.saim.dash.coupon.payment.dto.CouponUseRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponUseResponseDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateResponseDTO;
-import io.saim.dash.coupon.payment.dto.PaymentLogResponse;
+import io.saim.dash.coupon.payment.dto.PaymentLogBriefResponseDTO;
 import io.saim.dash.coupon.payment.service.ImageService;
 import io.saim.dash.coupon.payment.service.PaymentService;
 import io.saim.dash.global.dto.PagingResponse;
@@ -34,19 +36,31 @@ public class PaymentController {
 	private final ImageService imageService;
 
 	@GetMapping("/list")
-	public PagingResponse<PaymentLogResponse> listLogs(
-		@AuthenticationPrincipal ServiceUser user,
-		@RequestParam(value = "request_id",  required = false) Long   redeemId,
+	public PagingResponse<PaymentLogBriefResponseDTO> getPaymentLogs(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@RequestParam(value = "payment_id", required = false) Long paymentId,
+		@RequestParam(value = "payment_code", required = false) String paymentCode,
+		@RequestParam(value = "coupon_id", required = false) Long couponId,
 		@RequestParam(value = "user_name",  required = false) String userName,
-		@RequestParam(value = "page",       required = false, defaultValue = "1")  int page,
-		@RequestParam(value = "size",       required = false, defaultValue = "10") int size
+		@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+		@RequestParam(value = "size", required = false, defaultValue = "10") int size
 	) {
-		return null;
-		// return redeemService.getLogs(
-		// 	user, redeemId, userName, page, size
-		// );
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		List<CouponPaymentLog> paymentList = paymentService.getLogs(
+			loginUser, page, size,
+			paymentId, paymentCode, couponId, userName
+		);
+
+		List<PaymentLogBriefResponseDTO> responseDTOs = paymentList.stream()
+			.map(PaymentLogBriefResponseDTO::new)
+			.toList();
+		return new PagingResponse(
+			page, size,
+			responseDTOs
+		);
 	}
 
+	@Transactional
 	@PostMapping("/use")
 	public CouponUseResponseDTO useCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -60,6 +74,7 @@ public class PaymentController {
 		return new CouponUseResponseDTO(couponPaymentLog);
 	}
 
+	@Transactional
 	@PostMapping("/cancel")
 	public CouponUseCancelResponseDTO cancelCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -74,6 +89,7 @@ public class PaymentController {
 		return new CouponUseCancelResponseDTO(paymentLog);
 	}
 
+	@Transactional
 	@PostMapping("/validate")
 	public CouponValidateResponseDTO validateCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
