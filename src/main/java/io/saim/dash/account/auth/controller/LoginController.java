@@ -28,6 +28,7 @@ public class LoginController {
 			session
 		);
 
+
 		session.setAttribute("user_id", response.getData().getUser().getUserId());
 		return ResponseEntity.ok(response);
 	}
