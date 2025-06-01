@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.redeem.service;
+package io.saim.dash.coupon.payment.service;
 
 import org.springframework.stereotype.Service;
 

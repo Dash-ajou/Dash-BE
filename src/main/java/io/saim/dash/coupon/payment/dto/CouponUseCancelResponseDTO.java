@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.redeem.dto;
+package io.saim.dash.coupon.payment.dto;
 
 public class CouponUseCancelResponseDTO {
 	private final Boolean result;

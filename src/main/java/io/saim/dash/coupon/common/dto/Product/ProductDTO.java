@@ -1,11 +1,10 @@
-package io.saim.dash.coupon.redeem.dto;
+package io.saim.dash.coupon.common.dto.Product;
 
-import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
-import io.saim.dash.coupon.common.dto.VendorDTO;
+import io.saim.dash.coupon.common.model.Product;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class ProductDTO {
+public class ProductDTO {
 	private final Long product_id;
 	private final Long partner_id;
 	private final String product_name;
@@ -17,13 +16,11 @@ class ProductDTO {
 		this.product_name = requestProductDTO.getProductName();
 		this.price = requestProductDTO.getPrice();
 	}
-}
 
-@RequiredArgsConstructor
-public class CouponUseResponseDTO {
-	private final Boolean result;
-	private final Long id;
-	private final String used_at;
-	private final VendorDTO vendor;
-	private final ProductDTO product;
+	public ProductDTO(Product product) {
+		this.product_id = product.getProductId();
+		this.partner_id = product.getPartner().getId();
+		this.product_name = product.getProductName();
+		this.price = product.getPrice();
+	}
 }

@@ -2,11 +2,11 @@ package io.saim.dash.coupon.common.dto.Product;
 
 import io.saim.dash.coupon.common.model.Product;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter @Builder
 public class RequestProductDTO {
 	private Long productId;
@@ -19,17 +19,11 @@ public class RequestProductDTO {
 		this.productId = product.getProductId();
 		this.partnerId = product.getPartner().getId();
 		this.productName = product.getProductName();
+		this.price = product.getPrice();
 
 		if (requestProduct != null) {
+			this.count = requestProduct.getQuantity();
 			this.price = requestProduct.getPrice();
-		} else this.price = product.getPrice();
-	}
-
-	public RequestProductDTO(Long productId, Long partnerId, String productName, Long price, Long count) {
-		this.productId = productId;
-		this.partnerId = partnerId;
-		this.productName = productName;
-		this.price = price;
-		this.count = count;
+		}
 	}
 }

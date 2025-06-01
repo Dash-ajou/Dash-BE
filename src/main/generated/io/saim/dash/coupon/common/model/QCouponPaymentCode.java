@@ -28,6 +28,8 @@ public class QCouponPaymentCode extends EntityPathBase<CouponPaymentCode> {
 
     public final DateTimePath<java.time.LocalDateTime> issuedAt = createDateTime("issuedAt", java.time.LocalDateTime.class);
 
+    public final StringPath paymentCode = createString("paymentCode");
+
     public final NumberPath<Long> paymentCodeId = createNumber("paymentCodeId", Long.class);
 
     public final StringPath qrCodeUrl = createString("qrCodeUrl");

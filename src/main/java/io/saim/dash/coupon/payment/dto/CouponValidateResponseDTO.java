@@ -1,9 +1,10 @@
-package io.saim.dash.coupon.redeem.dto;
+package io.saim.dash.coupon.payment.dto;
 
 import io.saim.dash.coupon.common.constant.CodeType;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponPaymentBriefLogDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
+import io.saim.dash.coupon.common.dto.Product.ProductDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
 
 public class CouponValidateResponseDTO {

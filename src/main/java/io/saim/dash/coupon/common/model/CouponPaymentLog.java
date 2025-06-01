@@ -2,7 +2,7 @@ package io.saim.dash.coupon.common.model;
 
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
-import io.saim.dash.coupon.common.constant.RedeemStatus;
+import io.saim.dash.coupon.common.constant.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,21 +22,21 @@ import java.time.LocalDateTime;
  * 쿠폰 사용 처리(결제) 로그 엔티티
  */
 @Entity
-@Table(name = "redeem_log")
+@Table(name = "payment_log")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class RedeemLog {
+public class CouponPaymentLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "redeem_id")
-	private Long redeemId;
+	@Column(name = "payment_id")
+	private Long paymentId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "payment_code", referencedColumnName = "payment_code_id", nullable = false)
-	private CouponPaymentCode payment;
+	private CouponPaymentCode paymentCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
@@ -51,7 +51,7 @@ public class RedeemLog {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
-	private RedeemStatus status;
+	private PaymentStatus status;
 
 	// 추가 도메인 로직 필요 시 메서드 정의
 }

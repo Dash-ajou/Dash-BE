@@ -2,7 +2,7 @@ package io.saim.dash.account.general.coupon.service;
 
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentCode;
-import io.saim.dash.account.general.coupon.repository.CouponPaymentCodeRepository;
+import io.saim.dash.coupon.common.repository.jpa.CouponPaymentCodeJpaRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CouponPaymentCodeService {
 
-	private final CouponPaymentCodeRepository couponPaymentCodeRepository;
+	private final CouponPaymentCodeJpaRepository couponPaymentCodeJpaRepository;
 	private final CouponRepository couponRepository;
 
 	@Transactional
@@ -24,7 +24,7 @@ public class CouponPaymentCodeService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다: " + couponId));
 
 		//기존 결제 코드가 있다면 재사용
-		Optional<CouponPaymentCode> existingPaymentCode = couponPaymentCodeRepository.findByCoupon_CouponId(couponId);
+		Optional<CouponPaymentCode> existingPaymentCode = couponPaymentCodeJpaRepository.findByCoupon_CouponId(couponId);
 		if (existingPaymentCode.isPresent()) {
 			return existingPaymentCode.get();
 		}
@@ -37,6 +37,6 @@ public class CouponPaymentCodeService {
 			.expiresAt(LocalDateTime.now().plusMinutes(10)) //10분 후 만료
 			.build();
 
-		return couponPaymentCodeRepository.save(paymentCode);
+		return couponPaymentCodeJpaRepository.save(paymentCode);
 	}
 }

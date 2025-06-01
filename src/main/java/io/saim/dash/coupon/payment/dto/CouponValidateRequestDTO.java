@@ -1,4 +1,4 @@
-package io.saim.dash.coupon.redeem.dto;
+package io.saim.dash.coupon.payment.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

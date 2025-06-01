@@ -1,38 +1,40 @@
-package io.saim.dash.coupon.redeem.controller;
+package io.saim.dash.coupon.payment.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import io.saim.dash.account.common.model.ServiceUser;
-import io.saim.dash.coupon.redeem.dto.CouponUseCancelRequestDTO;
-import io.saim.dash.coupon.redeem.dto.CouponUseCancelResponseDTO;
-import io.saim.dash.coupon.redeem.dto.CouponUseResponseDTO;
-import io.saim.dash.coupon.redeem.dto.CouponValidateRequestDTO;
-import io.saim.dash.coupon.redeem.dto.CouponValidateResponseDTO;
-import io.saim.dash.coupon.redeem.dto.RedeemLogResponse;
-import io.saim.dash.coupon.redeem.service.ImageService;
-import io.saim.dash.coupon.redeem.service.RedeemService;
+import io.saim.dash.account.common.model.UserType;
+import io.saim.dash.coupon.common.model.CouponPaymentLog;
+import io.saim.dash.coupon.payment.dto.CouponUseCancelRequestDTO;
+import io.saim.dash.coupon.payment.dto.CouponUseCancelResponseDTO;
+import io.saim.dash.coupon.payment.dto.CouponUseResponseDTO;
+import io.saim.dash.coupon.payment.dto.CouponValidateRequestDTO;
+import io.saim.dash.coupon.payment.dto.CouponValidateResponseDTO;
+import io.saim.dash.coupon.payment.dto.PaymentLogResponse;
+import io.saim.dash.coupon.payment.service.ImageService;
+import io.saim.dash.coupon.payment.service.PaymentService;
 import io.saim.dash.global.dto.PagingResponse;
+import io.saim.dash.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/coupon/redeem")
-public class RedeemController {
+public class PaymentController {
 
-	private final RedeemService redeemService;
+	private final PaymentService paymentService;
 	private final ImageService imageService;
 
 
 	@GetMapping("/list")
-	public PagingResponse<RedeemLogResponse> listLogs(
+	public PagingResponse<PaymentLogResponse> listLogs(
 		@AuthenticationPrincipal ServiceUser user,
 		@RequestParam(value = "redeem_id",  required = false) Long   redeemId,
 		@RequestParam(value = "user_name",  required = false) String userName,
@@ -47,16 +49,13 @@ public class RedeemController {
 
 	@PostMapping("/use")
 	public CouponUseResponseDTO useCoupon(
-		@AuthenticationPrincipal ServiceUser user,
-		@RequestPart("scan_img") MultipartFile scanImage,
-		@RequestPart("payment_code") String paymentCode
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@RequestParam(value="payment_code") String paymentCode
 	) {
-		// imageService.saveScanImage(scanImage);
-		// CouponUseResult couponUseResult = redeemService.useCoupon(user, paymentCode);
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		CouponPaymentLog couponPaymentLog = paymentService.useCoupon(loginUser, paymentCode);
 
-		// return new CouponUseResponseDTO(couponUseResult);
-		// return new CouponUseResponseDTO();
-		return null;
+		return new CouponUseResponseDTO(couponPaymentLog);
 	}
 
 	@PostMapping("/cancel")
@@ -73,5 +72,16 @@ public class RedeemController {
 		@RequestBody CouponValidateRequestDTO request
 	) {
 		return new CouponValidateResponseDTO();
+	}
+
+	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {
+		ServiceUser user;
+		try {
+			user = customUserDetails.getGeneralUser();
+		} catch (Exception e) {
+			user = customUserDetails.getPartnerUser();
+		}
+		user.setUserType(UserType.valueOf(customUserDetails.getUserType()));
+		return user;
 	}
 }

@@ -11,50 +11,50 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QRedeemLog is a Querydsl query type for RedeemLog
+ * QCouponPaymentLog is a Querydsl query type for CouponPaymentLog
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QRedeemLog extends EntityPathBase<RedeemLog> {
+public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
 
-    private static final long serialVersionUID = -1733765760L;
+    private static final long serialVersionUID = -849576020L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QRedeemLog redeemLog = new QRedeemLog("redeemLog");
+    public static final QCouponPaymentLog couponPaymentLog = new QCouponPaymentLog("couponPaymentLog");
 
     public final io.saim.dash.account.general.model.QGeneralUser member;
 
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
-    public final QCouponPaymentCode payment;
+    public final QCouponPaymentCode paymentCode;
 
-    public final NumberPath<Long> redeemId = createNumber("redeemId", Long.class);
+    public final NumberPath<Long> paymentId = createNumber("paymentId", Long.class);
 
-    public final EnumPath<io.saim.dash.coupon.common.constant.RedeemStatus> status = createEnum("status", io.saim.dash.coupon.common.constant.RedeemStatus.class);
+    public final EnumPath<io.saim.dash.coupon.common.constant.PaymentStatus> status = createEnum("status", io.saim.dash.coupon.common.constant.PaymentStatus.class);
 
     public final DateTimePath<java.time.LocalDateTime> usedAt = createDateTime("usedAt", java.time.LocalDateTime.class);
 
-    public QRedeemLog(String variable) {
-        this(RedeemLog.class, forVariable(variable), INITS);
+    public QCouponPaymentLog(String variable) {
+        this(CouponPaymentLog.class, forVariable(variable), INITS);
     }
 
-    public QRedeemLog(Path<? extends RedeemLog> path) {
+    public QCouponPaymentLog(Path<? extends CouponPaymentLog> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QRedeemLog(PathMetadata metadata) {
+    public QCouponPaymentLog(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QRedeemLog(PathMetadata metadata, PathInits inits) {
-        this(RedeemLog.class, metadata, inits);
+    public QCouponPaymentLog(PathMetadata metadata, PathInits inits) {
+        this(CouponPaymentLog.class, metadata, inits);
     }
 
-    public QRedeemLog(Class<? extends RedeemLog> type, PathMetadata metadata, PathInits inits) {
+    public QCouponPaymentLog(Class<? extends CouponPaymentLog> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.member = inits.isInitialized("member") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("member"), inits.get("member")) : null;
         this.partner = inits.isInitialized("partner") ? new io.saim.dash.account.partner.model.QPartnerUser(forProperty("partner")) : null;
-        this.payment = inits.isInitialized("payment") ? new QCouponPaymentCode(forProperty("payment"), inits.get("payment")) : null;
+        this.paymentCode = inits.isInitialized("paymentCode") ? new QCouponPaymentCode(forProperty("paymentCode"), inits.get("paymentCode")) : null;
     }
 
 }
