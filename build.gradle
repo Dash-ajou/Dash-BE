@@ -46,6 +46,8 @@ dependencies {
   	implementation 'com.google.zxing:core:3.5.1'
 	implementation 'com.google.zxing:javase:3.5.1'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis'
   
 	// QueryDSL 의존성 추가
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

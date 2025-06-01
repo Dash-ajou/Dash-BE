@@ -4,7 +4,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class ServiceUser {
+public abstract class ServiceUser implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	protected String name;
 	protected String email;

@@ -54,7 +54,7 @@ public class LoginService {
 		session.setAttribute("userType", "GENERAL");
 		session.setAttribute("userId", user.getId());
 
-		return createLoginResponse(user.getName(), user.getEmail(), user.getPhone(), "GENERAL", session);
+		return createLoginResponse(user.getId(), user.getName(), user.getEmail(), user.getPhone(), "GENERAL", session);
 	}
 
 	private LoginResponseDTO authenticatePartnerUser(PartnerUser user, String rawPassword, HttpSession session) {
@@ -66,7 +66,7 @@ public class LoginService {
 		session.setAttribute("userType", "PARTNER");
 		session.setAttribute("userId", user.getId());
 
-		return createLoginResponse(user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
+		return createLoginResponse(user.getId(), user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}
 
 	private void setAuthentication(Object user) {
@@ -84,12 +84,12 @@ public class LoginService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-	private LoginResponseDTO createLoginResponse(String name, String email, String phone, String userType, HttpSession session) {
+	private LoginResponseDTO createLoginResponse(Long userId, String name, String email, String phone, String userType, HttpSession session) {
 		return new LoginResponseDTO(
 			"success",
 			"로그인 성공",
 			new LoginResponseDTO.Data(
-				new LoginResponseDTO.User(name, email, phone, userType),
+				new LoginResponseDTO.User(userId, name, email, phone, userType),
 				session.getId()
 			)
 		);

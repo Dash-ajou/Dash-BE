@@ -7,13 +7,16 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private final String userType; //GENERAL 또는 PARTNER
 	private final String phoneNumber;
 	private final String password;

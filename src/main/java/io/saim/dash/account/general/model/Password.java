@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.model;
 
+import java.io.Serializable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,9 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "passwords")
-public class Password {
+public class Password implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

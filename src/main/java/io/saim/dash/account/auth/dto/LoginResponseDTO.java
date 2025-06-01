@@ -24,9 +24,14 @@ public class LoginResponseDTO {
 	@Setter
 	@AllArgsConstructor
 	public static class User {
+		private Long userId;
 		private String userName;
 		private String userEmail;
 		private String userPhone;
 		private String userType;
+	}
+
+	public Long getUserId() {
+		return this.data != null && this.data.user != null ? this.data.user.userId : null;
 	}
 }
