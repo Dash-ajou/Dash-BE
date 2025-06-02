@@ -39,3 +39,4 @@ out/
 ### security ###
 *.env
 .env
+.env.properties
