@@ -55,7 +55,7 @@ class IssueServiceTest {
 			issueRepository,
 			vendorRepository,
 			productRepository,
-			partnerUserRepository,
+			partnerUserRepository
 		);
 	}
 
