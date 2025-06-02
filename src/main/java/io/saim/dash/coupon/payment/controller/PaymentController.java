@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import io.saim.dash.coupon.payment.dto.CouponUseResponseDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponValidateResponseDTO;
 import io.saim.dash.coupon.payment.dto.PaymentLogBriefResponseDTO;
+import io.saim.dash.coupon.payment.dto.PaymentLogResponseDTO;
 import io.saim.dash.coupon.payment.service.ImageService;
 import io.saim.dash.coupon.payment.service.PaymentService;
 import io.saim.dash.global.dto.PagingResponse;
@@ -35,7 +37,7 @@ public class PaymentController {
 	private final PaymentService paymentService;
 	private final ImageService imageService;
 
-	@GetMapping("/list")
+	@GetMapping("/log/list")
 	public PagingResponse<PaymentLogBriefResponseDTO> getPaymentLogs(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(value = "payment_id", required = false) Long paymentId,
@@ -58,6 +60,17 @@ public class PaymentController {
 			page, size,
 			responseDTOs
 		);
+	}
+
+	@GetMapping("/log/{payment_id}")
+	public PaymentLogResponseDTO getPaymentLogSpec(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable Long paymentId
+	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		CouponPaymentLog couponPaymentLog = paymentService.getLog(loginUser, paymentId);
+
+		return new PaymentLogResponseDTO(couponPaymentLog);
 	}
 
 	@Transactional
