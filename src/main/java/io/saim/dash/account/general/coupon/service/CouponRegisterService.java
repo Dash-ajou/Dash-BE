@@ -27,8 +27,7 @@ public class CouponRegisterService {
 	public CouponRegisterResponseDTO registerCoupon(String couponNumber, Long userId) {
 
 		// 1. 쿠폰 존재 여부 확인
-		Coupon coupon = couponRepository.findByRegistrationCode(couponNumber)
-			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.COUPON_NOT_FOUND));
+		Coupon coupon = couponRepository.findByRegistrationCode(couponNumber);
 
 		// 2. 이미 등록된 쿠폰인지 확인
 		if (couponRegistrationRepository.existsByCoupon(coupon)) {

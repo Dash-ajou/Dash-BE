@@ -8,6 +8,10 @@ import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
 
 public interface CouponRegistrationRepository {
+
+	CouponRegistration findByCoupon(Coupon coupon);
+
+	@Deprecated
 	CouponRegistration findByCouponId(Long couponId);
 
 	List<CouponRegistration> findByMemberId(Long memberId);

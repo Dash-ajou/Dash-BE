@@ -28,6 +28,17 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 	private final CouponRegistrationJpaRepository couponRegistrationJPARepository;
 
 	@Override
+	public CouponRegistration findByCoupon(Coupon coupon) {
+		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
+		return queryFactory.selectFrom(couponRegistration)
+			.where(
+				couponRegistration.coupon.couponId.eq(coupon.getCouponId()),
+				couponRegistration.isValid.eq(true)
+			)
+			.fetchOne();
+	}
+
+	@Override
 	public CouponRegistration findByCouponId(Long couponId) {
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
 		return queryFactory.selectFrom(couponRegistration)

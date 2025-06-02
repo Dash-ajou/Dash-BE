@@ -22,6 +22,9 @@ public class CouponPaymentCode {
 	@JoinColumn(name = "coupon_management_id", nullable = false)
 	private Coupon coupon;
 
+	@Column(name ="payment_code", unique = true, nullable = false)
+	private String paymentCode;
+
 	@Column(name = "qr_code_url", nullable = false)
 	private String qrCodeUrl;
 

@@ -25,7 +25,7 @@ public interface CouponRepository {
 
 	List<Coupon> findByGeneralUserId(Long generalUserId);
 
-	Optional<Coupon> findByRegistrationCode(String couponRegistrationCode);
+	Coupon findByRegistrationCode(String couponRegistrationCode);
 
 	Optional<CouponStatsDTO> getOverallStatsByPartnerId(Long partnerId);
 

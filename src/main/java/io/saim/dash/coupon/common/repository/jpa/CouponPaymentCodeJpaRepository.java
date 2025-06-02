@@ -1,11 +1,14 @@
 package io.saim.dash.coupon.common.repository.jpa;
 
-
-
+import io.saim.dash.coupon.common.model.CouponPaymentCode;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import io.saim.dash.coupon.common.model.CouponPayment;
+import java.util.Optional;
 
-public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPayment, String> {
+@Repository
+public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPaymentCode, Long> {
+	Optional<CouponPaymentCode> findByCoupon_CouponId(Long couponId);
 
+	Optional<CouponPaymentCode> findByPaymentCode(String paymentCode);
 }
