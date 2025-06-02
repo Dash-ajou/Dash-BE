@@ -253,4 +253,9 @@ public class PaymentService {
 		if (isPaymentCodeValid(code)) return CodeType.PAYMENT_CODE;
 		return CodeType.REGISTER_CODE;
 	}
+
+	public CouponPaymentLog getLog(ServiceUser loginUser, Long paymentId) {
+		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
+		return couponPaymentLogRepository.findById(paymentId);
+	}
 }
