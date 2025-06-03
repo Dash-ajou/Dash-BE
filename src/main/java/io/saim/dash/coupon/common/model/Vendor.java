@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.common.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,9 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-public class Vendor {
+public class Vendor implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
