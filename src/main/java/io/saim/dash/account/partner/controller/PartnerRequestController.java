@@ -1,5 +1,6 @@
 package io.saim.dash.account.partner.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,17 +31,21 @@ public class PartnerRequestController {
 	) {
 		try {
 			List<PartnerRequestResponseDTO> result = service.searchPartnerRequests(partner_name, request_status);
-			return ResponseEntity.ok(Map.of(
-				"status", "SUCCESS",
-				"message", "검색 결과입니다.",
-				"data", result
-			));
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("status", "SUCCESS");
+			response.put("message", "검색 결과입니다.");
+			response.put("data", result); // null이어도 문제 없음
+
+			return ResponseEntity.ok(response);
+
 		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(Map.of(
-				"status", "FAILED",
-				"message", e.getMessage(),
-				"data", null
-			));
+			Map<String, Object> error = new HashMap<>();
+			error.put("status", "FAILED");
+			error.put("message", e.getMessage());
+			error.put("data", null);
+
+			return ResponseEntity.badRequest().body(error);
 		}
 	}
 }
