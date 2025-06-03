@@ -1,5 +1,7 @@
 package io.saim.dash.coupon.common.model;
 
+import java.io.Serializable;
+
 import io.saim.dash.account.general.model.GeneralUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +20,9 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter @Builder
-public class UserVendor {
+public class UserVendor implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
