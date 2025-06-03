@@ -9,6 +9,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.account.push.model.Push;
 import io.saim.dash.account.push.model.QPush;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -31,6 +33,7 @@ public class PushRepositoryImpl implements PushRepository {
 
 	@Override
 	public Push findById(long pushId) {
-		return jpaRepository.findById(pushId);
+		return jpaRepository.findById(pushId)
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 	}
 }

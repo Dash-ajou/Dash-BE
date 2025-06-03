@@ -45,6 +45,33 @@ public class PushService {
 		return pushRepository.findByFilter(filter, page, size);
 	}
 
+	@Transactional
+	public Push getPush(ServiceUser loginUser, long pushId) {
+		UserSearchResultDTO userSearchResultDTO = searchUser(loginUser);
+
+		Push pushData = pushRepository.findById(pushId);
+		checkAccessValidity(userSearchResultDTO, pushData);
+
+		viewPush(pushData);
+		return pushData;
+	}
+
+	private void viewPush(Push pushData) {
+		if (pushData.getReadAt() != null) return;
+		pushData.setReadAt(LocalDateTime.now());
+	}
+
+	private void checkAccessValidity(UserSearchResultDTO userSearchResultDTO, Push pushData) {
+		if (userSearchResultDTO.isPartner()) {
+			if (!pushData.getReceiver().equals(userSearchResultDTO.partnerUser()))
+				throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+		}
+		else {
+			if (!pushData.getReceiver().equals(userSearchResultDTO.generalUser()))
+				throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+		}
+	}
+
 	@NotNull
 	private UserSearchResultDTO searchUser(ServiceUser loginUser) {
 		PartnerUser partnerUser = null;

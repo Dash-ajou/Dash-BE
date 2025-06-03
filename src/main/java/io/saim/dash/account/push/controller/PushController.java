@@ -52,6 +52,17 @@ public class PushController {
 		);
 	}
 
+	@GetMapping("/spec/{push_id}")
+	public PushDTO getPush(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable("push_id") long push_id
+	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+
+		Push pushData = pushService.getPush(loginUser, push_id);
+		return new PushDTO(pushData);
+	}
+
 	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {
 		ServiceUser user;
 		try {
