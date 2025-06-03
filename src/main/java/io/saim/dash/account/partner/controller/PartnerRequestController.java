@@ -33,14 +33,18 @@ public class PartnerRequestController {
 			List<PartnerRequestResponseDTO> result = service.searchPartnerRequests(partner_name, request_status);
 
 			Map<String, Object> response = new HashMap<>();
+			response.put("apiVersion", "1.0");
+			response.put("clientVersion", "1.0");
 			response.put("status", "SUCCESS");
 			response.put("message", "검색 결과입니다.");
-			response.put("data", result); // null이어도 문제 없음
+			response.put("data", result);
 
 			return ResponseEntity.ok(response);
 
 		} catch (ServiceException e) {
 			Map<String, Object> error = new HashMap<>();
+			error.put("apiVersion", "1.0");
+			error.put("clientVersion", "1.0");
 			error.put("status", "FAILED");
 			error.put("message", e.getMessage());
 			error.put("data", null);

@@ -1,5 +1,6 @@
 package io.saim.dash.account.partner.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,12 @@ public class PartnerRequestService {
 
 		if (requestStatus != null) {
 			try {
-				status = IssueStatus.valueOf(requestStatus.toUpperCase());
-			} catch (IllegalArgumentException e) {
-				throw new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS);
+				status = Arrays.stream(IssueStatus.values())
+					.filter(e -> e.name().equalsIgnoreCase(requestStatus))
+					.findFirst()
+					.orElseThrow(() -> new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS));
+			} catch (ServiceException e) {
+				throw e;
 			}
 		}
 
