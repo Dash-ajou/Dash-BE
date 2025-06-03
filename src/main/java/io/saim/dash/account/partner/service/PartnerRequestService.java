@@ -22,12 +22,9 @@ public class PartnerRequestService {
 
 		if (requestStatus != null) {
 			try {
-				status = Arrays.stream(IssueStatus.values())
-					.filter(e -> e.name().equalsIgnoreCase(requestStatus))
-					.findFirst()
-					.orElseThrow(() -> new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS));
-			} catch (ServiceException e) {
-				throw e;
+				status = IssueStatus.valueOf(requestStatus.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				status = null;
 			}
 		}
 
