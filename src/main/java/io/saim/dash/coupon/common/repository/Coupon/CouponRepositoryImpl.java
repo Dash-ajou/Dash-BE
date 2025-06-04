@@ -132,7 +132,7 @@ public class CouponRepositoryImpl implements CouponRepository {
 				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum()
 			))
 			.from(c)
-			.join(c.product, p).fetchJoin()
+			.join(c.product, p)
 			.join(p.partner, partner)
 			.where(partner.id.eq(partnerId))
 			.groupBy(p.productId, p.productName)
