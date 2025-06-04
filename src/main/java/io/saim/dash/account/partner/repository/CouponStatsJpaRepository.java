@@ -34,17 +34,22 @@ public interface CouponStatsJpaRepository extends JpaRepository<Coupon, Long> {
 	Long countUsedByVendor(@Param("vendorId") Long vendorId, @Param("status") CouponStatus status);
 
 	@Query("""
-        SELECT new io.saim.dash.account.partner.dto.VendorRawStatsDTO(
-            v.vendorId,
-            v.name,
-            COUNT(c),
-            SUM(CASE WHEN c.couponStatus = :status THEN 1 ELSE 0 END)
-        )
-        FROM Coupon c
-        JOIN c.issue i
-        JOIN i.request r
-        JOIN r.vendor v
-        GROUP BY v.vendorId, v.name
-    """)
-	List<VendorRawStatsDTO> findStatsGroupedByVendor(@Param("status") CouponStatus status);
+    SELECT new io.saim.dash.account.partner.dto.VendorRawStatsDTO(
+        v.vendorId,
+        v.name,
+        COUNT(c),
+        SUM(CASE WHEN c.couponStatus = :status THEN 1 ELSE 0 END)
+    )
+    FROM Coupon c
+    JOIN c.issue i
+    JOIN i.request r
+    JOIN r.vendor v
+    JOIN c.product p
+    WHERE p.productName = :menuName
+    GROUP BY v.vendorId, v.name
+""")
+	List<VendorRawStatsDTO> findStatsGroupedByVendorAndMenu(
+		@Param("menuName") String menuName,
+		@Param("status") CouponStatus status
+	);
 }
