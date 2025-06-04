@@ -53,7 +53,9 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
 
 		return jpaQueryFactory.selectFrom(couponPaymentLog)
-			.join(couponPaymentLog.paymentCode.coupon, couponRegistration.coupon);
+			.join(couponRegistration).on(couponRegistration.coupon.eq(couponPaymentLog.paymentCode.coupon))
+			.where(filterBuilder);
+
 	}
 
 	private static void addPaginateOptions(JPAQuery<CouponPaymentLog> issueJPAQuery, int page, int size) {
