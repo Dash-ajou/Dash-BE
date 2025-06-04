@@ -46,6 +46,8 @@ public class CouponStatsService {
 
 	// CouponStatsService.java 안에서
 	public VendorDetailInfoDTO getVendorDetailInfo(Long vendorId) {
+		System.out.println("vendorId: " + vendorId);
+		System.out.println("findById result: " + vendorRepository.findById(vendorId));
 		Vendor vendor = vendorRepository.findById(vendorId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 발급 단체를 찾을 수 없습니다."));
 
