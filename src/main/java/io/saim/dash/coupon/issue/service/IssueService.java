@@ -308,6 +308,8 @@ public class IssueService {
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
 			.usedCnt(0L)
 			.issueActiveStatus(IssueActiveStatus.ENABLED)
+			.vendor(request.getVendor())
+			.partner(request.getPartner())
 			.build();
 
 		List<Coupon> issuedCoupons = createCoupons(issue);

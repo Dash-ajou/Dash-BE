@@ -77,13 +77,15 @@ public class Issue {
 
 	@Builder
 	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
-		Long paidPrice) {
+		Long paidPrice, Vendor vendor, PartnerUser partner) {
 		this.request = request;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
 		this.issueCnt = issueCnt;
 		this.usedCnt = usedCnt;
 		this.issueActiveStatus = issueActiveStatus;
+		this.vendor = vendor;
+		this.partner = partner;
 		this.decidedAt = LocalDateTime.now();
 	}
 
