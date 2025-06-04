@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.saim.dash.account.partner.dto.MenuUsageStatsDTO;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.account.partner.repository.CouponStatsJpaRepository;
@@ -32,6 +33,7 @@ public class CouponStatsService {
 			.orElse(new CouponStatsDTO(0L, 0L, 0L));
 
 		List<CouponVendorDetailStatsDTO> detailed = couponRepository.getVendorStatsByPartnerId(partnerId);
+		List<MenuUsageStatsDTO> menuUsage = couponRepository.getMenuUsageStatsByPartnerId(partnerId);
 
 		return CouponStatsResponseDTO.builder()
 			.totalIssued(overall.getTotalIssued())
@@ -39,6 +41,7 @@ public class CouponStatsService {
 			.totalRemainder(overall.getTotalRemainder())
 			.usageRate(overall.getUsageRate())
 			.detailedStats(detailed)
+			.menuUsage(menuUsage)
 			.build();
 	}
 

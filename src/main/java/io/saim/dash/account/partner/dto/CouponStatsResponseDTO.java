@@ -15,4 +15,5 @@ public class CouponStatsResponseDTO {
 	private Long totalRemainder;
 	private Integer usageRate;
 	private List<CouponVendorDetailStatsDTO> detailedStats;
+	private List<MenuUsageStatsDTO> menuUsage;
 }
