@@ -121,6 +121,8 @@ public class CouponRepositoryImpl implements CouponRepository {
 		QCoupon c = QCoupon.coupon;
 		QProduct p = QProduct.product;
 
+		QPartnerUser partner = QPartnerUser.partnerUser;
+
 		return queryFactory
 			.select(Projections.constructor(
 				CouponVendorDetailStatsDTO.class,
@@ -130,8 +132,9 @@ public class CouponRepositoryImpl implements CouponRepository {
 				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum()
 			))
 			.from(c)
-			.join(c.product, p)
-			.where(p.partner.id.eq(partnerId))
+			.join(c.product, p).fetchJoin()
+			.join(p.partner, partner)
+			.where(partner.id.eq(partnerId))
 			.groupBy(p.productId, p.productName)
 			.fetch();
 	}
