@@ -26,7 +26,6 @@ public class CouponTransferController {
 		@RequestBody(required = false) CouponTransferRequestDTO requestDTO,
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		System.out.println("[Controller] /transfer API 호출됨");
 
 		if (userDetails == null || userDetails.getGeneralUser() == null) {
 			System.out.println("userDetails or generalUser is null");

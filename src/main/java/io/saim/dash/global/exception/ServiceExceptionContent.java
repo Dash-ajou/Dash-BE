@@ -22,6 +22,7 @@ public enum ServiceExceptionContent {
 	DUPLICATE_PHONE(APIStatus.BAD_REQUEST, "이미 등록된 전화번호입니다."),
 	INVALID_INPUT(APIStatus.BAD_REQUEST, "잘못된 입력값입니다. 확인 후 다시 시도해주세요."),
 	PAYMENT_CODE_EXPIRED(APIStatus.BAD_REQUEST, "결제코드가 만료되었습니다. 확인 후 다 시 시도해주세요."),
+	ALREADY_PROCESSED(APIStatus.BAD_REQUEST, "이미 처리된 쿠폰 요청입니다."),
 
 	// 401
   	UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),
