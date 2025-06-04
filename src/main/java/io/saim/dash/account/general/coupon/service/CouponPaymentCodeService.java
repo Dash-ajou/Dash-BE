@@ -20,7 +20,7 @@ public class CouponPaymentCodeService {
 
 	@Transactional
 	public CouponPaymentCode generatePaymentCode(Long couponId, String qrCodeUrl) {
-		Coupon coupon = couponRepository.findById(couponId)
+		Coupon coupon = couponRepository.findWithProductAndPartnerById(couponId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다: " + couponId));
 
 		//기존 결제 코드가 있다면 재사용

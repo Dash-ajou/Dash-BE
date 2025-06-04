@@ -34,4 +34,6 @@ public interface CouponRepository {
 	List<CouponVendorDetailStatsDTO> getDetailedVendorStatsByPartnerId(Long partnerId);
 
 	List<RequestDetailDTO> getRequestDetailsByVendorId(Long vendorId);
+
+	Optional<Coupon> findWithProductAndPartnerById(Long couponId);
 }
