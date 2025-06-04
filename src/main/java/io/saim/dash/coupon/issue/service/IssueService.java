@@ -126,6 +126,8 @@ public class IssueService {
 		);
 		PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
 
+		System.out.println("[TEST] " + partnerUser.getName() + " | " + partnerUser.getPartnerName());
+
 		Request request = Request.builder()
 			.vendor(requestVendor)
 			.partner(partnerUser)
@@ -142,15 +144,15 @@ public class IssueService {
 	}
 
 	private void sendRequestRegisteredPush(Vendor vendor, PartnerUser partnerUser) {
-		List<Push> pushes = vendor.getVendorUsers().stream()
+		List<Push> pushes = new ArrayList<>(vendor.getVendorUsers().stream()
 			.map(vendorUser -> createSystemPushMessage(
-				PushTag.REQUEST_RECEIVED.replaceArg(),
+				PushTag.REQUEST_RECEIVED,
 				vendorUser, partnerUser.getName()
 			))
-			.toList();
+			.toList());
 
 		pushes.add(createSystemPushMessage(
-			PushTag.REQUEST_RECEIVED.replaceArg(),
+			PushTag.REQUEST_RECEIVED,
 			partnerUser, vendor.getName()
 		) );
 
@@ -159,19 +161,30 @@ public class IssueService {
 
 	private void addProductsToRequest(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts, Request request) {
 		List<Product> products = getProducts(partnerUser, productCounts);
-		Map<String, Long> requestProductCounts = getMappedProductCounts(productCounts);
+		Map<String, Long> requestProductCounts = getMappedProductCounts(productCounts, products);
 
 		products.forEach(product -> request.addRequestProduct(
 			product, requestProductCounts.get(product.getProductName())
 		));
 	}
 
-	private static Map<String, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts) {
+	private static Map<String, Long> getMappedProductCounts(List<RequestProductCountDTO> productCounts, List<Product> products) {
 		Map<String, Long> requestProductCounts = productCounts.stream()
 			.collect(Collectors.toMap(
-				RequestProductCountDTO::getProductName, RequestProductCountDTO::getCount
+				counts -> {
+					if (counts.getProductName() != null) return counts.getProductName();
+					return getRegisteredProductName(products, counts);
+				}, RequestProductCountDTO::getCount
 			));
 		return requestProductCounts;
+	}
+
+	private static String getRegisteredProductName(List<Product> products, RequestProductCountDTO counts) {
+		Product registeredProducts = products.stream()
+			.filter(v -> v.getProductId().equals(counts.getProductId()))
+			.findFirst()
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PRODUCT_NOT_FOUND));
+		return registeredProducts.getProductName();
 	}
 
 	private List<Product> getProducts(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts) {
@@ -193,7 +206,7 @@ public class IssueService {
 				.productName(dto.getProductName()) // 임시 이름
 				.price(0L)
 				.build())
-			.collect(Collectors.toList());
+			.toList();
 
 		// 기존 + 새 상품을 합침
 		products.addAll(newProducts);
