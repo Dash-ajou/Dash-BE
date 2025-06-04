@@ -1,15 +1,12 @@
 package io.saim.dash.account.partner.service;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import io.saim.dash.account.partner.dto.MenuVendorStatsResponseDTO;
 import io.saim.dash.account.partner.dto.MenuVendorStatsResultDTO;
-
+import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.account.partner.dto.VendorRawStatsDTO;
 import io.saim.dash.account.partner.repository.CouponStatsJpaRepository;
-import io.saim.dash.coupon.common.constant.CouponStatus;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,14 +21,14 @@ public class PartnerStatsService {
 
 		List<MenuVendorStatsResponseDTO> vendorStats = rawStats.stream()
 			.map(row -> {
-				int issued = row.issuedCount().intValue();
-				int used = row.usedCount().intValue();
+				int issued = row.getIssuedCount().intValue();
+				int used = row.getUsedCount().intValue();
 				int remained = issued - used;
 				String usableStatus = remained > 0 ? "사용 가능" : "잔여 없음";
 
 				return MenuVendorStatsResponseDTO.builder()
-					.vendor_id(row.vendorId())
-					.vendor_name(row.vendorName())
+					.vendor_id(row.getVendorId())
+					.vendor_name(row.getVendorName())
 					.vendor_issued(issued)
 					.vendor_used(used)
 					.vendor_remained(remained)

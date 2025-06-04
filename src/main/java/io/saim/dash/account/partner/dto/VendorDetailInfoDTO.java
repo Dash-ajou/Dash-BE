@@ -10,7 +10,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class VendorDetailInfoDTO {
+	private Long vendorId;
 	private String vendorName;
+	private Long vendorIssued;
+	private Long vendorUsed;
+	private Double vendorUsageRate;
 	private String headName;
 	private String headContact;
 	private List<RequestDetailDTO> details;

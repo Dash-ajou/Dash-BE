@@ -6,16 +6,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Vendor;
+import io.saim.dash.account.partner.repository.CouponStatsJpaRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponStatsResponseDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
-import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.account.partner.dto.VendorDetailInfoDTO;
-import io.saim.dash.account.partner.model.PartnerUser;
-import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,6 +25,7 @@ public class CouponStatsService {
 
 	private final CouponRepository couponRepository;
 	private final VendorRepository vendorRepository;
+	private final CouponStatsJpaRepository couponStatsJpaRepository;
 
 	public CouponStatsResponseDTO getPartnerCouponStats(Long partnerId) {
 		CouponStatsDTO overall = couponRepository.getOverallStatsByPartnerId(partnerId)
@@ -45,18 +47,22 @@ public class CouponStatsService {
 	}
 
 	public VendorDetailInfoDTO getVendorDetailInfo(Long vendorId) {
-		System.out.println("vendorId: " + vendorId);
-		System.out.println("findById result: " + vendorRepository.findById(vendorId));
 		Vendor vendor = vendorRepository.findById(vendorId)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 발급 단체를 찾을 수 없습니다."));
+			.orElseThrow(() -> new ServiceException(
+				ServiceExceptionContent.VENDOR_NOT_FOUND
+			));
 
-		List<RequestDetailDTO> details = couponRepository.getRequestDetailsByVendorId(vendorId);
+		Long issuedCount = couponStatsJpaRepository.countByVendor(vendorId);
+		Long usedCount = couponStatsJpaRepository.countUsedByVendor(vendorId, CouponStatus.USED);
+
+		double usageRate = issuedCount == 0 ? 0.0 : (double) usedCount / issuedCount;
 
 		return VendorDetailInfoDTO.builder()
+			.vendorId(vendor.getVendorId())
 			.vendorName(vendor.getName())
-			.headName(vendor.getPresidentName())
-			.headContact(vendor.getPresidentPhone())
-			.details(details)
+			.vendorIssued(issuedCount)
+			.vendorUsed(usedCount)
+			.vendorUsageRate(usageRate)
 			.build();
 	}
 }

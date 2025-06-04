@@ -43,6 +43,7 @@ public enum ServiceExceptionContent {
 	PRODUCT_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 제품을 찾을 수 없습니다."),
 	PAYMENT_LOG_NOT_FOUND(APIStatus.NOT_FOUND, "결제기록을 찾을 수 없습니다."),
 	PUSH_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 Push 메시지를 찾을 수 없습니다."),
+	VENDOR_NOT_FOUND(APIStatus.NOT_FOUND, "해당 발급 단체(Vendor)를 찾을 수 없습니다."),
 
 
 	// 500

@@ -19,11 +19,11 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "vendor")
 @NoArgsConstructor
+@Getter
 public class Vendor implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -31,11 +31,10 @@ public class Vendor implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "vendor_id")
-	@Getter private Long vendorId;
-
-	@Getter private String name;
-	@Getter private String presidentName;
-	@Getter private String presidentPhone;
+	private Long vendorId;
+	private String name;
+	private String presidentName;
+	private String presidentPhone;
 
 	@OneToMany(
 		mappedBy = "vendor", fetch = FetchType.LAZY,
