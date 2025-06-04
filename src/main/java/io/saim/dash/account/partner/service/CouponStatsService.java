@@ -44,7 +44,6 @@ public class CouponStatsService {
 		return couponRepository.getDetailedVendorStatsByPartnerId(partnerId);
 	}
 
-	// CouponStatsService.java 안에서
 	public VendorDetailInfoDTO getVendorDetailInfo(Long vendorId) {
 		System.out.println("vendorId: " + vendorId);
 		System.out.println("findById result: " + vendorRepository.findById(vendorId));
