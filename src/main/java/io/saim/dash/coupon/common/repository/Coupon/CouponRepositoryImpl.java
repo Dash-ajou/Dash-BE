@@ -121,9 +121,8 @@ public class CouponRepositoryImpl implements CouponRepository {
 	@Override
 	public List<CouponVendorDetailStatsDTO> getVendorStatsByPartnerId(Long partnerId) {
 		QCoupon c = QCoupon.coupon;
-		QProduct p = QProduct.product;
-
-		QPartnerUser partner = QPartnerUser.partnerUser;
+		QIssue issue = QIssue.issue;
+		QVendor vendor = QVendor.vendor;
 
 		return queryFactory
 			.select(Projections.constructor(
@@ -134,10 +133,10 @@ public class CouponRepositoryImpl implements CouponRepository {
 				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum()
 			))
 			.from(c)
-			.join(c.product, p)
-			.join(p.partner, partner)
-			.where(partner.id.eq(partnerId))
-			.groupBy(p.productId, p.productName)
+			.join(c.issue, issue)
+			.join(issue.vendor, vendor)
+			.where(issue.partner.id.eq(partnerId))
+			.groupBy(vendor.vendorId, vendor.name)
 			.fetch();
 	}
 
