@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/coupon/redeem")
+@RequestMapping("/coupon/payment")
 public class PaymentController {
 
 	private final PaymentService paymentService;
