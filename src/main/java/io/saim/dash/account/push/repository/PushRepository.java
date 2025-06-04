@@ -11,4 +11,8 @@ public interface PushRepository {
 	List<Push> findByFilter(BooleanBuilder filter, int page, int size);
 
 	Push findById(long pushId);
+
+	void save(Push push);
+
+	void saveAll(List<Push> vendorPushes);
 }

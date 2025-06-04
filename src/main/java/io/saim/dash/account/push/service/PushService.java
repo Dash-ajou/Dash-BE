@@ -16,6 +16,7 @@ import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.account.push.dto.UserSearchResultDTO;
 import io.saim.dash.account.push.model.Push;
+import io.saim.dash.account.push.model.PushType;
 import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.account.push.util.PushQueryHelper;
 import io.saim.dash.global.exception.ServiceException;
