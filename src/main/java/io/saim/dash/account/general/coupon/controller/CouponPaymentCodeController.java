@@ -43,7 +43,8 @@ public class CouponPaymentCodeController {
 
 			CouponPaymentCodeResponseDTO responseDTO = new CouponPaymentCodeResponseDTO(
 				paymentCode.getQrCodeUrl(),
-				paymentCode.getCoupon().getCouponId()
+				paymentCode.getCoupon().getCouponId(),
+				paymentCode.getPaymentCode()
 			);
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(
