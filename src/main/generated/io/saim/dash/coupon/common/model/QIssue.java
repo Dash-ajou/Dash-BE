@@ -36,9 +36,13 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public final NumberPath<Long> paidPrice = createNumber("paidPrice", Long.class);
 
+    public final io.saim.dash.account.partner.model.QPartnerUser partner;
+
     public final QRequest request;
 
     public final NumberPath<Long> usedCnt = createNumber("usedCnt", Long.class);
+
+    public final QVendor vendor;
 
     public QIssue(String variable) {
         this(Issue.class, forVariable(variable), INITS);
@@ -58,7 +62,9 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public QIssue(Class<? extends Issue> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.partner = inits.isInitialized("partner") ? new io.saim.dash.account.partner.model.QPartnerUser(forProperty("partner")) : null;
         this.request = inits.isInitialized("request") ? new QRequest(forProperty("request"), inits.get("request")) : null;
+        this.vendor = inits.isInitialized("vendor") ? new QVendor(forProperty("vendor")) : null;
     }
 
 }

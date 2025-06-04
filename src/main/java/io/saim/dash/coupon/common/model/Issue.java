@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -21,6 +22,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -46,6 +48,14 @@ public class Issue {
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "request_id")
 	private Request request;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "vendor_id", nullable = false)
+	private Vendor vendor;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "partner_id", nullable = false)
+	private PartnerUser partner;
 
 	@OneToMany(
 		mappedBy = "issue", fetch = FetchType.LAZY,
