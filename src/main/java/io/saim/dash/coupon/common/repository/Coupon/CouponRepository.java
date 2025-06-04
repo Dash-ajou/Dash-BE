@@ -7,6 +7,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
+import io.saim.dash.account.partner.dto.MenuUsageStatsDTO;
 import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 
@@ -36,4 +37,6 @@ public interface CouponRepository {
 	List<RequestDetailDTO> getRequestDetailsByVendorId(Long vendorId);
 
 	Optional<Coupon> findWithProductAndPartnerById(Long couponId);
+
+	List<MenuUsageStatsDTO> getMenuUsageStatsByPartnerId(Long partnerId);
 }

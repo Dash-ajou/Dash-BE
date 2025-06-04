@@ -15,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.saim.dash.account.general.model.QGeneralUser;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
+import io.saim.dash.account.partner.dto.MenuUsageStatsDTO;
 import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
@@ -183,5 +184,27 @@ public class CouponRepositoryImpl implements CouponRepository {
 			.fetchOne();
 
 		return Optional.ofNullable(result);
+	}
+
+	@Override
+	public List<MenuUsageStatsDTO> getMenuUsageStatsByPartnerId(Long partnerId) {
+		QCoupon c = QCoupon.coupon;
+		QProduct p = QProduct.product;
+
+		return queryFactory
+			.select(Projections.constructor(
+				MenuUsageStatsDTO.class,
+				p.productName,
+				c.count(),
+				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum(),
+				c.couponStatus.when(CouponStatus.USED).then(1.0).otherwise(0.0).sum()
+					.divide(c.count().castToNum(Double.class))
+					.multiply(100)
+			))
+			.from(c)
+			.join(c.product, p)
+			.where(p.partner.id.eq(partnerId))
+			.groupBy(p.productName)
+			.fetch();
 	}
 }
