@@ -1,25 +1,26 @@
 package io.saim.dash.account.general.coupon.util;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
+import com.google.zxing.*;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class QrCodeGeneratorUtil {
 
-	public static String generateQRCode(Long couponId) throws Exception {
-		String qrCodePath = "qrcodes/";
-		String filePath = qrCodePath + "qrcode_" + couponId + ".png"; //파일 경로
+	@Value("${app.domain}")
+	private String domain;
 
-		//폴더가 없으면 생성
+	public String generateQRCode(Long couponId) throws Exception {
+		String qrCodePath = "qrcodes/";
+		String filePath = qrCodePath + "qrcode_" + couponId + ".png";
+
 		Path dirPath = FileSystems.getDefault().getPath(qrCodePath);
 		if (!Files.exists(dirPath)) {
 			try {
@@ -33,19 +34,17 @@ public class QrCodeGeneratorUtil {
 		int height = 300;
 		String format = "png";
 
-		//QR 코드 내용 (ex: 결제 검증 URL)
-		String qrContent = "https://yourdomain.com/payment/verify?couponId=" + couponId;
+		String qrContent = domain + "/payment/verify?couponId=" + couponId;
 
 		Map<EncodeHintType, Object> hints = new HashMap<>();
 		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 
-		//QR 코드 생성
 		BitMatrix bitMatrix = new MultiFormatWriter().encode(
 			qrContent, BarcodeFormat.QR_CODE, width, height, hints);
 
 		Path path = FileSystems.getDefault().getPath(filePath);
 		MatrixToImageWriter.writeToPath(bitMatrix, format, path);
 
-		return "https://yourdomain.com/qrcodes/qrcode_" + couponId + ".png"; //QR 코드 이미지 URL 반환
+		return domain + "/qrcodes/qrcode_" + couponId + ".png";
 	}
 }

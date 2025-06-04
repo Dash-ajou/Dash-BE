@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class CouponPaymentCodeController {
 
 	private final CouponPaymentCodeService couponPaymentCodeService;
+	private final QrCodeGeneratorUtil qrCodeGeneratorUtil;
 
 	@PostMapping("/{couponId}/generate-qrcode")
 	public ResponseEntity<CommonResponseDTO<CouponPaymentCodeResponseDTO>> generatePaymentQRCode(
 		@PathVariable Long couponId) {
 
 		try {
-			String qrCodeUrl = QrCodeGeneratorUtil.generateQRCode(couponId);
+			String qrCodeUrl = qrCodeGeneratorUtil.generateQRCode(couponId); // ✅ 변경
 			System.out.println("생성된 QR 코드 URL: " + qrCodeUrl);
 
 			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId, qrCodeUrl);
@@ -54,7 +55,7 @@ public class CouponPaymentCodeController {
 				)
 			);
 		} catch (Exception e) {
-			e.printStackTrace(); // 또는 log.error(...)
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 				new CommonResponseDTO<>(
 					new VersionResponseDTO("1.0", "1.0"),
