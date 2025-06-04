@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.manage.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +13,10 @@ import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
+import io.saim.dash.account.push.model.Push;
+import io.saim.dash.account.push.model.PushSenderType;
+import io.saim.dash.account.push.model.PushTag;
+import io.saim.dash.account.push.model.PushType;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
@@ -192,5 +197,18 @@ public class ManageService {
 		Long expiredCnt = couponRepository.cancelCoupons(couponFilterBuilder);
 
 		return new CancelIssueResultDTO(issue, expiredCnt);
+	}
+
+	private static Push createSystemPushMessage(PushTag tag, ServiceUser receiver) {
+		Push.PushBuilder pushBuilder = Push.builder()
+			.type(PushType.INFO)
+			.tag(tag)
+			.senderType(PushSenderType.SYSTEM)
+			.receivedAt(LocalDateTime.now());
+
+		if (receiver.isPartner()) pushBuilder.receiver_partner((PartnerUser)receiver);
+		else pushBuilder.receiver_general((GeneralUser)receiver);
+
+		return pushBuilder.build();
 	}
 }

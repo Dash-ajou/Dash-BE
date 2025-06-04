@@ -27,7 +27,5 @@ public abstract class ServiceUser implements Serializable {
 
 	public abstract Long getId();
 
-	public Boolean isPartner() {
-		return this.userType == UserType.PARTNER;
-	}
+	public abstract Boolean isPartner();
 }

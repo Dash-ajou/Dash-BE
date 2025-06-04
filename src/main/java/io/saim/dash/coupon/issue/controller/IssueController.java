@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
+import io.saim.dash.account.push.service.PushService;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
@@ -30,6 +31,7 @@ import io.saim.dash.coupon.issue.service.IssueService;
 public class IssueController {
 
 	private final IssueService issueService;
+	private final PushService pushService;
 
 	@GetMapping("/list")
 	public PagingResponse<RequestBriefResponseDTO> getIssues(

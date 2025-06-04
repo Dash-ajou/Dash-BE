@@ -94,4 +94,9 @@ public class PartnerUser extends ServiceUser implements Serializable {
 	public int hashCode() {
 		return Objects.hash(getId());
 	}
+
+	@Override
+	public Boolean isPartner() {
+		return true;
+	}
 }

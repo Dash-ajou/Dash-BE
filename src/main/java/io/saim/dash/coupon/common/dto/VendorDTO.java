@@ -1,43 +1,36 @@
 package io.saim.dash.coupon.common.dto;
 
+import net.minidev.json.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import io.saim.dash.coupon.common.model.Vendor;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class VendorDTO {
-	private String vendor_name;
+	private String vendorName;
 
 	@Nullable
-	private String president_name;
+	private String presidentName;
 
 	@Nullable
-	private String president_phone;
+	private String presidentPhone;
 
-	public VendorDTO(String vendor_name, @Nullable String president_name, @Nullable String president_phone) {
-		this.vendor_name = vendor_name;
-		this.president_name = president_name;
-		this.president_phone = president_phone;
+	public VendorDTO(String vendorName, @Nullable String presidentName, @Nullable String presidentPhone) {
+		this.vendorName = vendorName;
+		this.presidentName = presidentName;
+		this.presidentPhone = presidentPhone;
 	}
 
 	public VendorDTO(Vendor vendor) {
-		this.vendor_name = vendor.getName();
-		this.president_name = vendor.getPresidentName();
-		this.president_phone = vendor.getPresidentPhone();
-	}
-
-	public String getVendorName() {
-		return vendor_name;
-	}
-
-	public String getPresidentName() {
-		return president_name;
-	}
-
-	public String getPresidentPhone() {
-		return president_phone;
+		this.vendorName = vendor.getName();
+		this.presidentName = vendor.getPresidentName();
+		this.presidentPhone = vendor.getPresidentPhone();
 	}
 }

@@ -11,6 +11,11 @@ import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
+import io.saim.dash.account.push.model.Push;
+import io.saim.dash.account.push.model.PushSenderType;
+import io.saim.dash.account.push.model.PushTag;
+import io.saim.dash.account.push.model.PushType;
+import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.coupon.common.constant.CodeType;
 import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
@@ -44,6 +49,7 @@ public class PaymentService {
 	private final CouponRegistrationRepository couponRegistrationRepository;
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 	private final CouponPaymentCodeJpaRepository couponPaymentCodeJpaRepository;
+	private final PushRepository pushRepository;
 
 	private static final DateTimeFormatter FORMATTER =
 		DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -107,11 +113,43 @@ public class PaymentService {
 
 		CouponPaymentCode couponPaymentCode = getCouponPaymentCodeInfo(requestedPaymentCode);
 		checkCouponValidation(couponPaymentCode.getCoupon(), partnerUser);
-		CouponPaymentLog couponRedeemResult = applyPayment(partnerUser, couponPaymentCode);
+		CouponPaymentLog couponUseResult = applyPayment(partnerUser, couponPaymentCode);
 
-		// TODO: 알림 추가
+		sendPaymentCompletePush(couponPaymentCode, partnerUser);
 
-		return couponRedeemResult;
+		return couponUseResult;
+	}
+
+	private void sendPaymentCompletePush(CouponPaymentCode couponPaymentCode, PartnerUser partnerUser) {
+		CouponRegistration couponRegistrationInfo = couponRegistrationRepository.findByCoupon(couponPaymentCode.getCoupon());
+		GeneralUser registeredUser = couponRegistrationInfo.getRegisteredUser();
+		List<Push> pushes = List.of(
+			createSystemPushMessage(
+				PushTag.COUPON_USED,
+				partnerUser,
+				"[사용]" + couponPaymentCode.getCoupon().getProduct().getProductName()
+			),
+			createSystemPushMessage(
+				PushTag.COUPON_USED,
+				registeredUser,
+				"[사용]" + couponPaymentCode.getCoupon().getProduct().getProductName()
+			)
+		);
+		pushRepository.saveAll(pushes);
+	}
+
+	private static Push createSystemPushMessage(PushTag tag, ServiceUser receiver, String message) {
+		Push.PushBuilder pushBuilder = Push.builder()
+			.type(PushType.INFO)
+			.tag(tag)
+			.message(message)
+			.senderType(PushSenderType.SYSTEM)
+			.receivedAt(LocalDateTime.now());
+
+		if (receiver.isPartner()) pushBuilder.receiver_partner((PartnerUser)receiver);
+		else pushBuilder.receiver_general((GeneralUser)receiver);
+
+		return pushBuilder.build();
 	}
 
 	private PartnerUser getPartnerAPIAccessUser(ServiceUser loginUser) {
@@ -213,9 +251,29 @@ public class PaymentService {
 		CouponPaymentCode couponPaymentCodeInfo = getCouponPaymentCodeInfo(paymentCode);
 		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentId, couponPaymentCodeInfo);
 
-		// TODO: 알림 추가
+		sendPaymentCancelledPush(couponPaymentCodeInfo, partnerUser);
 
 		return paymentLog;
+	}
+
+	private void sendPaymentCancelledPush(CouponPaymentCode couponPaymentCodeInfo, PartnerUser partnerUser) {
+		Coupon coupon = couponPaymentCodeInfo.getCoupon();
+		CouponRegistration couponRegistrationInfo = couponRegistrationRepository.findByCoupon(coupon);
+
+		List<Push> pushes = List.of(
+			createSystemPushMessage(
+				PushTag.COUPON_USE_CANCELED,
+				partnerUser,
+				"[취소]" + coupon.getProduct().getProductName()
+			),
+			createSystemPushMessage(
+				PushTag.COUPON_USE_CANCELED,
+				couponRegistrationInfo.getRegisteredUser(),
+				"[취소]" + coupon.getProduct().getProductName()
+			)
+		);
+
+		pushRepository.saveAll(pushes);
 	}
 
 	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, Long paymentId) {
