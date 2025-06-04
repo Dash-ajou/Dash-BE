@@ -14,6 +14,7 @@ import io.saim.dash.account.general.model.QGeneralUser;
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
 import io.saim.dash.account.partner.dto.RequestDetailDTO;
+import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.QCoupon;
@@ -162,4 +163,19 @@ public class CouponRepositoryImpl implements CouponRepository {
 		// return couponJpaRepository.getRequestDetailsByVendorId(vendorId);
 	}
 
+	@Override
+	public Optional<Coupon> findWithProductAndPartnerById(Long couponId) {
+		QCoupon c = QCoupon.coupon;
+		QProduct p = QProduct.product;
+		QPartnerUser partner = QPartnerUser.partnerUser;
+
+		Coupon result = queryFactory
+			.selectFrom(c)
+			.join(c.product, p).fetchJoin()
+			.join(p.partner, partner).fetchJoin()
+			.where(c.couponId.eq(couponId))
+			.fetchOne();
+
+		return Optional.ofNullable(result);
+	}
 }
