@@ -195,8 +195,8 @@ public class CouponRepositoryImpl implements CouponRepository {
 			.select(Projections.constructor(
 				MenuUsageStatsDTO.class,
 				p.productName,
-				c.count(),
-				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum(),
+				c.count().castToNum(Long.class),
+				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum().castToNum(Long.class),
 				c.couponStatus.when(CouponStatus.USED).then(1.0).otherwise(0.0).sum()
 					.divide(c.count().castToNum(Double.class))
 					.multiply(100)
