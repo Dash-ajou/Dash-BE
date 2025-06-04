@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MenuUsageStatsDTO {
 	private String menuName;
-	private int menuIssued;
-	private int menuUsed;
+	private Long menuIssued;
+	private Long menuUsed;
 	private double menuUsageRate;
 }
