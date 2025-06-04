@@ -36,4 +36,14 @@ public class PushRepositoryImpl implements PushRepository {
 		return jpaRepository.findById(pushId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
 	}
+
+	@Override
+	public void save(Push push) {
+		jpaRepository.save(push);
+	}
+
+	@Override
+	public void saveAll(List<Push> vendorPushes) {
+		jpaRepository.saveAll(vendorPushes);
+	}
 }

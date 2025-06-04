@@ -62,6 +62,33 @@ public class Push {
 	@Getter
 	private LocalDateTime readAt;
 
+	public Push(
+		PushSenderType senderType,
+		GeneralUser receiver_general, PartnerUser receiver_partner,
+		LocalDateTime receivedAt, PushTag tag, PushType type
+	) {
+		this(
+			senderType, tag.getMessage(),
+			receiver_general, receiver_partner,
+			receivedAt, tag, type
+		);
+	}
+
+	public Push(
+		PushSenderType senderType, String message,
+		GeneralUser receiver_general, PartnerUser receiver_partner,
+		LocalDateTime receivedAt, PushTag tag, PushType type
+	) {
+		this.type = type;
+		this.tag = tag;
+		this.message = message;
+
+		this.senderType = senderType;
+		this.receiver_general = receiver_general;
+		this.receiver_partner = receiver_partner;
+		this.receivedAt = receivedAt;
+	}
+
 	public ServiceUser getReceiver() {
 		if (receiver_general == null) return receiver_partner;
 		return receiver_general;
