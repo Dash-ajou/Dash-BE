@@ -26,6 +26,7 @@ public class CouponPaymentCodeController {
 		try {
 			//QR 코드 생성
 			String qrCodeUrl = QrCodeGeneratorUtil.generateQRCode(couponId);
+			System.out.println("생성된 QR 코드 URL: " + qrCodeUrl);
 			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId, qrCodeUrl);
 
 			//DTO 변환
