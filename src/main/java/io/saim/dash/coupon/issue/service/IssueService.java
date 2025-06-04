@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import com.querydsl.core.BooleanBuilder;
 
@@ -20,6 +19,11 @@ import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
+import io.saim.dash.account.push.model.Push;
+import io.saim.dash.account.push.model.PushSenderType;
+import io.saim.dash.account.push.model.PushTag;
+import io.saim.dash.account.push.model.PushType;
+import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.constant.IssueStatus;
@@ -55,7 +59,7 @@ public class IssueService {
 
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
-	private final NativeWebRequest nativeWebRequest;
+	private final PushRepository pushRepository;
 
 	@Transactional
 	public List<Request> getRequests(
@@ -116,14 +120,14 @@ public class IssueService {
 		// temp: 기존 vendor 지정 없이 매 요청마다 신규 vendor 생성
 		GeneralUser requestUser = (GeneralUser) serviceUser;
 
-		Vendor issueVendor = createIssueVendor(
+		Vendor requestVendor = createIssueVendor(
 			requestUser,
 			vendorName, presidentName, presidentPhone
 		);
 		PartnerUser partnerUser = getRequestPartner(businessName, ownerPhone);
 
 		Request request = Request.builder()
-			.vendor(issueVendor)
+			.vendor(requestVendor)
 			.partner(partnerUser)
 			.build();
 
@@ -132,7 +136,25 @@ public class IssueService {
 		requestRepository.save(request);
 		requestRepository.flush();
 
+		sendRequestRegisteredPush(requestVendor, partnerUser);
+
 		return request;
+	}
+
+	private void sendRequestRegisteredPush(Vendor vendor, PartnerUser partnerUser) {
+		List<Push> pushes = vendor.getVendorUsers().stream()
+			.map(vendorUser -> createSystemPushMessage(
+				PushTag.REQUEST_RECEIVED.replaceArg(),
+				vendorUser, partnerUser.getName()
+			))
+			.toList();
+
+		pushes.add(createSystemPushMessage(
+			PushTag.REQUEST_RECEIVED.replaceArg(),
+			partnerUser, vendor.getName()
+		) );
+
+		pushRepository.saveAll(pushes);
 	}
 
 	private void addProductsToRequest(PartnerUser partnerUser, List<RequestProductCountDTO> productCounts, Request request) {
@@ -206,6 +228,7 @@ public class IssueService {
 
 		if (status == IssueStatus.DENIED) {
 			updateIssueRequestStatus(request, status);
+			sendIssueCompletionPush(request, serviceUser);
 			return new IssueResultDTO(request);
 		}
 
@@ -222,7 +245,43 @@ public class IssueService {
 		updateIssueRequestStatus(request, status);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		return issueCoupon(request, LocalDateTime.parse(paidAtString, formatter), paidPrice);
+		IssueResultDTO issueResultDTO = issueCoupon(request, LocalDateTime.parse(paidAtString, formatter), paidPrice);
+
+		sendIssueCompletionPush(request, serviceUser);
+		return issueResultDTO;
+	}
+
+	private void sendIssueCompletionPush(Request request, PartnerUser serviceUser) {
+		Vendor vendor = request.getVendor();
+		List<Push> vendorPushes = vendor.getVendorUsers().stream()
+			.map(vendorUser -> createSystemPushMessage(
+				PushTag.REQUEST_ISSUED.replaceArg(),
+				vendorUser,
+				serviceUser.getPartnerName()
+			))
+			.toList();
+		vendorPushes.add(
+			createSystemPushMessage(
+				PushTag.REQUEST_ISSUED,
+				serviceUser,
+				vendor.getName()
+			)
+		);
+		pushRepository.saveAll(vendorPushes);
+	}
+
+	private static Push createSystemPushMessage(PushTag tag, ServiceUser receiver, String message) {
+		Push.PushBuilder pushBuilder = Push.builder()
+			.type(PushType.INFO)
+			.tag(tag)
+			.message(message)
+			.senderType(PushSenderType.SYSTEM)
+			.receivedAt(LocalDateTime.now());
+
+		if (receiver.isPartner()) pushBuilder.receiver_partner((PartnerUser)receiver);
+		else pushBuilder.receiver_general((GeneralUser)receiver);
+
+		return pushBuilder.build();
 	}
 
 	private void updateProductPriceInfo(Request request, List<RequestProductPriceDTO> price) {
@@ -253,7 +312,18 @@ public class IssueService {
 		Request request = getRequest(requestId, requestedUser);
 		requestRepository.delete(request);
 
+		sendRequestCancelledPush(request);
+
 		return true;
+	}
+
+	private void sendRequestCancelledPush(Request request) {
+		Push push = createSystemPushMessage(
+			PushTag.REQUEST_CACELLED,
+			request.getPartner(),
+			"[취소] " + request.getVendor().getName()
+		);
+		pushRepository.save(push);
 	}
 
 	private Vendor createIssueVendor(

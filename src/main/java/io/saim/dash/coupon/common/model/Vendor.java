@@ -67,7 +67,7 @@ public class Vendor implements Serializable {
 			.anyMatch(vu -> vu.getId().equals(generalUser.getId()));
 	}
 
-	private List<GeneralUser> getVendorUsers() {
+	public List<GeneralUser> getVendorUsers() {
 		return this.vendorUsers.stream()
 			.map(UserVendor::getUser)
 			.toList();
