@@ -30,6 +30,7 @@ public class PartnerStatsService {
 				String usableStatus = remained > 0 ? "사용 가능" : "잔여 없음";
 
 				return MenuVendorStatsResponseDTO.builder()
+					.vendor_id(row.vendorId())
 					.vendor_name(row.vendorName())
 					.vendor_issued(issued)
 					.vendor_used(used)
