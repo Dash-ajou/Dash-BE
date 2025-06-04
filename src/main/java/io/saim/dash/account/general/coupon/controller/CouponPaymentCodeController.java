@@ -24,12 +24,22 @@ public class CouponPaymentCodeController {
 		@PathVariable Long couponId) {
 
 		try {
-			//QR 코드 생성
 			String qrCodeUrl = QrCodeGeneratorUtil.generateQRCode(couponId);
 			System.out.println("생성된 QR 코드 URL: " + qrCodeUrl);
+
 			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId, qrCodeUrl);
 
-			//DTO 변환
+			if (paymentCode == null || paymentCode.getQrCodeUrl() == null) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					new CommonResponseDTO<>(
+						new VersionResponseDTO("1.0", "1.0"),
+						APIStatus.FAILED,
+						"결제 코드 생성에 실패하였습니다.",
+						null
+					)
+				);
+			}
+
 			CouponPaymentCodeResponseDTO responseDTO = new CouponPaymentCodeResponseDTO(
 				paymentCode.getQrCodeUrl(),
 				paymentCode.getCoupon().getCouponId()
@@ -44,6 +54,7 @@ public class CouponPaymentCodeController {
 				)
 			);
 		} catch (Exception e) {
+			e.printStackTrace(); // 또는 log.error(...)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 				new CommonResponseDTO<>(
 					new VersionResponseDTO("1.0", "1.0"),
