@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MenuVendorStatsResultDTO {
-
 	private String menu_name;
 	private int menu_vendors;
 	private List<MenuVendorStatsResponseDTO> vendors;
