@@ -12,17 +12,17 @@ import java.util.List;
 public interface CouponStatsJpaRepository extends JpaRepository<Coupon, Long> {
 
 	@Query("""
-    SELECT new io.saim.dash.account.partner.dto.VendorRawStatsDTO(
-        v.vendorId,
-        v.name,
-        COUNT(c.couponId),
-        SUM(CASE WHEN c.couponStatus = :status THEN 1 ELSE 0 END)
-    )
-    FROM Coupon c
-    JOIN c.issue i
-    JOIN i.request r
-    JOIN r.vendor v
-    GROUP BY v.vendorId, v.name
+	SELECT new io.saim.dash.account.partner.dto.VendorRawStatsDTO(
+		v.vendorId,
+		v.name,
+		COUNT(c),
+		SUM(CASE WHEN c.couponStatus = :status THEN 1 ELSE 0 END)
+	)
+	FROM Coupon c
+	JOIN c.issue i
+	JOIN i.request r
+	JOIN r.vendor v
+	GROUP BY v.vendorId, v.name
 """)
 	List<VendorRawStatsDTO> findStatsGroupedByVendor(@Param("status") CouponStatus status);
 }
