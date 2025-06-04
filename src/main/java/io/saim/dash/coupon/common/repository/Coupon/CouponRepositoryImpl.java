@@ -1,5 +1,7 @@
 package io.saim.dash.coupon.common.repository.Coupon;
 
+import static io.saim.dash.coupon.common.model.QVendor.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -126,8 +128,8 @@ public class CouponRepositoryImpl implements CouponRepository {
 		return queryFactory
 			.select(Projections.constructor(
 				CouponVendorDetailStatsDTO.class,
-				p.productId,
-				p.productName,
+				vendor.vendorId,
+				vendor.name,
 				c.count(),
 				c.couponStatus.when(CouponStatus.USED).then(1).otherwise(0).sum()
 			))
