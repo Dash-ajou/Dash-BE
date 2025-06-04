@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.saim.dash.account.partner.dto.CouponStatsResponseDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
+import io.saim.dash.account.partner.dto.OrganizationStatsResponseDTO;
 import io.saim.dash.account.partner.dto.VendorDetailInfoDTO;
 import io.saim.dash.account.partner.service.CouponStatsService;
+import io.saim.dash.account.partner.service.OrganizationStatsService;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.security.CustomUserDetails;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class CouponStatsController {
 
 	private final CouponStatsService couponStatsService;
+	private final OrganizationStatsService organizationStatsService;
 
 	@GetMapping("/stats")
 	public ResponseEntity<CommonResponseDTO<CouponStatsResponseDTO>> getStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -58,10 +61,10 @@ public class CouponStatsController {
 	}
 
 	@GetMapping("/stats/organization/{vendor_id}")
-	public ResponseEntity<CommonResponseDTO<VendorDetailInfoDTO>> getVendorDetails(
+	public ResponseEntity<CommonResponseDTO<OrganizationStatsResponseDTO>> getVendorDetails(
 		@PathVariable("vendor_id") Long vendorId) {
 
-		VendorDetailInfoDTO response = couponStatsService.getVendorDetailInfo(vendorId);
+		OrganizationStatsResponseDTO response = organizationStatsService.getStats(vendorId);
 
 		return ResponseEntity.ok(
 			new CommonResponseDTO<>(
