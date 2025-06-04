@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CouponPaymentCodeResponseDTO {
 	private String qrcodeUrl;
 	private Long couponId; //결제 코드가 발급된 쿠폰 ID
+	private String paymentCode;
 }
