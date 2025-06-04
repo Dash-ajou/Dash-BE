@@ -20,7 +20,7 @@ public class PartnerStatsService {
 
 	public MenuVendorStatsResultDTO getMenuVendorStats(String menuName) {
 		List<VendorRawStatsDTO> rawStats =
-			couponStatsJpaRepository.findStatsByMenuNameAndStatus(menuName, CouponStatus.USED);
+			couponStatsJpaRepository.findStatsGroupedByVendor(CouponStatus.USED);
 
 		List<MenuVendorStatsResponseDTO> vendorStats = rawStats.stream()
 			.map(row -> {
