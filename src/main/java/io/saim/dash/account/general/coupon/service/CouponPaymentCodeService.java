@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,11 @@ public class CouponPaymentCodeService {
 			return existingPaymentCode.get();
 		}
 
+		String generatedCode = UUID.randomUUID().toString();
 		//새로운 결제 코드 생성
 		CouponPaymentCode paymentCode = CouponPaymentCode.builder()
 			.coupon(coupon)
+			.paymentCode(generatedCode)
 			.qrCodeUrl(qrCodeUrl)
 			.issuedAt(LocalDateTime.now())
 			.expiresAt(LocalDateTime.now().plusMinutes(10)) //10분 후 만료
