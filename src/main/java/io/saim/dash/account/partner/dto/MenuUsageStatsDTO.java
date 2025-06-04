@@ -15,4 +15,12 @@ public class MenuUsageStatsDTO {
 	private Long menuIssued;
 	private Long menuUsed;
 	private double menuUsageRate;
+
+	public MenuUsageStatsDTO(String menuName, Long menuIssued, Long menuUsed, Double menuUsageRate) {
+		this.menuName = menuName;
+		this.menuIssued = menuIssued;
+		this.menuUsed = menuUsed;
+		this.menuUsageRate = menuUsageRate != null ? menuUsageRate : 0.0;
+	}
 }
+
