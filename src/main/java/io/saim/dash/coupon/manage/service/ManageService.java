@@ -168,7 +168,7 @@ public class ManageService {
 		return registration;
 	}
 
-	public Boolean checkIssueCancellable(ServiceUser loginUser, Long issueId) {
+	public Issue getRequestedCancelIssue(ServiceUser loginUser, Long issueId) {
 		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
 
 		if (user.isPartner())
@@ -178,21 +178,21 @@ public class ManageService {
 		if (issue.getIssueActiveStatus() != IssueActiveStatus.DISABLED)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_DISABLED);
 
-		return true;
+		return issue;
 	}
 
 	@Transactional
-	public CancelIssueResultDTO cancelIssue(ServiceUser loginUser, Long issueId) {
+	public CancelIssueResultDTO cancelIssue(ServiceUser loginUser, Issue issue, Boolean verifyResult) {
 		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
-
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Issue issue = getIssue(user, issueId);
+		if (!verifyResult)
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		BooleanBuilder couponFilterBuilder = ManageQueryHelper.createCouponSearchFilterBuilder(
 			List.of(new CouponStatus[]{CouponStatus.DISABLED}),
-			issueId
+			issue.getIssueId()
 		);
 		Long expiredCnt = couponRepository.cancelCoupons(couponFilterBuilder);
 
