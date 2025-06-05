@@ -15,6 +15,7 @@ import lombok.Setter;
 public class PushBriefDTO {
 	private Long notification_id;
 	private String type;
+	private String tag;
 	private String message;
 	private String sender_type;
 	private Long user_id;
@@ -30,6 +31,7 @@ public class PushBriefDTO {
 	public PushBriefDTO(Push push) {
 		notification_id = push.getId();
 		type = push.getType().toString();
+		tag = push.getTag().toString();
 		sender_type = push.getSenderType().toString();
 		user_id = push.getReceiver().getId();
 		received_at = push.getReceivedAt();
@@ -37,6 +39,7 @@ public class PushBriefDTO {
 		readed = push.isReaded();
 
 		message = push.getMessage();
+		if (message == null || message.isEmpty()) return;
 		if (message.length() > 20) message = message.substring(0, 20);
 	}
 }
