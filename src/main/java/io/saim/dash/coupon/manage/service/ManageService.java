@@ -17,6 +17,7 @@ import io.saim.dash.account.push.model.Push;
 import io.saim.dash.account.push.model.PushSenderType;
 import io.saim.dash.account.push.model.PushTag;
 import io.saim.dash.account.push.model.PushType;
+import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
@@ -47,6 +48,7 @@ public class ManageService {
 	private final CouponRegistrationRepository couponRegistrationRepository;
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
+	private final PushRepository pushRepository;
 
 	public List<CouponIssueLogDTO> getIssuedRequests(
 		ServiceUser user,
@@ -196,13 +198,32 @@ public class ManageService {
 		);
 		Long expiredCnt = couponRepository.cancelCoupons(couponFilterBuilder);
 
+		sendIssueCancelledPush(issue);
+
 		return new CancelIssueResultDTO(issue, expiredCnt);
 	}
 
-	private static Push createSystemPushMessage(PushTag tag, ServiceUser receiver) {
+	private void sendIssueCancelledPush(Issue issue) {
+		List<Push> pushes = issue.getVendor().getVendorUsers().stream()
+			.map(vendorUser -> createSystemPushMessage(
+				PushTag.ISSUE_CANCELLED,
+				vendorUser,
+				issue.getPartner().getPartnerName()
+			))
+			.toList();
+		pushes.add(createSystemPushMessage(
+			PushTag.ISSUE_CANCELLED,
+			issue.getPartner(),
+			issue.getVendor().getName()
+		));
+		pushRepository.saveAll(pushes);
+	}
+
+	private static Push createSystemPushMessage(PushTag tag, ServiceUser receiver, String message) {
 		Push.PushBuilder pushBuilder = Push.builder()
 			.type(PushType.INFO)
 			.tag(tag)
+			.message(message)
 			.senderType(PushSenderType.SYSTEM)
 			.receivedAt(LocalDateTime.now());
 
