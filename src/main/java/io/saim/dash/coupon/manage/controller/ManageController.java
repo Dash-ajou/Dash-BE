@@ -12,15 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.saim.dash.account.auth.service.PhoneVerificationService;
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
-import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CancelIssueResultDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.manage.dto.CancelIssueRequestDTO;
 import io.saim.dash.coupon.manage.dto.CancelIssueResponseDTO;
 import io.saim.dash.coupon.manage.dto.CancelRegistrationResponseDTO;
 import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
@@ -37,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class ManageController {
 
 	private final ManageService manageService;
+	private PhoneVerificationService phoneVerificationService;
 
 	@GetMapping("/list")
 	public PagingResponse<IssuedRequestResponseDTO> getApprovedIssues(
@@ -147,20 +151,29 @@ public class ManageController {
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
-		manageService.checkIssueCancellable(loginUser, issue_id);
+		Issue requestedCancelIssue = manageService.getRequestedCancelIssue(loginUser, issue_id);
 
 		// 파트너 인증문자 발송
-
+		PartnerUser partnerUser = requestedCancelIssue.getPartner();
+		phoneVerificationService.requestVerification(partnerUser.getPhone());
 	}
 
 	@PostMapping("/{issue_id}/cancel")
 	public CancelIssueResponseDTO cancelIssue(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable Long issue_id
+		@PathVariable Long issue_id,
+		@RequestBody CancelIssueRequestDTO cancelIssueRequestDTO
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
-		CancelIssueResultDTO cancelResult = manageService.cancelIssue(loginUser, issue_id);
+		Issue issue = manageService.getRequestedCancelIssue(loginUser, issue_id);
+		Boolean verifyResult = phoneVerificationService.verifyCode(
+			issue.getPartner().getPhone(),
+			cancelIssueRequestDTO.getUserVerifyCode()
+		);
+
+		CancelIssueResultDTO cancelResult = manageService.cancelIssue(loginUser, issue, verifyResult);
+
 		return new CancelIssueResponseDTO(cancelResult);
 	}
 
