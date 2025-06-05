@@ -28,6 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 			.allowedOrigins("http://localhost:5174")  // 프론트 로컬 주소
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+			.allowedHeaders("*")
 			.allowCredentials(true);
 	}
 }
