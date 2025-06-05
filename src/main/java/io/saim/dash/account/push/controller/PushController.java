@@ -31,15 +31,17 @@ public class PushController {
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
-		@RequestParam(required = false) String received_at_from,
-		@RequestParam(required = false) String received_at_to
+		@RequestParam(required = false, name = "is_readed") Boolean isReaded,
+		@RequestParam(required = false, name = "received_at_from") String receivedAtFrom,
+		@RequestParam(required = false, name = "received_at_to") String receivedAtTo
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
 		List<Push> pushes = pushService.getPushes(
 			loginUser,
 			page, size,
-			received_at_from, received_at_to
+			isReaded,
+			receivedAtFrom, receivedAtTo
 		);
 
 		List<PushBriefDTO> pushResponseList = pushes.stream()

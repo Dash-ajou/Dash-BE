@@ -35,13 +35,14 @@ public class PushService {
 	public List<Push> getPushes(
 		ServiceUser loginUser,
 		int page, int size,
+		Boolean isReaded,
 		String receivedAtFrom, String receivedAtTo
 	) {
 		UserSearchResultDTO userSearchResultDTO = searchUser(loginUser);
 
 		BooleanBuilder filter = PushQueryHelper.createFilterBuilder(
 			userSearchResultDTO,
-			receivedAtFrom, receivedAtTo
+			isReaded, receivedAtFrom, receivedAtTo
 		);
 		return pushRepository.findByFilter(filter, page, size);
 	}

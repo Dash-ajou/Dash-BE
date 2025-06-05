@@ -1,5 +1,6 @@
 package io.saim.dash.account.push.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.querydsl.core.BooleanBuilder;
@@ -12,26 +13,43 @@ public class PushQueryHelper {
 
 	public static BooleanBuilder createFilterBuilder(
 		UserSearchResultDTO receiver,
-		String receivedAtFrom, String receivedAtTo
+		Boolean isReaded, String receivedAtFrom, String receivedAtTo
 	) {
 		BooleanBuilder builder = new BooleanBuilder();
 
 		addReceiverFilter(builder, receiver);
+		addIsReadedFilter(builder, isReaded);
 		addReceivedAtFilter(builder, receivedAtFrom, receivedAtTo);
 
 		return builder;
 	}
 
+	private static void addIsReadedFilter(BooleanBuilder builder, Boolean isReaded) {
+		QPush push = QPush.push;
+		if (isReaded == null) return;
+		if (isReaded) builder.and(push.readAt.isNotNull());
+		else builder.and(push.readAt.isNull());
+	}
+
 	private static void addReceivedAtFilter(BooleanBuilder builder, String receivedAtFrom, String receivedAtTo) {
 		QPush push = QPush.push;
-		if (receivedAtFrom != null) {
-			LocalDateTime recievedAtStart = LocalDateTime.parse(receivedAtFrom);
-			builder.and(push.receivedAt.gt(recievedAtStart));
+		if (receivedAtFrom != null && !receivedAtFrom.isEmpty()) {
+			LocalDateTime parsedReceivedAtStart = parseDateTime(receivedAtFrom);
+			builder.and(push.receivedAt.gt(parsedReceivedAtStart));
 		}
 
-		if (receivedAtTo != null) {
-			LocalDateTime receivedAtEnd = LocalDateTime.parse(receivedAtTo);
+		if (receivedAtTo != null && !receivedAtTo.isEmpty()) {
+			LocalDateTime receivedAtEnd = parseDateTime(receivedAtTo);
 			builder.and(push.receivedAt.lt(receivedAtEnd));
+		}
+	}
+
+	private static LocalDateTime parseDateTime(String stringDateTime) {
+		try {
+			return LocalDateTime.parse(stringDateTime);
+		} catch (java.time.format.DateTimeParseException e) {
+			LocalDate dateOnly = LocalDate.parse(stringDateTime);
+			return dateOnly.atStartOfDay();
 		}
 	}
 
