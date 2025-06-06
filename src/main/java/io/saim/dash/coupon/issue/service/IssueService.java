@@ -266,13 +266,13 @@ public class IssueService {
 
 	private void sendIssueCompletionPush(Request request, PartnerUser serviceUser) {
 		Vendor vendor = request.getVendor();
-		List<Push> vendorPushes = vendor.getVendorUsers().stream()
+		List<Push> vendorPushes = new ArrayList<>(vendor.getVendorUsers().stream()
 			.map(vendorUser -> createSystemPushMessage(
-				PushTag.REQUEST_ISSUED.replaceArg(),
+				PushTag.REQUEST_ISSUED,
 				vendorUser,
 				serviceUser.getPartnerName()
 			))
-			.toList();
+			.toList());
 		vendorPushes.add(
 			createSystemPushMessage(
 				PushTag.REQUEST_ISSUED,
