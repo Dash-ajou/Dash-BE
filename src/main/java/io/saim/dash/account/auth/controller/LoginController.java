@@ -30,7 +30,7 @@ public class LoginController {
 			session
 		);
 
-		session.setAttribute("LOGIN_GENERAL_USER", response);
+		session.setAttribute("LOGIN_GENERAL_USER", response.getData().getUser());
 		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
 			session.setAttribute("user_id", response.getUserId());
 		}
