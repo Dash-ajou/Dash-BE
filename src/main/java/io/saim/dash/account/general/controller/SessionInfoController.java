@@ -33,16 +33,26 @@ public class SessionInfoController {
 		Map<String, Object> userInfo = new HashMap<>();
 
 		if ("GENERAL".equalsIgnoreCase(userType) && user instanceof GeneralUser generalUser) {
+			String email = generalUser.getOwnerEmail();
+			if (email != null && email.endsWith("@dummy.com")) {
+				email = null;
+			}
+
 			userInfo.put("userType", "GENERAL");
 			userInfo.put("name", generalUser.getOwnerName());
 			userInfo.put("phone", generalUser.getOwnerPhone());
-			userInfo.put("email", generalUser.getOwnerEmail());
+			userInfo.put("email", email);
 
 		} else if ("PARTNER".equalsIgnoreCase(userType) && user instanceof PartnerUser partnerUser) {
+			String email = partnerUser.getEmail();
+			if (email != null && email.endsWith("@dummy.com")) {
+				email = null;
+			}
+
 			userInfo.put("userType", "PARTNER");
 			userInfo.put("name", partnerUser.getOwnerName());
 			userInfo.put("phone", partnerUser.getPhone());
-			userInfo.put("email", partnerUser.getEmail());
+			userInfo.put("email", email);
 
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CommonResponseDTO<>(
