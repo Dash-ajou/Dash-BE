@@ -1,18 +1,15 @@
 package io.saim.dash.account.partner.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.saim.dash.account.partner.dto.CouponStatsResponseDTO;
 import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
 import io.saim.dash.account.partner.dto.OrganizationStatsResponseDTO;
-import io.saim.dash.account.partner.dto.VendorDetailInfoDTO;
 import io.saim.dash.account.partner.service.CouponStatsService;
 import io.saim.dash.account.partner.service.OrganizationStatsService;
 import io.saim.dash.global.dto.APIStatus;
@@ -29,9 +26,19 @@ public class CouponStatsController {
 	private final OrganizationStatsService organizationStatsService;
 
 	@GetMapping("/stats")
-	public ResponseEntity<CommonResponseDTO<CouponStatsResponseDTO>> getStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		Long partnerId = userDetails.getPartnerUser().getId();
+	public ResponseEntity<?> getStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (!"PARTNER".equals(userDetails.getUserType())) {
+			return ResponseEntity
+				.status(403)
+				.body(new CommonResponseDTO<>(
+					new CommonResponseDTO.VersionResponseDTO("1.0", "default"),
+					APIStatus.FAILED,
+					"해당 사용자는 PARTNER 타입이 아닙니다.",
+					null
+				));
+		}
 
+		Long partnerId = userDetails.getPartnerUser().getId();
 		CouponStatsResponseDTO responseDTO = couponStatsService.getPartnerCouponStats(partnerId);
 
 		return ResponseEntity.ok(
@@ -45,9 +52,19 @@ public class CouponStatsController {
 	}
 
 	@GetMapping("/stats/detailed")
-	public ResponseEntity<CommonResponseDTO<List<CouponVendorDetailStatsDTO>>> getDetailedStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		Long partnerId = userDetails.getPartnerUser().getId();
+	public ResponseEntity<?> getDetailedStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (!"PARTNER".equals(userDetails.getUserType())) {
+			return ResponseEntity
+				.status(403)
+				.body(new CommonResponseDTO<>(
+					new CommonResponseDTO.VersionResponseDTO("1.0", "default"),
+					APIStatus.FAILED,
+					"해당 사용자는 PARTNER 타입이 아닙니다.",
+					null
+				));
+		}
 
+		Long partnerId = userDetails.getPartnerUser().getId();
 		List<CouponVendorDetailStatsDTO> details = couponStatsService.getDetailedStats(partnerId);
 
 		return ResponseEntity.ok(
