@@ -29,6 +29,11 @@ public class LoginController {
 		);
 
 		session.setAttribute("LOGIN_GENERAL_USER", response.getData().getUser());
+
+		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
+			session.setAttribute("user_id", response.getData().getUser().getUserId());
+		}
+
 		return ResponseEntity.ok(response);
 	}
 }
