@@ -90,12 +90,12 @@ public class LoginService {
 
 	private LoginResponseDTO createLoginResponse(Long userId, String name, String email, String phone, String userType, HttpSession session) {
 		return new LoginResponseDTO(
-			"success",
-			"로그인 성공",
-			new LoginResponseDTO.Data(
-				new LoginResponseDTO.User(userId, name, email, phone, userType),
-				session.getId()
-			)
+			userId,
+			name,
+			email,
+			phone,
+			userType,
+			session.getId()
 		);
 	}
 }

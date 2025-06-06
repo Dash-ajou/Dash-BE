@@ -1,7 +1,5 @@
 package io.saim.dash.account.auth.dto;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class LoginResponseDTO {
+
 	private String status;
 	private String message;
 	private Data data;
