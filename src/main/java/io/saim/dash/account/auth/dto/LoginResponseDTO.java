@@ -4,25 +4,23 @@ import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponseDTO {
 
-	private String status;
-	private String message;
 	private Data data;
-
 
 	@Getter
 	@Setter
 	@AllArgsConstructor
+	@NoArgsConstructor
 	public static class Data implements Serializable {
-
 		private static final long serialVersionUID = 1L;
-
 		private User user;
 		private String sessionId;
 	}
@@ -30,9 +28,9 @@ public class LoginResponseDTO {
 	@Getter
 	@Setter
 	@AllArgsConstructor
+	@NoArgsConstructor
 	public static class User implements Serializable {
 		private static final long serialVersionUID = 1L;
-
 		private Long userId;
 		private String userName;
 		private String userEmail;
