@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +15,7 @@ import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.account.push.dto.PushBriefDTO;
 import io.saim.dash.account.push.dto.PushDTO;
+import io.saim.dash.account.push.dto.PushStatusUpdateRequestDTO;
 import io.saim.dash.account.push.model.Push;
 import io.saim.dash.account.push.service.PushService;
 import io.saim.dash.global.dto.PagingResponse;
@@ -54,6 +57,16 @@ public class PushController {
 		);
 	}
 
+	@PatchMapping("/{push_id}/status")
+	public void updatePushStatus(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable(name = "push_id") Long pushId,
+		@RequestBody PushStatusUpdateRequestDTO pushStatusUpdateRequestDTO
+	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		pushService.updatePushState(loginUser, pushId, pushStatusUpdateRequestDTO.getIsReaded());
+	}
+
 	@GetMapping("/spec/{push_id}")
 	public PushDTO getPush(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -61,7 +74,7 @@ public class PushController {
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
-		Push pushData = pushService.getPush(loginUser, push_id);
+		Push pushData = pushService.getPushByPushId(loginUser, push_id);
 		return new PushDTO(pushData);
 	}
 
