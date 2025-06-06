@@ -6,7 +6,6 @@ import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.general.coupon.service.CouponStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
 @Service
@@ -24,16 +23,12 @@ public class MyPageService {
 		Map<String, Integer> couponStatus = couponStatusService.getCouponStatus(user.getId());
 
 		return new MyPageResponseDTO(
-			"SUCCESS",
-			"계정 정보를 성공적으로 가져왔습니다.",
-			new MyPageResponseDTO.Data(
-				user.getName(),
-				new MyPageResponseDTO.CouponStatus(
-					couponStatus.getOrDefault("usable_count", 0),
-					couponStatus.getOrDefault("used_count", 0)
-				),
-				new MyPageResponseDTO.Menus()
-			)
+			user.getName(),
+			new MyPageResponseDTO.CouponStatus(
+				couponStatus.getOrDefault("usable_count", 0),
+				couponStatus.getOrDefault("used_count", 0)
+			),
+			new MyPageResponseDTO.Menus()
 		);
 	}
 }
