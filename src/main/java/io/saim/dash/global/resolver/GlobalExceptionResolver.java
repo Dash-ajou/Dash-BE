@@ -16,7 +16,9 @@ import io.saim.dash.global.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GlobalExceptionResolver implements HandlerExceptionResolver {
@@ -38,7 +40,7 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 				responseDTOBuilder.status(e.getApiStatus()).message(e.getMessage()).data(null);
 				response.setStatus(e.getApiStatus().getStatusCode());
 			} else {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 				String errorMessage = ex.getMessage();
 				if (errorMessage == null || errorMessage.isEmpty()) errorMessage = "알 수 없는 오류가 발생하였습니다";
@@ -50,10 +52,7 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 			writer.flush();
 
 			// 에러 출력
-			System.out.println(ex.getMessage());
-			for (StackTraceElement stack: ex.getStackTrace()) {
-				System.out.println(stack);
-			}
+			log.error("[ERROR - GlobalExceptionResolver]", ex);
 		} catch (IOException e) {
 			// 로깅
 		}
