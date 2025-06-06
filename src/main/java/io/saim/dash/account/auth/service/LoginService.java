@@ -36,6 +36,7 @@ public class LoginService {
 			return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
 		}
 
+
 		Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
 		if (generalUserOpt.isPresent()) {
 			session.setAttribute("user_type", "GENERAL");
