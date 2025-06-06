@@ -14,6 +14,7 @@ public class LoginResponseDTO {
 	private String message;
 	private Data data;
 
+
 	@Getter
 	@Setter
 	@AllArgsConstructor
