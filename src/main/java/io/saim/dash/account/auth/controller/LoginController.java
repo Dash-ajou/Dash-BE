@@ -3,6 +3,8 @@ package io.saim.dash.account.auth.controller;
 import io.saim.dash.account.auth.dto.LoginRequestDTO;
 import io.saim.dash.account.auth.dto.LoginResponseDTO;
 import io.saim.dash.account.auth.service.LoginService;
+import io.saim.dash.global.dto.APIStatus;
+import io.saim.dash.global.dto.CommonResponseDTO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class LoginController {
 	private final LoginService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO requestDTO, HttpSession session) {
+	public ResponseEntity<CommonResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO requestDTO, HttpSession session) {
 		if (requestDTO.getUserType() != null) {
 			session.setAttribute("user_type", requestDTO.getUserType());
 		}
@@ -28,12 +30,19 @@ public class LoginController {
 			session
 		);
 
-		session.setAttribute("LOGIN_GENERAL_USER", response.getData().getUser());
+		session.setAttribute("LOGIN_GENERAL_USER", response.getUser());
 
 		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
-			session.setAttribute("user_id", response.getData().getUser().getUserId());
+			session.setAttribute("user_id", response.getUser().getUserId());
 		}
 
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(
+			new CommonResponseDTO<>(
+				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
+				APIStatus.SUCCESS,
+				"로그인 성공",
+				response
+			)
+		);
 	}
 }
