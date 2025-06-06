@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import io.saim.dash.account.general.dto.*;
@@ -104,7 +105,10 @@ public class GeneralAccountController {
 			));
 		}
 
-		if (!newEmail.toLowerCase().endsWith("@gmail.com")) {
+		List<String> allowedDomains = List.of("@gmail.com", "@ajou.ac.kr");
+		boolean isAllowed = allowedDomains.stream().anyMatch(domain -> newEmail.toLowerCase().endsWith(domain));
+
+		if (!isAllowed) {
 			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILED,
