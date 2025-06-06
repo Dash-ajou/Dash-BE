@@ -19,7 +19,10 @@ public class LoginController {
 	private final LoginService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<CommonResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO requestDTO, HttpSession session) {
+	public ResponseEntity<CommonResponseDTO<LoginResponseDTO>> login(
+		@Valid @RequestBody LoginRequestDTO requestDTO,
+		HttpSession session
+	) {
 		if (requestDTO.getUserType() != null) {
 			session.setAttribute("user_type", requestDTO.getUserType());
 		}
@@ -30,10 +33,8 @@ public class LoginController {
 			session
 		);
 
-		session.setAttribute("LOGIN_GENERAL_USER", response);
-		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
-			session.setAttribute("user_id", response.getUserId());
-		}
+		session.setAttribute("LOGIN_GENERAL_USER", response.getUser());
+		session.setAttribute("user_id", response.getUserId());
 
 		return ResponseEntity.ok(
 			new CommonResponseDTO<>(
