@@ -1,9 +1,10 @@
 package io.saim.dash.account.auth.dto;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.saim.dash.account.general.model.GeneralUser;
+import io.saim.dash.account.partner.model.PartnerUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,33 @@ public class LoginResponseDTO implements Serializable {
 	@JsonIgnore
 	public Long getUserId() {
 		return this.user != null ? this.user.getUserId() : null;
+	}
+
+	@JsonIgnore
+	public GeneralUser toGeneralUser() {
+		if (!"GENERAL".equalsIgnoreCase(user.getUserType())) {
+			throw new IllegalStateException("해당 사용자는 GENERAL 타입이 아닙니다.");
+		}
+		return GeneralUser.builder()
+			.id(user.getUserId())
+			.ownerName(user.getUserName())
+			.ownerEmail(user.getUserEmail())
+			.ownerPhone(user.getUserPhone())
+			.type(user.getUserType()) // 필요 시 UserType enum 변환
+			.build();
+	}
+
+	@JsonIgnore
+	public PartnerUser toPartnerUser() {
+		if (!"PARTNER".equalsIgnoreCase(user.getUserType())) {
+			throw new IllegalStateException("해당 사용자는 PARTNER 타입이 아닙니다.");
+		}
+		return PartnerUser.builder()
+			.id(user.getUserId())
+			.name(user.getUserName())
+			.email(user.getUserEmail())
+			.phone(user.getUserPhone())
+			.build();
 	}
 
 	@Getter @Setter
