@@ -31,12 +31,16 @@ public class LoginService {
 		Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
 		if (partnerUserOpt.isPresent()) {
 			session.setAttribute("user_type", "PARTNER");
+			PartnerUser partnerUser = partnerUserOpt.get();
+			session.setAttribute("user", partnerUser);
 			return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
 		}
 
 		Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
 		if (generalUserOpt.isPresent()) {
 			session.setAttribute("user_type", "GENERAL");
+			GeneralUser generalUser = generalUserOpt.get();
+			session.setAttribute("user", generalUser);
 			return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
 		}
 
