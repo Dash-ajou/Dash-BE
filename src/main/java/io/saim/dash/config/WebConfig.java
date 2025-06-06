@@ -9,9 +9,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import io.saim.dash.account.general.resolver.LoginGeneralUserArgumentResolver;
 import io.saim.dash.global.interceptor.VersionInterceptor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
@@ -30,5 +33,12 @@ public class WebConfig implements WebMvcConfigurer {
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 			.allowedHeaders("*")
 			.allowCredentials(true);
+	}
+
+	private final LoginGeneralUserArgumentResolver loginGeneralUserArgumentResolver;
+
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.add(loginGeneralUserArgumentResolver);
 	}
 }

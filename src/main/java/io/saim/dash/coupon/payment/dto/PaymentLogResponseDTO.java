@@ -29,7 +29,7 @@ public class PaymentLogResponseDTO {
 	public PaymentLogResponseDTO(CouponPaymentLog couponPaymentLog) {
 		this.payment_id = couponPaymentLog.getPaymentId();
 		this.payment_code = couponPaymentLog.getPaymentCode().getPaymentCode();
-		this.register = new GeneralUserDTO(couponPaymentLog.getMember());
+		this.register = new GeneralUserDTO(couponPaymentLog.getUser());
 		this.status = couponPaymentLog.getStatus();
 
 		Coupon coupon = couponPaymentLog.getPaymentCode().getCoupon();

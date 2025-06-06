@@ -191,7 +191,7 @@ public class PaymentService {
 
 		CouponPaymentLog couponPayment = CouponPaymentLog.builder()
 				.paymentCode(paymentCode)
-				.member(couponOwner)
+				.user(couponOwner)
 				.partner(partnerUser)
 				.usedAt(LocalDateTime.now())
 				.status(PaymentStatus.USED)
