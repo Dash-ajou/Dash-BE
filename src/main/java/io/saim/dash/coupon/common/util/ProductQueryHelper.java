@@ -45,7 +45,7 @@ public class ProductQueryHelper {
 		if (productName == null) return;
 
 		QRequestProduct product = QRequestProduct.requestProduct;
-		builder.and(product.product.productName.eq(productName));
+		builder.and(product.product.productName.like("%" + productName + "%"));
 	}
 
 	private static void addPartnerIdFilterToRequestProduct(BooleanBuilder builder, Long partnerId) {
@@ -67,7 +67,7 @@ public class ProductQueryHelper {
 		if (productName == null) return;
 
 		QProduct product = QProduct.product;
-		builder.and(product.productName.eq(productName));
+		builder.and(product.productName.like("%" + productName + "%"));
 	}
 
 	private static void addPartnerIdFilterToProduct(BooleanBuilder builder, Long partnerId) {
