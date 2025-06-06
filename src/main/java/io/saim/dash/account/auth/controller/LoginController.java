@@ -5,10 +5,13 @@ import io.saim.dash.account.auth.dto.LoginResponseDTO;
 import io.saim.dash.account.auth.service.LoginService;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
+import io.saim.dash.security.CustomUserDetails;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +37,16 @@ public class LoginController {
 		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
 			session.setAttribute("user_id", response.getUserId());
 		}
+
+		CustomUserDetails userDetails;
+		if ("GENERAL".equalsIgnoreCase(requestDTO.getUserType())) {
+			userDetails = new CustomUserDetails(response.toGeneralUser());
+		} else {
+			userDetails = new CustomUserDetails(response.toPartnerUser());
+		}
+		UsernamePasswordAuthenticationToken authentication =
+			new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		return ResponseEntity.ok(
 			new CommonResponseDTO<>(
