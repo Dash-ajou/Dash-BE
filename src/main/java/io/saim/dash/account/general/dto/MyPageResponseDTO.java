@@ -1,7 +1,6 @@
 package io.saim.dash.account.general.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,18 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class MyPageResponseDTO {
-	private String status;
-	private String message;
-	private Data data;
-
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	public static class Data {
-		private String generalName;
-		private CouponStatus couponStatus;
-		private Menus menus;
-	}
+	private String generalName;
+	private CouponStatus couponStatus;
+	private Menus menus;
 
 	@Getter
 	@Setter
@@ -37,6 +27,7 @@ public class MyPageResponseDTO {
 	@Getter
 	@Setter
 	public static class Menus {
+
 		private MenuItem[] myInfo = {
 			new MenuItem("계정 정보", "/general/account"),
 			new MenuItem("비밀번호 변경하기", "/auth/password-reset/request")
