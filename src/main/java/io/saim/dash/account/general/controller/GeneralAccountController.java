@@ -104,6 +104,15 @@ public class GeneralAccountController {
 			));
 		}
 
+		if (!newEmail.toLowerCase().endsWith("@gmail.com")) {
+			return ResponseEntity.badRequest().body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILED,
+				"구글 계정만 이메일로 사용할 수 있습니다.",
+				null
+			));
+		}
+
 		boolean isSent = generalAccountService.requestEmailVerification(generalUser, newEmail);
 
 		return isSent
