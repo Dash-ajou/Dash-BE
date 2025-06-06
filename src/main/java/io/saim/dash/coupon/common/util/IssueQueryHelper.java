@@ -14,10 +14,10 @@ public class IssueQueryHelper {
 	) {
 		BooleanBuilder builder = new BooleanBuilder();
 
-		// addCreateAtFilter(builder, QRequest.request, createat_start, createat_end);
-		// addBusinesNameFilter(builder, QRequest.request, business_name);
-		// addBusinesOwnerPnFilter(builder, QRequest.request, owner_phone);
-		// addIssueStatuFilter(builder, QRequest.request, status);
+		addCreateAtFilter(builder, QRequest.request, createat_start, createat_end);
+		addBusinesNameFilter(builder, QRequest.request, business_name);
+		addBusinesOwnerPnFilter(builder, QRequest.request, owner_phone);
+		addIssueStatuFilter(builder, QRequest.request, status);
 
 		return builder;
 	}

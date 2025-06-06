@@ -48,6 +48,12 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 
 			writer.write(new ObjectMapper().writeValueAsString(responseDTOBuilder.build()));
 			writer.flush();
+
+			// 에러 출력
+			System.out.println(ex.getMessage());
+			for (StackTraceElement stack: ex.getStackTrace()) {
+				System.out.println(stack);
+			}
 		} catch (IOException e) {
 			// 로깅
 		}
