@@ -20,24 +20,23 @@ public class CouponPaymentCodeService {
 	private final CouponRepository couponRepository;
 
 	@Transactional
-	public CouponPaymentCode generatePaymentCode(Long couponId, String qrCodeUrl) {
+	public CouponPaymentCode generatePaymentCode(Long couponId) {
 		Coupon coupon = couponRepository.findWithProductAndPartnerById(couponId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다: " + couponId));
 
-		//기존 결제 코드가 있다면 재사용
 		Optional<CouponPaymentCode> existingPaymentCode = couponPaymentCodeJpaRepository.findByCoupon_CouponId(couponId);
 		if (existingPaymentCode.isPresent()) {
 			return existingPaymentCode.get();
 		}
 
 		String generatedCode = UUID.randomUUID().toString();
-		//새로운 결제 코드 생성
+
 		CouponPaymentCode paymentCode = CouponPaymentCode.builder()
 			.coupon(coupon)
 			.paymentCode(generatedCode)
-			.qrCodeUrl(qrCodeUrl)
+			.qrCodeUrl(null)
 			.issuedAt(LocalDateTime.now())
-			.expiresAt(LocalDateTime.now().plusMinutes(10)) //10분 후 만료
+			.expiresAt(LocalDateTime.now().plusMinutes(10))
 			.build();
 
 		return couponPaymentCodeJpaRepository.save(paymentCode);

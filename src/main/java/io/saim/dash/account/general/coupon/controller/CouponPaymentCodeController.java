@@ -25,12 +25,10 @@ public class CouponPaymentCodeController {
 		@PathVariable Long couponId) {
 
 		try {
-			String qrCodeUrl = qrCodeGeneratorUtil.generateQRCode(couponId); // ✅ 변경
-			System.out.println("생성된 QR 코드 URL: " + qrCodeUrl);
+			String qrCodeBase64 = qrCodeGeneratorUtil.generateQRCodeBase64(couponId);
+			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId);
 
-			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId, qrCodeUrl);
-
-			if (paymentCode == null || paymentCode.getQrCodeUrl() == null) {
+			if (paymentCode == null) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					new CommonResponseDTO<>(
 						new VersionResponseDTO("1.0", "1.0"),
@@ -42,7 +40,7 @@ public class CouponPaymentCodeController {
 			}
 
 			CouponPaymentCodeResponseDTO responseDTO = new CouponPaymentCodeResponseDTO(
-				paymentCode.getQrCodeUrl(),
+				qrCodeBase64,
 				paymentCode.getCoupon().getCouponId(),
 				paymentCode.getPaymentCode()
 			);
