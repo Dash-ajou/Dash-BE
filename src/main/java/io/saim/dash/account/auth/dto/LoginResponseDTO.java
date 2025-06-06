@@ -1,5 +1,7 @@
 package io.saim.dash.account.auth.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +30,7 @@ public class LoginResponseDTO {
 	@Getter
 	@Setter
 	@AllArgsConstructor
-	public static class User implements Serializable{
+	public static class User implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Long userId;
