@@ -1,11 +1,9 @@
 package io.saim.dash.account.auth.controller;
 
 import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import io.saim.dash.account.auth.dto.PhoneVerificationRequestDTO;
 import io.saim.dash.account.auth.dto.PhoneVerificationCheckDTO;
 import io.saim.dash.account.auth.service.PhoneVerificationService;
@@ -25,12 +23,11 @@ public class PhoneVerificationController {
 		String userPhone = requestDTO.getUserPhone();
 		String userVerifyCode = phoneVerificationService.requestVerification(userPhone);
 
-		//공통 응답 형식 적용
 		CommonResponseDTO<?> response = new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
 			APIStatus.SUCCESS,
-			"Verification code sent successfully.",
-			new PhoneVerificationResponse(300, LocalDateTime.now()) // data 필드
+			"인증번호가 전송되었습니다.",
+			new PhoneVerificationResponse(300, LocalDateTime.now())
 		);
 
 		return ResponseEntity.ok(response);
@@ -46,7 +43,7 @@ public class PhoneVerificationController {
 			CommonResponseDTO<?> response = new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.SUCCESS,
-				"Phone number verified.",
+				"전화번호 인증에 성공했습니다.",
 				new VerificationResult(userPhone, true)
 			);
 			return ResponseEntity.ok(response);
@@ -54,17 +51,13 @@ public class PhoneVerificationController {
 			CommonResponseDTO<?> response = new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
 				APIStatus.BAD_REQUEST,
-				"Invalid or expired verification code.",
+				"인증번호가 만료되었거나 올바르지 않습니다.",
 				null
 			);
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
 
-	//요청 코드 응답 데이터 클래스
-	private record PhoneVerificationResponse(int expires_in, LocalDateTime request_time) {}
-
-	//인증 확인 응답 데이터 클래스
-	private record VerificationResult(String user_phone, boolean user_verified) {}
-
+	private record PhoneVerificationResponse(int expiresIn, LocalDateTime requestTime) {}
+	private record VerificationResult(String userPhone, boolean verified) {}
 }
