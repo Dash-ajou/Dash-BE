@@ -16,7 +16,6 @@ import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.account.partner.repository.PartnerUserRepository;
 import io.saim.dash.account.push.dto.UserSearchResultDTO;
 import io.saim.dash.account.push.model.Push;
-import io.saim.dash.account.push.model.PushType;
 import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.account.push.util.PushQueryHelper;
 import io.saim.dash.global.exception.ServiceException;
@@ -48,11 +47,24 @@ public class PushService {
 	}
 
 	@Transactional
-	public Push getPush(ServiceUser loginUser, long pushId) {
+	public void updatePushState(ServiceUser loginUser, Long pushId, Boolean isReaded) {
 		UserSearchResultDTO userSearchResultDTO = searchUser(loginUser);
+		Push pushData = getPushByPushId(pushId, userSearchResultDTO);
 
+		if (isReaded) viewPush(pushData);
+		else unviewPush(pushData);
+	}
+
+	private Push getPushByPushId(Long pushId, UserSearchResultDTO userSearchResultDTO) {
 		Push pushData = pushRepository.findById(pushId);
 		checkAccessValidity(userSearchResultDTO, pushData);
+		return pushData;
+	}
+
+	@Transactional
+	public Push getPushByPushId(ServiceUser loginUser, Long pushId) {
+		UserSearchResultDTO userSearchResultDTO = searchUser(loginUser);
+		Push pushData = getPushByPushId(pushId, userSearchResultDTO);
 
 		viewPush(pushData);
 		return pushData;
@@ -61,6 +73,11 @@ public class PushService {
 	private void viewPush(Push pushData) {
 		if (pushData.getReadAt() != null) return;
 		pushData.setReadAt(LocalDateTime.now());
+	}
+
+	private void unviewPush(Push pushData) {
+		if (pushData.getReadAt() == null) return;
+		pushData.setReadAt(null);
 	}
 
 	private void checkAccessValidity(UserSearchResultDTO userSearchResultDTO, Push pushData) {

@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Table(name = "push")
@@ -59,7 +59,7 @@ public class Push {
 	@Getter
 	private LocalDateTime receivedAt;
 
-	@Getter
+	@Getter @Setter
 	private LocalDateTime readAt;
 
 	public Push(

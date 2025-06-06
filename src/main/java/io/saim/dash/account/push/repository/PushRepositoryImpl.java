@@ -34,7 +34,7 @@ public class PushRepositoryImpl implements PushRepository {
 	@Override
 	public Push findById(long pushId) {
 		return jpaRepository.findById(pushId)
-			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PUSH_NOT_FOUND));
 	}
 
 	@Override
