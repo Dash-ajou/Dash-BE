@@ -90,7 +90,11 @@ public class LoginService {
 
 	private LoginResponseDTO createLoginResponse(Long userId, String name, String email, String phone, String userType, HttpSession session) {
 		return new LoginResponseDTO(
-			new LoginResponseDTO.User(userId, name, email, phone, userType),
+			userId,
+			name,
+			email,
+			phone,
+			userType,
 			session.getId()
 		);
 	}
