@@ -24,8 +24,7 @@ public class CouponController {
 
 		if (generalUserId == null) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
-				null,
-				null,
+				new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
 				APIStatus.FAILED,
 				"로그인이 필요합니다.",
 				null
@@ -35,8 +34,7 @@ public class CouponController {
 		List<CouponResponseDTO> coupons = couponService.getCouponsByUser(generalUserId);
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
-			null,
-			null,
+			new CommonResponseDTO.VersionResponseDTO("1.0", "1.0"),
 			APIStatus.SUCCESS,
 			"쿠폰 목록 조회 성공",
 			coupons
