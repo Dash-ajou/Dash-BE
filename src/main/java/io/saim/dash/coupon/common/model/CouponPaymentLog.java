@@ -39,8 +39,8 @@ public class CouponPaymentLog {
 	private CouponPaymentCode paymentCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
-	private GeneralUser member;
+	@JoinColumn(name = "user_id", nullable = false)
+	private GeneralUser user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "partner_id", nullable = false)

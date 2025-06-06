@@ -28,8 +28,7 @@ public class LoginController {
 			session
 		);
 
-
-		session.setAttribute("user_id", response.getData().getUser().getUserId());
+		session.setAttribute("LOGIN_GENERAL_USER", response.getData().getUser());
 		return ResponseEntity.ok(response);
 	}
 }

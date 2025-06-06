@@ -24,8 +24,6 @@ public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
 
     public final DateTimePath<java.time.LocalDateTime> canceledAt = createDateTime("canceledAt", java.time.LocalDateTime.class);
 
-    public final io.saim.dash.account.general.model.QGeneralUser member;
-
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
     public final QCouponPaymentCode paymentCode;
@@ -35,6 +33,8 @@ public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
     public final EnumPath<io.saim.dash.coupon.common.constant.PaymentStatus> status = createEnum("status", io.saim.dash.coupon.common.constant.PaymentStatus.class);
 
     public final DateTimePath<java.time.LocalDateTime> usedAt = createDateTime("usedAt", java.time.LocalDateTime.class);
+
+    public final io.saim.dash.account.general.model.QGeneralUser user;
 
     public QCouponPaymentLog(String variable) {
         this(CouponPaymentLog.class, forVariable(variable), INITS);
@@ -54,9 +54,9 @@ public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
 
     public QCouponPaymentLog(Class<? extends CouponPaymentLog> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("member"), inits.get("member")) : null;
         this.partner = inits.isInitialized("partner") ? new io.saim.dash.account.partner.model.QPartnerUser(forProperty("partner")) : null;
         this.paymentCode = inits.isInitialized("paymentCode") ? new QCouponPaymentCode(forProperty("paymentCode"), inits.get("paymentCode")) : null;
+        this.user = inits.isInitialized("user") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
