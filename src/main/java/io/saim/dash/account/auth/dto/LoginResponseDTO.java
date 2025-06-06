@@ -1,6 +1,8 @@
 package io.saim.dash.account.auth.dto;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +20,7 @@ public class LoginResponseDTO implements Serializable {
 	@JsonProperty("session_id")
 	private String sessionId;
 
+	@JsonIgnore
 	public Long getUserId() {
 		return this.user != null ? this.user.getUserId() : null;
 	}
