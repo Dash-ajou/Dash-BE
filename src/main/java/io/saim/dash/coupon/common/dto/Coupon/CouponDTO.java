@@ -26,7 +26,7 @@ public class CouponDTO {
 		this.partner = this.product.getPartner();
 		this.register_code = coupon.getRegistrationCode();
 
-		if (issueActiveStatus == IssueActiveStatus.DISABLED)
+		if (issueActiveStatus == IssueActiveStatus.DISABLE)
 			this.status = CouponStatus.DISABLED;
 		else this.status = coupon.getCouponStatus();
 	}

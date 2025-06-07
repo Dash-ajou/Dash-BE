@@ -18,7 +18,7 @@ public class PauseCouponsResponseDTO {
 	public PauseCouponsResponseDTO(Long issueId, IssueActiveStatus status, PauseCouponsResultDTO pauseCouponsResultDTO) {
 		this.issue_id = issueId;
 		this.issue_count = pauseCouponsResultDTO.getIssueCount();
-		if (status == IssueActiveStatus.DISABLED) {
+		if (status == IssueActiveStatus.DISABLE) {
 			this.active_count = null;
 			this.deactive_count = pauseCouponsResultDTO.getUpdatedCount();
 		} else {
