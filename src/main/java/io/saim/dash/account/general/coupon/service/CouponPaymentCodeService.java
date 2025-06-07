@@ -46,6 +46,7 @@ public class CouponPaymentCodeService {
 			}
 
 			couponPaymentCodeJpaRepository.delete(existing);
+			couponPaymentCodeJpaRepository.flush();
 		}
 
 		String generatedCode = UUID.randomUUID().toString();
