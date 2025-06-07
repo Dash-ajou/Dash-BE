@@ -1,11 +1,13 @@
 package io.saim.dash.account.auth.dto;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class GoogleInfoResponseDTO {
+public class GoogleInfoResponseDTO implements Serializable {
 	private String iss;
 	private String azp;
 	private String aud;
