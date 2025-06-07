@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
+import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 import io.saim.dash.coupon.payment.dto.CouponUseCancelRequestDTO;
 import io.saim.dash.coupon.payment.dto.CouponUseCancelResponseDTO;
@@ -110,9 +111,9 @@ public class PaymentController {
 		@RequestBody CouponValidateRequestDTO request
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
-		paymentService.validateCoupon(loginUser, request.getCode());
+		CouponCodeInfo couponCodeInfo = paymentService.validateCoupon(loginUser, request.getCode());
 
-		return new CouponValidateResponseDTO();
+		return new CouponValidateResponseDTO(couponCodeInfo);
 	}
 
 	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {

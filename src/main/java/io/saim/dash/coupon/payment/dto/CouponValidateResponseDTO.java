@@ -1,42 +1,44 @@
 package io.saim.dash.coupon.payment.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import io.saim.dash.coupon.common.constant.CodeType;
 import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
 import io.saim.dash.coupon.common.dto.Coupon.CouponPaymentBriefLogDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.Product.ProductDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
+import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.common.model.Request;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponValidateResponseDTO {
-	private final CodeType type;
-	private final VendorDTO vendor;
-	private final PartnerDTO partner;
-	private final ProductDTO product;
-	private final CouponStatus stauts;
-	private final CouponPaymentBriefLogDTO redeem;
+	private CodeType type;
+	private VendorDTO vendor;
+	private PartnerDTO partner;
+	private ProductDTO product;
+	private CouponStatus stauts;
 
-	public CouponValidateResponseDTO() {
-		this.type = CodeType.PAYMENT_CODE;
-		this.stauts = CouponStatus.USED;
-		this.partner = new PartnerDTO(
-			"4t5fr3dew",
-			"010-1234-1234"
-		);
-		this.vendor = new VendorDTO(
-			"Bobby Gutkowski",
-			"Assunta_Wehner35@yahoo.com",
-			"(415) 529-8392"
-		);
-		this.product = new ProductDTO(
-			87542090L,
-			69952994L,
-			"Bespoke Bronze Shirt",
-			660L
-		);
-		this.redeem = new CouponPaymentBriefLogDTO(
-			65432L,
-			"IJOSE65432",
-			"2025-01-07 03:46:19"
-		);
+	public CouponValidateResponseDTO(CouponCodeInfo couponCodeInfo) {
+		this.type = couponCodeInfo.codeType();
+
+		Coupon coupon = couponCodeInfo.coupon();
+		Issue issue = coupon.getIssue();
+		Request request = issue.getRequest();
+
+		this.vendor = new VendorDTO(request.getVendor());
+		this.partner = new PartnerDTO(request.getPartner());
+		this.product = new ProductDTO(coupon.getProduct());
+		this.stauts = coupon.getCouponStatus();
 	}
 }
