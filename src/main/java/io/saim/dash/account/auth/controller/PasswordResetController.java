@@ -70,13 +70,13 @@ public class PasswordResetController {
 	public ResponseEntity<CommonResponseDTO<PasswordResetResponseDTO>> resetPassword(
 		@Valid @RequestBody PasswordResetRequestDTO requestDTO) {
 
-		PasswordResetResponseDTO responseData = passwordResetService.resetPassword(requestDTO);
+		passwordResetService.resetPassword(requestDTO);
 
 		CommonResponseDTO<PasswordResetResponseDTO> response = new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
 			APIStatus.SUCCESS,
 			"비밀번호가 성공적으로 재설정되었습니다.",
-			responseData
+			null
 		);
 
 		return ResponseEntity.ok(response);
