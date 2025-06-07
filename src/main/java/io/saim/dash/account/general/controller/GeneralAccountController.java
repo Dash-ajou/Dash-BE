@@ -38,12 +38,17 @@ public class GeneralAccountController {
 		//GeneralUser 가져오기
 		GeneralUser generalUser = userDetails.getGeneralUser();
 		GeneralAccountResponseDTO response = generalAccountService.getGeneralAccountDetails(generalUser);
+		GeneralAccountResponseDTO.Data data = response.getData();
+
+		if (data.getGeneralEmail() != null && data.getGeneralEmail().endsWith("@dummy.com")) {
+			data.setGeneralEmail(null);
+		}
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
 			APIStatus.SUCCESS,
 			"계정 정보를 가져왔습니다.",
-			response.getData()
+			data
 		));
 	}
 
