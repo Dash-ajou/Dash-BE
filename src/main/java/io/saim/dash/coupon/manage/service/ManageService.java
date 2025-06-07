@@ -3,6 +3,7 @@ package io.saim.dash.coupon.manage.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,15 +108,15 @@ public class ManageService {
 
 	public RegisteredCouponDTO getCouponByCouponId(
 		ServiceUser loginUser,
-		Long issueId, Long couponId
+		Long couponId
 	) {
 		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
 
 		if (user.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Issue issue = getIssue(user, issueId);
 		Coupon coupon = couponRepository.findCouponById(couponId);
+		Issue issue = coupon.getIssue();
 		CouponRegistration registration = couponRegistrationRepository.findByCouponId(couponId);
 		return new RegisteredCouponDTO(issue, coupon, registration);
 	}
@@ -158,10 +159,10 @@ public class ManageService {
 		ServiceUser loginUser,
 		Long issueId, Long couponId
 	) {
-		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
-
-		if (user.isPartner())
+		if (loginUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
 
 		getIssue(user, issueId);
 		CouponRegistration registration = couponRegistrationRepository.findByCouponId(couponId);

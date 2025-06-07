@@ -91,27 +91,17 @@ public class ManageController {
 		);
 	}
 
-	@Deprecated
-	@GetMapping("/{issue_id}/{coupon_id}/register")
-	public RegisteredCouponDTO deprecatedGetCouponSpec(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable Long issue_id,
-		@PathVariable Long coupon_id
-	) {
-		return this.getCouponSpec(customUserDetails, issue_id, coupon_id);
-	}
-
-	@GetMapping("/{issue_id}/{coupon_id}")
+	// @GetMapping("/{issue_id}/{coupon_id}")
+	@GetMapping("/coupon/{coupon_id}")
 	public RegisteredCouponDTO getCouponSpec(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable Long issue_id,
 		@PathVariable Long coupon_id
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
 		RegisteredCouponDTO specCoupon = manageService.getCouponByCouponId(
 			loginUser,
-			issue_id, coupon_id
+			coupon_id
 		);
 
 		return specCoupon;
