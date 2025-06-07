@@ -22,6 +22,8 @@ public interface CouponRegistrationRepository {
 
 	List<CouponRegistration> findByRegisteredUserIdAndIsValid(Long userId, Boolean isValid);
 
+	int countByRegisteredUserIdAndCoupon_CouponStatus(Long userId, CouponStatus status);
+
 	void save(CouponRegistration couponRegistration);
 }
 
