@@ -76,7 +76,6 @@ public class PaymentController {
 		return new PaymentLogResponseDTO(couponPaymentLog);
 	}
 
-	@Transactional
 	@PostMapping("/use")
 	public CouponUseResponseDTO useCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -90,7 +89,6 @@ public class PaymentController {
 		return new CouponUseResponseDTO(couponPaymentLog);
 	}
 
-	@Transactional
 	@PostMapping("/cancel")
 	public CouponUseCancelResponseDTO cancelCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -99,13 +97,12 @@ public class PaymentController {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 		CouponPaymentLog paymentLog = paymentService.cancelCoupon(
 			loginUser,
-			couponUseCancelRequestDTO.getPaymentCode(), couponUseCancelRequestDTO.getPaymentId()
+			couponUseCancelRequestDTO.getPaymentId()
 		);
 
 		return new CouponUseCancelResponseDTO(paymentLog);
 	}
 
-	@Transactional
 	@PostMapping("/validate")
 	public CouponValidateResponseDTO validateCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,

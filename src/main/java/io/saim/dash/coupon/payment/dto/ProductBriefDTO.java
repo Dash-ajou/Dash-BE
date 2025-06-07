@@ -2,19 +2,21 @@ package io.saim.dash.coupon.payment.dto;
 
 import io.saim.dash.coupon.common.model.Product;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class ProductBriefDTO {
-	private Long product_id;
-	private Long partner_id;
-	private String product_name;
+	private Long productId;
+	private Long partnerId;
+	private String productName;
 
 	public ProductBriefDTO(Product product) {
-		this.product_id = product.getProductId();
-		this.partner_id = product.getPartner().getId();
-		this.product_name = product.getProductName();
+		this.productId = product.getProductId();
+		this.partnerId = product.getPartner().getId();
+		this.productName = product.getProductName();
 	}
 }
