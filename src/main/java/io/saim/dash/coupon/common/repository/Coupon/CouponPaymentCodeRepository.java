@@ -8,4 +8,6 @@ public interface CouponPaymentCodeRepository {
 
 	Optional<CouponPaymentCode> findByPaymentCode(String paymentCode);
 
+	Optional<CouponPaymentCode> findByCoupon_CouponId(Long couponId);
+	boolean existsByCoupon_CouponId(Long couponId);
 }

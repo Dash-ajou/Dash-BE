@@ -18,4 +18,14 @@ public class CouponPaymentCodeRepositoryImpl implements CouponPaymentCodeReposit
 	public Optional<CouponPaymentCode> findByPaymentCode(String paymentCode) {
 		return couponPaymentCodeJpaRepository.findByPaymentCode(paymentCode);
 	}
+
+	@Override
+	public Optional<CouponPaymentCode> findByCoupon_CouponId(Long couponId) {
+		return couponPaymentCodeJpaRepository.findByCoupon_CouponId(couponId);
+	}
+
+	@Override
+	public boolean existsByCoupon_CouponId(Long couponId) {
+		return couponPaymentCodeJpaRepository.existsByCoupon_CouponId(couponId);
+	}
 }
