@@ -40,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class ManageController {
 
 	private final ManageService manageService;
-	private PhoneVerificationService phoneVerificationService;
+	private final PhoneVerificationService phoneVerificationService;
 
 	@GetMapping("/list")
 	public PagingResponse<IssuedRequestResponseDTO> getApprovedIssues(
