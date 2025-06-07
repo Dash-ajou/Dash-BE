@@ -25,6 +25,7 @@ public class GeneralCouponService {
 			Coupon coupon = log.getPaymentCode().getCoupon();
 			return UsedCouponResponseDTO.builder()
 				.couponId(coupon.getCouponId())
+				.couponName(coupon.getProduct().getProductName())
 				.paymentCode(log.getPaymentCode().getPaymentCode())
 				.partnerName(coupon.getIssue().getPartner().getPartnerName())
 				.usedAt(log.getUsedAt())
