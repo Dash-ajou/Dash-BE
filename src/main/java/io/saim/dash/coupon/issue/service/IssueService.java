@@ -267,7 +267,7 @@ public class IssueService {
 		Long discount = paymentInfo.getDiscount();
 
 		updateProductPriceInfo(request, price);
-		Long paidPrice = getPaidPrice(request,price, discount);
+		Long paidPrice = getPaidPrice(request, price, discount);
 
 		updateIssueRequestStatus(request, status);
 
@@ -502,7 +502,7 @@ public class IssueService {
 			request.setCouponForm(couponFormImageKey);
 			return couponFormImageKey;
 		} catch (IOException e) {
-			throw new ServiceException(ServiceExceptionContent.FILE_SAVE_ERROR);
+			throw new ServiceException(ServiceExceptionContent.IMAGE_SAVE_ERROR);
 		}
 	}
 
@@ -520,7 +520,7 @@ public class IssueService {
 			ImageIO.write(bufferedImage, "png", baos); // jpeg, gif 등으로 변경 가능
 			return baos.toByteArray();
 		} catch (IOException e) {
-			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+			throw new ServiceException(ServiceExceptionContent.IMAGE_GET_ERROR);
 		}
 	}
 }
