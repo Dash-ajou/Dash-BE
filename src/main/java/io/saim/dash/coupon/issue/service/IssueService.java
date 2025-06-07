@@ -398,6 +398,7 @@ public class IssueService {
 			.paidPrice(paidPrice)
 			.issueCnt(Integer.toUnsignedLong(request.getRequestProducts().size()))
 			.usedCnt(0L)
+			.registerCnt(0L)
 			.issueActiveStatus(IssueActiveStatus.ENABLE)
 			.vendor(request.getVendor())
 			.partner(request.getPartner())
