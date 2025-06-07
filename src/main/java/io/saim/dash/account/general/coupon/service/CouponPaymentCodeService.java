@@ -1,9 +1,13 @@
 package io.saim.dash.account.general.coupon.service;
 
+import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentCode;
 import io.saim.dash.coupon.common.repository.jpa.CouponPaymentCodeJpaRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +28,22 @@ public class CouponPaymentCodeService {
 		Coupon coupon = couponRepository.findWithProductAndPartnerById(couponId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다: " + couponId));
 
+		if (coupon.getCouponStatus() != CouponStatus.USABLE) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_COUPON_STATUS);
+		}
+		if (coupon.getIssue().getIssueActiveStatus() != IssueActiveStatus.ENABLE) {
+			throw new ServiceException(ServiceExceptionContent.INVALID_ISSUE_STATUS);
+		}
+
 		Optional<CouponPaymentCode> existingPaymentCode = couponPaymentCodeJpaRepository.findByCoupon_CouponId(couponId);
 		if (existingPaymentCode.isPresent()) {
-			return existingPaymentCode.get();
+			CouponPaymentCode existing = existingPaymentCode.get();
+
+			if (existing.getExpiresAt().isAfter(LocalDateTime.now())) {
+				return existing;
+			}
+
+			couponPaymentCodeJpaRepository.delete(existing);
 		}
 
 		String generatedCode = UUID.randomUUID().toString();
