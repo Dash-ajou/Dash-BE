@@ -32,7 +32,7 @@ public class RegisteredCouponDTO {
 	public RegisteredCouponDTO(Issue issue, Coupon coupon) {
 		this.id = coupon.getCouponId();
 		this.partner = new PartnerDTO(issue.getRequest().getPartner());
-		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLED)
+		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLE)
 			? CouponStatus.DISABLED
 			: coupon.getCouponStatus()
 		;
@@ -45,7 +45,7 @@ public class RegisteredCouponDTO {
 	public RegisteredCouponDTO(Issue issue, Coupon coupon, CouponRegistration couponRegistration) {
 		this.id = coupon.getCouponId();
 		this.partner = new PartnerDTO(issue.getRequest().getPartner());
-		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLED)
+		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLE)
 			? CouponStatus.DISABLED
 			: coupon.getCouponStatus()
 		;

@@ -224,7 +224,7 @@ public class PaymentService {
 
 	private boolean isCouponUsable(Coupon coupon) {
 		if (coupon.getCouponStatus() != CouponStatus.USABLE) return false;
-		return coupon.getIssue().getIssueActiveStatus() == IssueActiveStatus.ENABLED;
+		return coupon.getIssue().getIssueActiveStatus() == IssueActiveStatus.ENABLE;
 	}
 
 	private boolean isCouponUsed(Coupon coupon) {

@@ -59,7 +59,7 @@ public class ManageQueryHelper {
 		Boolean isCompletionIncluded
 	) {
 		if (isCompletionIncluded.equals(true))
-			builder.and(issueLog.issueActiveStatus.eq(IssueActiveStatus.ENABLED));
+			builder.and(issueLog.issueActiveStatus.eq(IssueActiveStatus.ENABLE));
 	}
 
 	private static void addPresidentFilter(

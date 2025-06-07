@@ -177,7 +177,7 @@ public class ManageService {
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		Issue issue = getIssue(user, issueId);
-		if (issue.getIssueActiveStatus() != IssueActiveStatus.DISABLED)
+		if (issue.getIssueActiveStatus() != IssueActiveStatus.DISABLE)
 			throw new ServiceException(ServiceExceptionContent.ISSUE_NOT_DISABLED);
 
 		return issue;
