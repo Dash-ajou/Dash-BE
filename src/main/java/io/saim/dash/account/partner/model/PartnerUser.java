@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Getter
@@ -80,6 +82,10 @@ public class PartnerUser extends ServiceUser implements Serializable {
 
 	public static boolean isPartnerUser(ServiceUser serviceUser) {
 		return serviceUser instanceof PartnerUser;
+	}
+
+	public void changePassword(String newPassword, BCryptPasswordEncoder encoder) {
+		this.password = encoder.encode(newPassword);
 	}
 
 	@Override
