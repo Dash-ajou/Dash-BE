@@ -32,7 +32,7 @@ public class QCouponPaymentCode extends EntityPathBase<CouponPaymentCode> {
 
     public final NumberPath<Long> paymentCodeId = createNumber("paymentCodeId", Long.class);
 
-    public final StringPath qrCodeUrl = createString("qrCodeUrl");
+    public final StringPath qrCodeImage = createString("qrCodeImage");
 
     public QCouponPaymentCode(String variable) {
         this(CouponPaymentCode.class, forVariable(variable), INITS);
