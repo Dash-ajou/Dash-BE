@@ -1,12 +1,10 @@
 package io.saim.dash.account.auth.controller;
 
 import java.util.Map;
-
 import io.saim.dash.account.auth.dto.GoogleInfoResponseDTO;
 import io.saim.dash.account.auth.dto.GoogleResponseDTO;
 import io.saim.dash.account.auth.dto.GoogleTokenVerifyResponseDTO;
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin("*")
 public class GoogleLoginController {
 
 	@Value("${spring.security.oauth2.client.registration.google.client-id}")
@@ -38,7 +35,6 @@ public class GoogleLoginController {
 		String accessToken = body.get("google_access_token");
 		GoogleInfoResponseDTO userInfo = fetchUserInfo(accessToken);
 
-		// (선택) 세션에 저장
 		session.setAttribute("user", userInfo);
 
 		return ResponseEntity.ok(
