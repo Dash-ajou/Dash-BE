@@ -268,7 +268,7 @@ public class IssueService {
 		Long discount = paymentInfo.getDiscount();
 
 		updateProductPriceInfo(request, price);
-		Long paidPrice = getPaidPrice(price, discount);
+		Long paidPrice = getPaidPrice(request, price, discount);
 
 		updateIssueRequestStatus(request, status);
 
@@ -449,9 +449,11 @@ public class IssueService {
 		return createdCoupons;
 	}
 
-	private Long getPaidPrice(List<RequestProductPriceDTO> price, Long discount) {
+	private Long getPaidPrice(Request request, List<RequestProductPriceDTO> price, Long discount) {
+
+		Map<Long, Long> mappedProductCounts = getMappedProductCounts(request.getRequestProducts());
 		long paidPrice = price.stream()
-			.map(RequestProductPriceDTO::getPrice)
+			.map(product -> product.getPrice() * mappedProductCounts.get(product.getProductId()))
 			.reduce(Long::sum)
 			.orElse(0L) - discount;
 
@@ -459,6 +461,14 @@ public class IssueService {
 			throw new ServiceException(ServiceExceptionContent.BAD_ISSUE_SIGN_REQUEST);
 
 		return paidPrice;
+	}
+
+	private Map<Long, Long> getMappedProductCounts(List<RequestProduct> requestProducts) {
+		return requestProducts.stream()
+			.collect(Collectors.toMap(
+				requestProduct -> requestProduct.getProduct().getProductId(),
+				RequestProduct::getQuantity
+			));
 	}
 
 	private void updateIssueRequestStatus(Request request, IssueStatus status) {
