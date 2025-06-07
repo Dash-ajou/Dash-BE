@@ -434,7 +434,13 @@ public class IssueService {
 					.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
 					.price(requestProduct.getPrice())
 					.couponStatus(CouponStatus.REGISTERABLE)
-					.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
+					.expiredAt(
+						LocalDateTime.now().plusMonths(1)
+						.withHour(23)
+						.withMinute(59)
+						.withSecond(59)
+						.withNano(0)
+					) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
 					.issue(issue)
 					.build()
 				);
