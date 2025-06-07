@@ -11,4 +11,6 @@ public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPaym
 	Optional<CouponPaymentCode> findByCoupon_CouponId(Long couponId);
 
 	Optional<CouponPaymentCode> findByPaymentCode(String paymentCode);
+
+	boolean existsByCoupon_CouponId(Long couponId);
 }
