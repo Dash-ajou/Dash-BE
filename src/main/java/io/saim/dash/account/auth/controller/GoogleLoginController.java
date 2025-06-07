@@ -29,7 +29,6 @@ public class GoogleLoginController {
 
 	@Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
 	private String googleRedirectUri;
-
 	private final WebClient webClient = WebClient.create();
 
 	@PostMapping("/google")
