@@ -45,6 +45,8 @@ public class CouponPaymentCodeService {
 				return existing;
 			}
 
+			couponPaymentCodeJpaRepository.clearPaymentCodeReference(existing.getPaymentCodeId());
+
 			couponPaymentCodeJpaRepository.delete(existing);
 			couponPaymentCodeJpaRepository.flush();
 		}
