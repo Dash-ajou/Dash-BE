@@ -125,6 +125,13 @@ public class IssueService {
 		if (serviceUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
+		// 좌우측 공백문제 수정
+		presidentPhone = presidentPhone.trim();
+		presidentName = presidentName.trim();
+		vendorName = vendorName.trim();
+		ownerPhone = ownerPhone.trim();
+		businessName = businessName.trim();
+
 		// temp: 기존 vendor 지정 없이 매 요청마다 신규 vendor 생성
 		GeneralUser requestUser = (GeneralUser) serviceUser;
 
