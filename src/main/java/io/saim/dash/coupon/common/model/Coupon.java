@@ -7,6 +7,7 @@ import org.hibernate.annotations.CurrentTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.dto.Product.RequestProductDTO;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
@@ -58,6 +59,10 @@ public class Coupon {
 
 	@CurrentTimestamp
 	private LocalDateTime createdAt = LocalDateTime.now();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "general_user_id")
+	private GeneralUser generalUser;
 
 	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
