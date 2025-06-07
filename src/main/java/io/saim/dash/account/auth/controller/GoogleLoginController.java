@@ -2,7 +2,7 @@ package io.saim.dash.account.auth.controller;
 
 import io.saim.dash.account.auth.dto.GoogleInfoResponseDTO;
 import io.saim.dash.account.auth.dto.GoogleResponseDTO;
-import io.saim.dash.account.auth.dto.GoogleTokenVerifyResponseDTO;
+import io.saim.dash.account.auth.dto.GoogleTokenVerifyDataDTO;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
@@ -13,7 +13,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import java.util.Map;
 
 @RestController
@@ -33,7 +32,7 @@ public class GoogleLoginController {
 	private final WebClient webClient = WebClient.create();
 
 	@PostMapping("/google")
-	public ResponseEntity<CommonResponseDTO<?>> verifyGoogleToken(
+	public ResponseEntity<CommonResponseDTO<GoogleTokenVerifyDataDTO>> verifyGoogleToken(
 		@RequestBody Map<String, String> body,
 		HttpSession session
 	) {
@@ -41,7 +40,7 @@ public class GoogleLoginController {
 		GoogleInfoResponseDTO userInfo = fetchUserInfo(accessToken);
 		session.setAttribute("user", userInfo);
 
-		GoogleTokenVerifyResponseDTO.Data data = new GoogleTokenVerifyResponseDTO.Data(
+		GoogleTokenVerifyDataDTO data = new GoogleTokenVerifyDataDTO(
 			userInfo.getSub(),
 			userInfo.getEmail(),
 			userInfo.isEmail_verified()
@@ -58,7 +57,7 @@ public class GoogleLoginController {
 	}
 
 	@GetMapping("/google/callback")
-	public ResponseEntity<CommonResponseDTO<?>> handleGoogleCallback(@RequestParam("code") String code) {
+	public ResponseEntity<CommonResponseDTO<Map<String, Object>>> handleGoogleCallback(@RequestParam("code") String code) {
 		try {
 			GoogleResponseDTO googleResponse = requestAccessToken(code);
 			GoogleInfoResponseDTO userInfo = fetchUserInfo(googleResponse.getAccess_token());
