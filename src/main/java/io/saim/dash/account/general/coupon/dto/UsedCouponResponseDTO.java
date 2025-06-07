@@ -11,6 +11,7 @@ import lombok.Getter;
 @Builder
 public class UsedCouponResponseDTO {
 	private Long couponId;
+	private String couponName;
 	private String paymentCode;
 	private String partnerName;
 
