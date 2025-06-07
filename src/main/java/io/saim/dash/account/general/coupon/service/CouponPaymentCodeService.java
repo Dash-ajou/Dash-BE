@@ -1,5 +1,6 @@
 package io.saim.dash.account.general.coupon.service;
 
+import io.saim.dash.account.general.coupon.util.QrCodeGeneratorUtil;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Coupon;
@@ -22,6 +23,7 @@ public class CouponPaymentCodeService {
 
 	private final CouponPaymentCodeJpaRepository couponPaymentCodeJpaRepository;
 	private final CouponRepository couponRepository;
+	private final QrCodeGeneratorUtil qrCodeGeneratorUtil;
 
 	@Transactional
 	public CouponPaymentCode generatePaymentCode(Long couponId) {
@@ -48,10 +50,17 @@ public class CouponPaymentCodeService {
 
 		String generatedCode = UUID.randomUUID().toString();
 
+		String qrImageBase64;
+		try {
+			qrImageBase64 = qrCodeGeneratorUtil.generateQRCodeBase64(generatedCode);
+		} catch (Exception e) {
+			throw new RuntimeException("QR 코드 생성 실패", e);
+		}
+
 		CouponPaymentCode paymentCode = CouponPaymentCode.builder()
 			.coupon(coupon)
 			.paymentCode(generatedCode)
-			.qrCodeImage(null)
+			.qrCodeImage(qrImageBase64)
 			.issuedAt(LocalDateTime.now())
 			.expiresAt(LocalDateTime.now().plusMinutes(10))
 			.build();
