@@ -1,7 +1,7 @@
 package io.saim.dash.account.general.coupon.service;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
-import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
+import io.saim.dash.coupon.common.repository.jpa.CouponJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +12,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CouponStatusService {
 
-	private final CouponRegistrationRepository couponRegistrationRepository;
+	private final CouponJpaRepository couponJpaRepository;
 
 	public Map<String, Integer> getCouponStatus(Long userId) {
-		int usable = couponRegistrationRepository.findByRegisteredUserIdAndIsValid(userId, true).size();
-		int used = couponRegistrationRepository.findByRegisteredUserIdAndIsValid(userId, false).size();
+		int usableCount = couponJpaRepository.countByGeneralUser_IdAndCouponStatus(userId, CouponStatus.USABLE);
+		int usedCount = couponJpaRepository.countByGeneralUser_IdAndCouponStatus(userId, CouponStatus.USED);
 
 		Map<String, Integer> result = new HashMap<>();
-		result.put("usable_count", usable);
-		result.put("used_count", used);
+		result.put("usable_count", usableCount);
+		result.put("used_count", usedCount);
 		return result;
 	}
 }

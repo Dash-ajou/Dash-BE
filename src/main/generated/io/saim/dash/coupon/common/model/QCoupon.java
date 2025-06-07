@@ -30,6 +30,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final DateTimePath<java.time.LocalDateTime> expiredAt = createDateTime("expiredAt", java.time.LocalDateTime.class);
 
+    public final io.saim.dash.account.general.model.QGeneralUser generalUser;
+
     public final QIssue issue;
 
     public final NumberPath<Long> price = createNumber("price", Long.class);
@@ -56,6 +58,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public QCoupon(Class<? extends Coupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser"), inits.get("generalUser")) : null;
         this.issue = inits.isInitialized("issue") ? new QIssue(forProperty("issue"), inits.get("issue")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
