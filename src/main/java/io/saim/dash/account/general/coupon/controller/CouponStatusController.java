@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 
 @RestController
@@ -22,7 +23,6 @@ public class CouponStatusController {
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
 		Long userId = userDetails.getGeneralUser().getId();
-
 		Map<String, Integer> status = couponStatusService.getCouponStatus(userId);
 
 		return ResponseEntity.ok(
