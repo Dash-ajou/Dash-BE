@@ -175,13 +175,13 @@ public class PaymentService {
 		return couponPayment;
 	}
 
-	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, Long paymentId, CouponPaymentCode payment) {
+	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, Long paymentId) {
 		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentId);
 		couponPaymentLog.setStatus(PaymentStatus.CANCELLED);
 		couponPaymentLog.setCanceledAt(LocalDateTime.now());
 
-		payment.getCoupon().setCouponStatus(CouponStatus.USABLE);
-		payment.getCoupon().getIssue().decreaseUsedCnt();
+		couponPaymentLog.getPaymentCode().getCoupon().setCouponStatus(CouponStatus.USABLE);
+		couponPaymentLog.getPaymentCode().getCoupon().getIssue().decreaseUsedCnt();
 
 		return couponPaymentLog;
 	}
@@ -250,19 +250,16 @@ public class PaymentService {
 	}
 
 	@Transactional
-	public CouponPaymentLog cancelCoupon(ServiceUser loginUser, String paymentCode, Long paymentId) {
+	public CouponPaymentLog cancelCoupon(ServiceUser loginUser, Long paymentId) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 
-		CouponPaymentCode couponPaymentCodeInfo = getCouponPaymentCodeInfo(paymentCode);
-		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentId, couponPaymentCodeInfo);
-
-		sendPaymentCancelledPush(couponPaymentCodeInfo, partnerUser);
+		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentId);
+		sendPaymentCancelledPush(paymentLog.getPaymentCode().getCoupon(), partnerUser);
 
 		return paymentLog;
 	}
 
-	private void sendPaymentCancelledPush(CouponPaymentCode couponPaymentCodeInfo, PartnerUser partnerUser) {
-		Coupon coupon = couponPaymentCodeInfo.getCoupon();
+	private void sendPaymentCancelledPush(Coupon coupon, PartnerUser partnerUser) {
 		CouponRegistration couponRegistrationInfo = couponRegistrationRepository.findByCoupon(coupon);
 
 		List<Push> pushes = List.of(
@@ -289,6 +286,7 @@ public class PaymentService {
 		return couponPaymentLog;
 	}
 
+	@Transactional
 	public CouponCodeInfo validateCoupon(ServiceUser loginUser, String code) {
 		CodeType codeType = checkCodeType(code);
 		Coupon coupon = getCouponByCode(code, codeType);
