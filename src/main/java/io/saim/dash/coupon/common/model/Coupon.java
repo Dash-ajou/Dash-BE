@@ -33,7 +33,7 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Getter @Builder
 public class Coupon {
 
 	@Id
@@ -57,7 +57,8 @@ public class Coupon {
 	@Column(nullable = false)
 	private Long price;
 
-	@CurrentTimestamp
+	@Builder.Default
+	@Column(nullable = false)
 	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -67,9 +68,11 @@ public class Coupon {
 	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime expiredAt = LocalDateTime.now().plusMonths(1);
+	@Builder.Default
+	private LocalDateTime expiredAt = LocalDateTime.now()
+		.plusMonths(1)
+		.withHour(23).withMinute(59).withSecond(59).withNano(0);
 
-	@Builder
 	public Coupon(
 		Issue issue,
 		Product product,
@@ -81,6 +84,7 @@ public class Coupon {
 		this.registrationCode = registrationCode;
 		this.couponStatus = couponStatus;
 		this.price = price;
+		this.createdAt = LocalDateTime.now();
 		this.expiredAt = expiredAt;
 	}
 

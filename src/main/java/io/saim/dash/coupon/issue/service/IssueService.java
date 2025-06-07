@@ -125,6 +125,13 @@ public class IssueService {
 		if (serviceUser.isPartner())
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
+		// 좌우측 공백문제 수정
+		presidentPhone = presidentPhone.trim();
+		presidentName = presidentName.trim();
+		vendorName = vendorName.trim();
+		ownerPhone = ownerPhone.trim();
+		businessName = businessName.trim();
+
 		// temp: 기존 vendor 지정 없이 매 요청마다 신규 vendor 생성
 		GeneralUser requestUser = (GeneralUser) serviceUser;
 
@@ -427,7 +434,13 @@ public class IssueService {
 					.registrationCode(generateCouponRegisterCode(issue.getRequest(), 10))
 					.price(requestProduct.getPrice())
 					.couponStatus(CouponStatus.REGISTERABLE)
-					.expiredAt(LocalDateTime.now().plusMonths(1)) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
+					.expiredAt(
+						LocalDateTime.now().plusMonths(1)
+						.withHour(23)
+						.withMinute(59)
+						.withSecond(59)
+						.withNano(0)
+					) // temp: 모든 발행쿠폰 유효기간 1개월로 설정
 					.issue(issue)
 					.build()
 				);
