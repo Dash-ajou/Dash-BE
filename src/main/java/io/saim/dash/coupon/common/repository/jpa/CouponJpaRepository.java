@@ -16,6 +16,8 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
 
 	List<Coupon> findByGeneralUser_IdAndCouponStatus(Long generalUserId, CouponStatus status);
 
+	int countByGeneralUser_IdAndCouponStatus(Long userId, CouponStatus status);
+
 	// TODO: 설계 오류로 인한 임시 주석처리
 	// @Query("""
 	// SELECT new io.saim.dash.account.partner.dto.RequestDetailDTO(
