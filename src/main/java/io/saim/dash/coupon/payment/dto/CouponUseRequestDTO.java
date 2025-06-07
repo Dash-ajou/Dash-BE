@@ -1,10 +1,13 @@
 package io.saim.dash.coupon.payment.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@AllArgsConstructor
-@Getter
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class CouponUseRequestDTO {
 	private String payment_code;
 
