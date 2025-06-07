@@ -68,6 +68,8 @@ public class Issue {
 
 	private Long usedCnt = 0L;
 
+	private Long registerCnt = 0L;
+
 	@Nullable
 	private LocalDateTime paidAt = LocalDateTime.now();
 	private Long paidPrice;
@@ -76,13 +78,14 @@ public class Issue {
 	private LocalDateTime decidedAt = LocalDateTime.now();
 
 	@Builder
-	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, LocalDateTime paidAt,
+	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, Long registerCnt, LocalDateTime paidAt,
 		Long paidPrice, Vendor vendor, PartnerUser partner) {
 		this.request = request;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
 		this.issueCnt = issueCnt;
 		this.usedCnt = usedCnt;
+		this.registerCnt = registerCnt;
 		this.issueActiveStatus = issueActiveStatus;
 		this.vendor = vendor;
 		this.partner = partner;
@@ -95,6 +98,14 @@ public class Issue {
 
 	public Long decreaseUsedCnt() {
 		return --this.usedCnt;
+	}
+
+	public Long increaseRegisterCnt() {
+		return ++this.registerCnt;
+	}
+
+	public Long decreaseRegisterCnt() {
+		return --this.registerCnt;
 	}
 
 	public void addCoupons(List<Coupon> issuedCoupons) {
