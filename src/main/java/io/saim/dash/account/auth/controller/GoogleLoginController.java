@@ -1,5 +1,6 @@
 package io.saim.dash.account.auth.controller;
 
+import java.net.URI;
 import java.util.Map;
 import io.saim.dash.account.auth.dto.GoogleInfoResponseDTO;
 import io.saim.dash.account.auth.dto.GoogleResponseDTO;
@@ -102,9 +103,12 @@ public class GoogleLoginController {
 		body.add("redirect_uri", googleRedirectUri);
 		body.add("grant_type", "authorization_code");
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+		RequestEntity<MultiValueMap<String, String>> request = RequestEntity
+			.post(URI.create(tokenUrl))
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body(body);
 
-		ResponseEntity<GoogleResponseDTO> response = restTemplate.postForEntity(tokenUrl, request, GoogleResponseDTO.class);
+		ResponseEntity<GoogleResponseDTO> response = restTemplate.exchange(request, GoogleResponseDTO.class);
 
 		if (!response.getStatusCode().is2xxSuccessful()) {
 			throw new RuntimeException("Google OAuth2 Token 요청 실패: " + response.getStatusCode());
