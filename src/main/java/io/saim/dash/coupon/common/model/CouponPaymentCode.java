@@ -25,8 +25,8 @@ public class CouponPaymentCode {
 	@Column(name ="payment_code", unique = true, nullable = false)
 	private String paymentCode;
 
-	@Column(name = "qr_code_url", nullable = false)
-	private String qrCodeUrl;
+	@Column(name = "qr_code_image", nullable = false)
+	private String qrCodeImage;
 
 	@Column(name = "issued_at", nullable = false)
 	private LocalDateTime issuedAt;

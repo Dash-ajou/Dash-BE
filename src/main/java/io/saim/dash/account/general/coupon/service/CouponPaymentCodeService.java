@@ -51,7 +51,7 @@ public class CouponPaymentCodeService {
 		CouponPaymentCode paymentCode = CouponPaymentCode.builder()
 			.coupon(coupon)
 			.paymentCode(generatedCode)
-			.qrCodeUrl(null)
+			.qrCodeImage(null)
 			.issuedAt(LocalDateTime.now())
 			.expiresAt(LocalDateTime.now().plusMinutes(10))
 			.build();
