@@ -25,7 +25,6 @@ public class CouponPaymentCodeController {
 		@PathVariable Long couponId) {
 
 		try {
-			String qrCodeBase64 = qrCodeGeneratorUtil.generateQRCodeBase64(couponId);
 			CouponPaymentCode paymentCode = couponPaymentCodeService.generatePaymentCode(couponId);
 
 			if (paymentCode == null) {
@@ -38,6 +37,8 @@ public class CouponPaymentCodeController {
 					)
 				);
 			}
+
+			String qrCodeBase64 = qrCodeGeneratorUtil.generateQRCodeBase64(paymentCode.getPaymentCode());
 
 			CouponPaymentCodeResponseDTO responseDTO = new CouponPaymentCodeResponseDTO(
 				qrCodeBase64,
