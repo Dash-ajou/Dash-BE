@@ -1,15 +1,22 @@
 package io.saim.dash.coupon.issue.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.querydsl.core.BooleanBuilder;
 
@@ -41,6 +48,7 @@ import io.saim.dash.coupon.common.repository.Request.RequestRepository;
 
 import io.saim.dash.coupon.common.repository.Product.ProductRepository;
 import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
+import io.saim.dash.coupon.common.util.ImageUtil;
 import io.saim.dash.coupon.common.util.IssueQueryHelper;
 import io.saim.dash.coupon.common.dto.Request.RequestProductPriceDTO;
 import io.saim.dash.global.exception.ServiceException;
@@ -94,7 +102,7 @@ public class IssueService {
 
 	public Request getRequest(Long requestId, ServiceUser requestUser) throws ServiceException {
 		Request request = requestRepository.getById(requestId)
-			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.ISSUE_NOT_FOUND));
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.REQUEST_NOT_FOUND));
 
 		if (requestUser.isPartner()) {
 			if (!request.isRequestedPartner(requestUser))
@@ -454,5 +462,42 @@ public class IssueService {
 			codeBuilder.append(digit);
 		}
 		return codeBuilder.toString();
+	}
+
+	@Transactional
+	public String registerFormImage(ServiceUser loginUser, Long requestId, MultipartFile couponForm) {
+		if (loginUser.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		GeneralUser user = generalUserRepository.findById(loginUser.getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+
+		try {
+			String couponFormImageKey = ImageUtil.saveImage(ImageUtil.AccessType.FORM, couponForm);
+			Request request = getRequest(requestId, user);
+
+			request.setCouponForm(couponFormImageKey);
+			return couponFormImageKey;
+		} catch (IOException e) {
+			throw new ServiceException(ServiceExceptionContent.IMAGE_SAVE_ERROR);
+		}
+	}
+
+	public byte[] getFormImage(ServiceUser loginUser, Long requestId) {
+		GeneralUser user = generalUserRepository.findById(loginUser.getId())
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
+
+		Request request = getRequest(requestId, user);
+		if (request.getCouponForm() == null)
+			throw new ServiceException(ServiceExceptionContent.IMAGE_NOT_FOUND);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			BufferedImage bufferedImage = ImageUtil.readImage(ImageUtil.AccessType.FORM, request.getCouponForm());
+			ImageIO.write(bufferedImage, "png", baos); // jpeg, gif 등으로 변경 가능
+			return baos.toByteArray();
+		} catch (IOException e) {
+			throw new ServiceException(ServiceExceptionContent.IMAGE_GET_ERROR);
+		}
 	}
 }

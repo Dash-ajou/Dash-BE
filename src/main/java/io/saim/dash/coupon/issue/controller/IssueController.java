@@ -2,8 +2,11 @@ package io.saim.dash.coupon.issue.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
@@ -93,6 +96,29 @@ public class IssueController {
 		);
 
 		return new RequestBriefResponseDTO(request, user.isPartner());
+	}
+
+	@GetMapping("/{requestId}/form")
+	public ResponseEntity<byte[]> getRegisteredForm(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable Long requestId
+	) {
+		ServiceUser user = getLoginUser(customUserDetails);
+		byte[] formImage = issueService.getFormImage(user, requestId);
+
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_TYPE, "image/png")
+			.body(formImage);
+	}
+
+	@PostMapping("/{requestId}/form")
+	public void registerForm(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable Long requestId,
+		@RequestParam(name = "coupon_format") MultipartFile formFile
+	) {
+		ServiceUser user = getLoginUser(customUserDetails);
+		issueService.registerFormImage(user, requestId, formFile);
 	}
 
 	@PostMapping("/{issueId}/sign")

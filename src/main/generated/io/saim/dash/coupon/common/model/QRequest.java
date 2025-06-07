@@ -22,6 +22,8 @@ public class QRequest extends EntityPathBase<Request> {
 
     public static final QRequest request = new QRequest("request");
 
+    public final StringPath couponForm = createString("couponForm");
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final io.saim.dash.account.partner.model.QPartnerUser partner;

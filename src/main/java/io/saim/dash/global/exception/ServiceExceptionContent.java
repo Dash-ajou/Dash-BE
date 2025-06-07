@@ -39,6 +39,8 @@ public enum ServiceExceptionContent {
 	USER_NOT_FOUND(APIStatus.NOT_FOUND, "수신자가 존재하지 않습니다."),
 	PAYMENT_CODE_NOT_FOUND(APIStatus.NOT_FOUND, "결제코드가 존재하지 않습니다."),
 	// DATA_NOT_FOUND(APIStatus.NOT_FOUND, "일치하는 데이터ID를 찾을 수 없습니다: %d"),
+	REQUEST_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 발행요청서를 찾을 수 없습니다."),
+	IMAGE_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 이미지를 찾을 수 없습니다."),
 	ISSUE_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 이슈를 찾을 수 없습니다."),
 	PRODUCT_NOT_FOUND(APIStatus.NOT_FOUND, "요청하신 제품을 찾을 수 없습니다."),
 	PAYMENT_LOG_NOT_FOUND(APIStatus.NOT_FOUND, "결제기록을 찾을 수 없습니다."),
@@ -47,7 +49,9 @@ public enum ServiceExceptionContent {
 
 
 	// 500
-	INTERNAL_SERVER_ERROR(APIStatus.FAILED, "알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도헤주세요.")
+	INTERNAL_SERVER_ERROR(APIStatus.FAILED, "알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도헤주세요."),
+	IMAGE_SAVE_ERROR(APIStatus.FAILED, "이미지 저장 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요."),
+	IMAGE_GET_ERROR(APIStatus.FAILED, "이미지 조회 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요.")
 	;
 
 	// FORMAT
