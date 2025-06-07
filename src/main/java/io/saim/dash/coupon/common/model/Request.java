@@ -12,6 +12,7 @@ import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.constant.IssueStatus;
 import io.saim.dash.coupon.common.model.mapping.RequestProduct;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -53,6 +54,9 @@ public class Request {
 	@Column(nullable = false)
 	@Builder.Default
 	private IssueStatus status = IssueStatus.REQUESTED;
+
+	@Column(nullable = true, name = "coupon_form")
+	private String couponForm;
 
 	@OneToMany(
 		mappedBy = "request", fetch = FetchType.LAZY,

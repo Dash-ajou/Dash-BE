@@ -59,6 +59,10 @@ dependencies {
 
 	// Time Serialization
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// AWS SDK for S3 (v2 기준)
+	implementation platform('software.amazon.awssdk:bom:2.17.230')
+	implementation 'software.amazon.awssdk:s3'
 }
 
 // querydsl 세팅 시작
