@@ -38,6 +38,8 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
+    public final NumberPath<Long> registerCnt = createNumber("registerCnt", Long.class);
+
     public final QRequest request;
 
     public final NumberPath<Long> usedCnt = createNumber("usedCnt", Long.class);
