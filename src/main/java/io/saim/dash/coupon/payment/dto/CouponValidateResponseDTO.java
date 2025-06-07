@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.saim.dash.coupon.common.constant.CodeType;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
-import io.saim.dash.coupon.common.dto.Coupon.CouponPaymentBriefLogDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.Product.ProductDTO;
 import io.saim.dash.coupon.common.dto.VendorDTO;
@@ -27,7 +26,7 @@ public class CouponValidateResponseDTO {
 	private VendorDTO vendor;
 	private PartnerDTO partner;
 	private ProductDTO product;
-	private CouponStatus stauts;
+	private CouponStatus status;
 
 	public CouponValidateResponseDTO(CouponCodeInfo couponCodeInfo) {
 		this.type = couponCodeInfo.codeType();
@@ -39,6 +38,6 @@ public class CouponValidateResponseDTO {
 		this.vendor = new VendorDTO(request.getVendor());
 		this.partner = new PartnerDTO(request.getPartner());
 		this.product = new ProductDTO(coupon.getProduct());
-		this.stauts = coupon.getCouponStatus();
+		this.status = coupon.getCouponStatus();
 	}
 }

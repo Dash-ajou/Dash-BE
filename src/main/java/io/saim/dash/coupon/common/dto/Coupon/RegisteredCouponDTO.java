@@ -11,6 +11,7 @@ import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.GeneralUserDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
+import io.saim.dash.coupon.common.dto.PartnerSpecDTO;
 import io.saim.dash.coupon.common.dto.Product.ProductDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.Issue;
@@ -28,7 +29,7 @@ public class RegisteredCouponDTO {
 	private Long couponId;
 	private Long issueId;
 
-	private PartnerDTO partner;
+	private PartnerSpecDTO partner;
 
 	private ProductDTO product;
 
@@ -46,7 +47,7 @@ public class RegisteredCouponDTO {
 
 	public RegisteredCouponDTO(Issue issue, Coupon coupon) {
 		this.couponId = coupon.getCouponId();
-		this.partner = new PartnerDTO(issue.getRequest().getPartner());
+		this.partner = new PartnerSpecDTO(issue.getRequest().getPartner());
 		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLE)
 			? CouponStatus.DISABLED
 			: coupon.getCouponStatus()
@@ -62,7 +63,7 @@ public class RegisteredCouponDTO {
 	public RegisteredCouponDTO(Issue issue, Coupon coupon, CouponRegistration couponRegistration) {
 		this.couponId = coupon.getCouponId();
 		this.issueId = issue.getIssueId();
-		this.partner = new PartnerDTO(issue.getRequest().getPartner());
+		this.partner = new PartnerSpecDTO(issue.getRequest().getPartner());
 		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLE)
 			? CouponStatus.DISABLED
 			: coupon.getCouponStatus()
