@@ -3,6 +3,7 @@ package io.saim.dash.coupon.payment.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,10 +203,13 @@ public class PaymentService {
 	}
 
 	private boolean isPaymentCodeValid(String paymentCode) {
-
 		// 형식체크
-
-		return true;
+		try {
+			UUID.fromString(paymentCode);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	private void checkCouponValidation(Coupon coupon, PartnerUser partnerUser) {
@@ -237,6 +241,7 @@ public class PaymentService {
 
 		CouponPaymentCode couponPaymentCode = couponPaymentCodeJpaRepository.findByPaymentCode(requestedPaymentCode)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_CODE_NOT_FOUND));
+
 		// 만료여부 체크
 		if (couponPaymentCode.getExpiresAt().isBefore(LocalDateTime.now()))
 			throw new ServiceException(ServiceExceptionContent.PAYMENT_CODE_EXPIRED);
@@ -285,9 +290,21 @@ public class PaymentService {
 	}
 
 	public CouponCodeInfo validateCoupon(ServiceUser loginUser, String code) {
-
 		CodeType codeType = checkCodeType(code);
 		Coupon coupon = getCouponByCode(code, codeType);
+
+		ServiceUser serviceUser = getAPIAccessUser(loginUser);
+
+		if (
+			serviceUser.isPartner() &&
+			!coupon.getIssue().getRequest().isRequestedPartner(serviceUser)
+		)
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+		if (
+			!serviceUser.isPartner() &&
+			!coupon.getIssue().getVendor().isMemberIncluded(serviceUser)
+		)
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		return new CouponCodeInfo(codeType, coupon);
 	}
