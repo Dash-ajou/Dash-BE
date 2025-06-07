@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import io.saim.dash.account.general.coupon.dto.CouponResponseDTO;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.jpa.CouponJpaRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -13,18 +15,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CouponService {
 
-	private final CouponJpaRepository couponJpaRepository;
+	private final CouponRegistrationRepository couponRegistrationRepository;
 
 	public List<CouponResponseDTO> getCouponsByUser(Long generalUserId) {
-		List<Coupon> coupons = couponJpaRepository.findByGeneralUser_IdAndCouponStatus(generalUserId, CouponStatus.USABLE);
+		List<CouponRegistration> registrations = couponRegistrationRepository
+			.findByRegisteredUserIdAndCoupon_CouponStatus(generalUserId, CouponStatus.USABLE);
 
-		return coupons.stream()
-			.map(coupon -> CouponResponseDTO.builder()
-				.couponId(coupon.getCouponId())
-				.couponName(coupon.getProduct().getProductName())
-				.partnerName(coupon.getProduct().getPartner().getPartnerName())
-				.validUntil(coupon.getExpiredAt().toString())
-				.build())
+		return registrations.stream()
+			.map(reg -> {
+				Coupon coupon = reg.getCoupon();
+				return CouponResponseDTO.builder()
+					.couponId(coupon.getCouponId())
+					.couponName(coupon.getProduct().getProductName())
+					.partnerName(coupon.getProduct().getPartner().getPartnerName())
+					.validUntil(coupon.getExpiredAt().toString())
+					.build();
+			})
 			.collect(Collectors.toList());
 	}
 }
