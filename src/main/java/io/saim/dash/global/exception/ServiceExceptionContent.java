@@ -26,6 +26,7 @@ public enum ServiceExceptionContent {
 	INVALID_INPUT(APIStatus.BAD_REQUEST, "잘못된 입력값입니다. 확인 후 다시 시도해주세요."),
 	PAYMENT_CODE_EXPIRED(APIStatus.BAD_REQUEST, "결제코드가 만료되었습니다. 확인 후 다 시 시도해주세요."),
 	ALREADY_PROCESSED(APIStatus.BAD_REQUEST, "이미 처리된 쿠폰 요청입니다."),
+	USER_HAS_COUPONS(APIStatus.FORBIDDEN, "등록한 쿠폰이 있어 탈퇴할 수 없습니다."),
 
 	// 401
   	UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),

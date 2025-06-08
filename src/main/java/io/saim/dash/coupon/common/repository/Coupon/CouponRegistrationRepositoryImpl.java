@@ -139,6 +139,24 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 	}
 
 	@Override
+	public boolean existsByRegisteredUserId(Long userId) {
+		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
+		QGeneralUser generalUser = QGeneralUser.generalUser;
+
+		Integer result = queryFactory
+			.selectOne()
+			.from(couponRegistration)
+			.join(couponRegistration.registeredUser, generalUser)
+			.where(
+				generalUser.id.eq(userId),
+				couponRegistration.isValid.eq(true)
+			)
+			.fetchFirst();
+
+		return result != null;
+	}
+
+	@Override
 	public boolean existsByCoupon(Coupon coupon) {
 		return couponRegistrationJPARepository.existsByCoupon(coupon);
 	}
