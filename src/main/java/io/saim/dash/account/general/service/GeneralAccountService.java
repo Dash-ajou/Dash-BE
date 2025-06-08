@@ -9,9 +9,11 @@ import io.saim.dash.account.general.model.EmailVerification;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.EmailVerifyRepository;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.global.dto.APIStatus;
 import lombok.RequiredArgsConstructor;
-
+import io.saim.dash.global.exception.ServiceException;
+import io.saim.dash.global.exception.ServiceExceptionContent;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class GeneralAccountService {
 	private final PhoneVerificationService phoneVerificationService;
 	private final EmailVerifyService emailVerificationService;
 	private final EmailVerifyRepository emailVerifyRepository;
+	private final CouponRegistrationRepository couponRegistrationRepository;
 
 	public GeneralAccountResponseDTO getGeneralAccountDetails(GeneralUser user) {
 		if (user == null) {
@@ -108,6 +111,10 @@ public class GeneralAccountService {
 	public boolean deleteAccount(GeneralUser user) {
 		if (user == null) {
 			return false;
+		}
+
+		if (couponRegistrationRepository.existsByRegisteredUserId(user.getId())) {
+			throw new ServiceException(ServiceExceptionContent.USER_HAS_COUPONS);
 		}
 
 		signupNameRepository.delete(user);
