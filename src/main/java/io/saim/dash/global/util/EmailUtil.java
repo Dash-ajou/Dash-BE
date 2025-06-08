@@ -14,9 +14,8 @@ public class EmailUtil {
 	public void sendVerificationEmail(String toEmail, String code) {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(toEmail);
-		message.setSubject("DASH 이메일 인증 코드");
-		message.setText("아래 코드를 입력해주세요:\n\n" + code + "\n\n(유효시간: 3분)");
-
+		message.setSubject("[DASH] 이메일 인증 코드");
+		message.setText("인증 코드: " + code + "\n\n" + "해당 코드는 3분간 유효합니다.");
 		mailSender.send(message);
 	}
 }
