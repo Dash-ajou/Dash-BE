@@ -39,10 +39,12 @@ import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
+import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.coupon.common.util.ManageQueryHelper;
+import io.saim.dash.coupon.issue.service.ExternalRequestService;
 import io.saim.dash.coupon.manage.dto.ExportResponseDTO;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -69,6 +71,7 @@ public class ManageService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 	private final PushRepository pushRepository;
+	private final ExternalRequestService externalRequestService;
 
 	private final Region AWS_REGION = Region.AP_NORTHEAST_2;
 	private final String AWS_EXPORT_BUCKET = "dash-form-bucket";
@@ -291,6 +294,7 @@ public class ManageService {
 	private ExportResponseDTO exportImageCouponList(Issue issue) {
 		String couponImageKey = issue.getCouponImageKey();
 		if (couponImageKey == null) {
+			triggerCouponImageCreate(issue.getRequest());
 			throw new ServiceException(ServiceExceptionContent.IMAGE_NOT_READY);
 		}
 
@@ -305,6 +309,18 @@ public class ManageService {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+		}
+	}
+
+	private void triggerCouponImageCreate(Request request) {
+		try {
+			Issue issue = issueRepository.getByRequest(request);
+			if (issue == null || request.getCouponForm() == null)
+				throw new Exception();
+
+			externalRequestService.requestCouponImageCreate(request.getRequestId());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
