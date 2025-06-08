@@ -39,7 +39,8 @@ public class ProductService {
 		Map<Long, RequestProduct> mappedRequestProducts = requestProducts.stream()
 			.collect(Collectors.toMap(
 				v -> v.getProduct().getProductId(),
-				v -> v
+				v -> v,
+				(existing, replacement) -> existing
 			));
 
 		return products.stream()
