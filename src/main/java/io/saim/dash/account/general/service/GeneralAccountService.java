@@ -81,6 +81,7 @@ public class GeneralAccountService {
 		}
 
 		user.setEmail(confirmDTO.getNewEmail());
+		user.setOwnerEmail(confirmDTO.getNewEmail());
 		signupNameRepository.save(user);
 		emailVerifyRepository.delete(verification);
 
