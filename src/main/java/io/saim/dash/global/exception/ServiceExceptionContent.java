@@ -29,6 +29,7 @@ public enum ServiceExceptionContent {
 
 	// 401
   	UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),
+	INVALID_VERIFICATION_NUMBER(APIStatus.UNAUTHORIZED, "올바르지 않은 인증번호입니다."),
 	// AUTHORIZATION_EXPIRED(APIStatus.UNAUTHORIZED, "인증이 만료되었습니다. 잠시 후 다시 시도해주세요"),
 
 	// 403
