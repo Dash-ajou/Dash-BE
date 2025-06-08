@@ -229,7 +229,7 @@ public class ManageService {
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		if (!verifyResult)
-			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+			throw new ServiceException(ServiceExceptionContent.INVALID_VERIFICATION_NUMBER);
 
 		BooleanBuilder couponFilterBuilder = ManageQueryHelper.createCouponSearchFilterBuilder(
 			List.of(new CouponStatus[]{CouponStatus.DISABLED}),
