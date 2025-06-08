@@ -22,6 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor @AllArgsConstructor @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponValidateResponseDTO {
+	private Long couponId;
 	private CodeType type;
 	private VendorDTO vendor;
 	private PartnerDTO partner;
@@ -35,6 +36,7 @@ public class CouponValidateResponseDTO {
 		Issue issue = coupon.getIssue();
 		Request request = issue.getRequest();
 
+		this.couponId = coupon.getCouponId();
 		this.vendor = new VendorDTO(request.getVendor());
 		this.partner = new PartnerDTO(request.getPartner());
 		this.product = new ProductDTO(coupon.getProduct());
