@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.account.general.model.QGeneralUser;
+import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
@@ -66,20 +67,27 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 	@Override
 	public Optional<CouponRegistration> findByCouponIdAndMemberId(Long couponId, Long memberId) {
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
-		QVendor vendor = QVendor.vendor;
-		QUserVendor userVendor = QUserVendor.userVendor;
-		QGeneralUser generalUser = QGeneralUser.generalUser;
-		CouponRegistration searchResult = queryFactory.selectFrom(couponRegistration)
-			.join(couponRegistration.coupon.issue.request.vendor, vendor)
-			.join(vendor.vendorUsers, userVendor)
-			.join(userVendor.user, generalUser)
+		QCoupon coupon = QCoupon.coupon;
+		QIssue issue = QIssue.issue;
+		QRequest request = QRequest.request;
+		QPartnerUser partnerUser = QPartnerUser.partnerUser;
+		QGeneralUser user = QGeneralUser.generalUser;
+
+		CouponRegistration result = queryFactory
+			.selectFrom(couponRegistration)
+			.join(couponRegistration.coupon, coupon).fetchJoin()
+			.join(coupon.issue, issue).fetchJoin()
+			.join(issue.request, request).fetchJoin()
+			.join(request.partner, partnerUser).fetchJoin()
+			.join(couponRegistration.registeredUser, user)
 			.where(
 				couponRegistration.coupon.couponId.eq(couponId),
-				generalUser.id.eq(memberId)
+				user.id.eq(memberId),
+				couponRegistration.isValid.eq(true)
 			)
 			.fetchOne();
 
-		return Optional.ofNullable(searchResult);
+		return Optional.ofNullable(result);
 	}
 
 	@Override
