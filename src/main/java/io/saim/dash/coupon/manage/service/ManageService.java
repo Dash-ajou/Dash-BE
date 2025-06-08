@@ -110,15 +110,30 @@ public class ManageService {
 		ServiceUser loginUser,
 		Long couponId
 	) {
-		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+		ServiceUser user = getLoginedUserInfo(loginUser);
+		Coupon coupon = getCouponById(couponId, user);
 
-		if (user.isPartner())
+		Issue issue = coupon.getIssue();
+		CouponRegistration registration = couponRegistrationRepository.findByCoupon(coupon);
+		return new RegisteredCouponDTO(issue, coupon, registration);
+	}
+
+	private Coupon getCouponById(Long couponId, ServiceUser user) {
+		Coupon coupon = couponRepository.findCouponById(couponId);
+
+		if (user.isPartner() && coupon.getIssue().getPartner() != user)
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+		if (!user.isPartner() && !coupon.getIssue().getVendor().isMemberIncluded(user))
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
-		Coupon coupon = couponRepository.findCouponById(couponId);
-		Issue issue = coupon.getIssue();
-		CouponRegistration registration = couponRegistrationRepository.findByCouponId(couponId);
-		return new RegisteredCouponDTO(issue, coupon, registration);
+		return coupon;
+	}
+
+	private ServiceUser getLoginedUserInfo(ServiceUser loginUser) {
+		if (loginUser.isPartner())
+			return partnerUserRepository.getReferenceById(((PartnerUser)loginUser).getId());
+		else
+			return generalUserRepository.getReferenceById(((GeneralUser)loginUser).getId());
 	}
 
 	@Transactional
