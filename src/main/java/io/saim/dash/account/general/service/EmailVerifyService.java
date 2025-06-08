@@ -4,6 +4,7 @@ import io.saim.dash.account.general.model.EmailVerification;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.EmailVerifyRepository;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
+import io.saim.dash.global.util.EmailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ public class EmailVerifyService {
 
 	private final EmailVerifyRepository emailVerificationRepository;
 	private final GeneralUserRepository signupNameRepository;
+	private final EmailUtil emailUtil;
 
 	//인증 코드 생성 및 이메일 전송
 	public boolean sendVerificationCode(String email) {
@@ -34,8 +36,7 @@ public class EmailVerifyService {
 
 		emailVerificationRepository.save(emailVerification);
 
-		//실제 이메일 발송 로직 (추후 구현 가능)
-		System.out.println("인증 코드: " + verificationCode + " (이메일: " + email + ")");
+		emailUtil.sendVerificationEmail(email, verificationCode);
 
 		return true;
 	}
