@@ -1,7 +1,6 @@
 package io.saim.dash.account.general.service;
 
 import java.time.LocalDateTime;
-
 import io.saim.dash.account.auth.service.PhoneVerificationService;
 import io.saim.dash.account.general.dto.GeneralAccountResponseDTO;
 import io.saim.dash.account.general.dto.GeneralEmailVerifyConfirmDTO;
@@ -12,8 +11,12 @@ import io.saim.dash.account.general.repository.EmailVerifyRepository;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.global.dto.APIStatus;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import io.saim.dash.security.CustomUserDetails;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +87,11 @@ public class GeneralAccountService {
 		user.setOwnerEmail(confirmDTO.getNewEmail());
 		signupNameRepository.save(user);
 		emailVerifyRepository.delete(verification);
+
+		CustomUserDetails updatedDetails = new CustomUserDetails(user);
+		UsernamePasswordAuthenticationToken newAuth =
+			new UsernamePasswordAuthenticationToken(updatedDetails, null, updatedDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
 
 		return true;
 	}
