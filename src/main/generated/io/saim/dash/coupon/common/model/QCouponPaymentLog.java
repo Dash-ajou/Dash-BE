@@ -24,6 +24,8 @@ public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
 
     public final DateTimePath<java.time.LocalDateTime> canceledAt = createDateTime("canceledAt", java.time.LocalDateTime.class);
 
+    public final StringPath capturedImage = createString("capturedImage");
+
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
     public final QCouponPaymentCode paymentCode;

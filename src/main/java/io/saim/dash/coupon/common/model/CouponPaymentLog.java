@@ -56,5 +56,9 @@ public class CouponPaymentLog {
 	@Column(name = "status", length = 10, nullable = false)
 	private PaymentStatus status;
 
+	@Setter
+	@Column(name = "captured_image_key", nullable = false)
+	private String capturedImage;
+
 	// 추가 도메인 로직 필요 시 메서드 정의
 }
