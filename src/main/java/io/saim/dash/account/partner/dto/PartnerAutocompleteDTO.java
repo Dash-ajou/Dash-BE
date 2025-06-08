@@ -14,8 +14,12 @@ public class PartnerAutocompleteDTO {
 	@JsonProperty("partner_name")
 	private String partner_name;
 
+	@JsonProperty("owner_phone")
+	private String owner_phone;
+
 	public PartnerAutocompleteDTO(PartnerUser user) {
 		this.partner_id = user.getId();
 		this.partner_name = user.getPartnerName();
+		this.owner_phone = user.getPhone();
 	}
 }

@@ -18,8 +18,6 @@ public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPaym
 
 	boolean existsByCoupon_CouponId(Long couponId);
 
-
-
 	@Transactional
 	@Modifying
 	@Query("UPDATE CouponPaymentCode c SET c.coupon = null WHERE c.paymentCodeId = :paymentCodeId")

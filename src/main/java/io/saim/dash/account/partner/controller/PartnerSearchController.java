@@ -26,10 +26,11 @@ public class PartnerSearchController {
 		@RequestParam("keyword") String keyword,
 		@CookieValue(value = "SESSION", required = true) String cookie
 	) {
-		List<PartnerAutocompleteDTO> result = partnerUserRepository.findByPartnerNameContaining(keyword)
-			.stream()
-			.map(PartnerAutocompleteDTO::new)
-			.collect(Collectors.toList());
+		List<PartnerAutocompleteDTO> result =
+			partnerUserRepository.findTop10ByPartnerNameContainingOrPhoneContaining(keyword, keyword)
+				.stream()
+				.map(PartnerAutocompleteDTO::new)
+				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(
 			new CommonResponseDTO<>(

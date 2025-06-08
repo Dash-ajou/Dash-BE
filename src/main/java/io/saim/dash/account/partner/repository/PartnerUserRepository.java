@@ -10,5 +10,5 @@ public interface PartnerUserRepository extends JpaRepository<PartnerUser, Long> 
 	Optional<PartnerUser> findByPartnerName(String partnerName);
 	Optional<PartnerUser> findByPhone(String phone);
 	Optional<PartnerUser> findByEmail(String email);
-	List<PartnerUser> findByPartnerNameContaining(String keyword);
+	List<PartnerUser> findTop10ByPartnerNameContainingOrPhoneContaining(String nameKeyword, String phoneKeyword);
 }
