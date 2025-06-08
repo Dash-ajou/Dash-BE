@@ -1,5 +1,7 @@
 package io.saim.dash.account.general.coupon.service;
 
+import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -15,12 +17,9 @@ public class CouponDeleteService {
 
 	@Transactional
 	public void deleteCoupon(Long couponId) {
-		boolean exists = couponRepository.existsById(couponId);
+		Coupon coupon = couponRepository.findById(couponId)
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.COUPON_NOT_FOUND));
 
-		if (!exists) {
-			throw new ServiceException(ServiceExceptionContent.COUPON_NOT_FOUND);
-		}
-
-		couponRepository.deleteById(couponId);
+		coupon.setCouponStatus(CouponStatus.CANCELED);
 	}
 }
