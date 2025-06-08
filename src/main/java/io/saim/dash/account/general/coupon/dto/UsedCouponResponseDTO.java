@@ -13,6 +13,7 @@ public class UsedCouponResponseDTO {
 	private Long couponId;
 	private String couponName;
 	private String paymentCode;
+	private Long paymentId;
 	private String partnerName;
 
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
