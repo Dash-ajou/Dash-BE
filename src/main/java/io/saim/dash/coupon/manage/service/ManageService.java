@@ -243,13 +243,13 @@ public class ManageService {
 	}
 
 	private void sendIssueCancelledPush(Issue issue) {
-		List<Push> pushes = issue.getVendor().getVendorUsers().stream()
+		List<Push> pushes = new java.util.ArrayList<>(issue.getVendor().getVendorUsers().stream()
 			.map(vendorUser -> createSystemPushMessage(
 				PushTag.ISSUE_CANCELLED,
 				vendorUser,
 				issue.getPartner().getPartnerName()
 			))
-			.toList();
+			.toList());
 		pushes.add(createSystemPushMessage(
 			PushTag.ISSUE_CANCELLED,
 			issue.getPartner(),
