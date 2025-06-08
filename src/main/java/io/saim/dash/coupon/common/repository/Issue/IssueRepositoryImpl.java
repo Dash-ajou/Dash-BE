@@ -12,6 +12,7 @@ import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
+import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.repository.jpa.IssueJpaRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -63,5 +64,10 @@ public class IssueRepositoryImpl implements IssueRepository {
 	@Override
 	public Issue getReferenceById(Long issueId) {
 		return null;
+	}
+
+	@Override
+	public Issue getByRequest(Request request) {
+		return issueJpaRepository.findByRequest(request);
 	}
 }

@@ -50,6 +50,7 @@ import io.saim.dash.coupon.common.repository.Vendor.VendorRepository;
 import io.saim.dash.coupon.common.util.ImageUtil;
 import io.saim.dash.coupon.common.util.IssueQueryHelper;
 import io.saim.dash.coupon.common.dto.Request.RequestProductPriceDTO;
+import io.saim.dash.coupon.payment.service.ImageService;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,7 @@ public class IssueService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 	private final PushRepository pushRepository;
+	private final ExternalRequestService externalRequestService;
 
 	@Transactional
 	public List<Request> getRequests(
@@ -275,6 +277,8 @@ public class IssueService {
 		IssueResultDTO issueResultDTO = issueCoupon(request, LocalDateTime.parse(paidAtString, formatter), paidPrice);
 
 		sendIssueCompletionPush(request, serviceUser);
+		triggerCouponImageCreate(request);
+
 		return issueResultDTO;
 	}
 
@@ -500,9 +504,23 @@ public class IssueService {
 			Request request = getRequest(requestId, user);
 
 			request.setCouponForm(couponFormImageKey);
+			triggerCouponImageCreate(request);
+
 			return couponFormImageKey;
 		} catch (IOException e) {
-			throw new ServiceException(ServiceExceptionContent.IMAGE_SAVE_ERROR);
+			throw new ServiceException(ServiceExceptionContent.FILE_SAVE_ERROR);
+		}
+	}
+
+	private void triggerCouponImageCreate(Request request) {
+		try {
+			Issue issue = issueRepository.getByRequest(request);
+			if (issue == null || request.getCouponForm() == null)
+				throw new Exception();
+
+			externalRequestService.requestCouponImageCreate(request.getRequestId());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -520,7 +538,7 @@ public class IssueService {
 			ImageIO.write(bufferedImage, "png", baos); // jpeg, gif 등으로 변경 가능
 			return baos.toByteArray();
 		} catch (IOException e) {
-			throw new ServiceException(ServiceExceptionContent.IMAGE_GET_ERROR);
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
 		}
 	}
 }

@@ -60,6 +60,7 @@ public class Vendor implements Serializable {
 	public boolean isMemberIncluded(ServiceUser user) {
 		if (user.isPartner())
 			return false;
+
 		if (!(user instanceof GeneralUser generalUser))
 			return false;
 

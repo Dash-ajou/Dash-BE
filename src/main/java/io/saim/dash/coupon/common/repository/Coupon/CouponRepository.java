@@ -10,6 +10,7 @@ import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
 import io.saim.dash.account.partner.dto.MenuUsageStatsDTO;
 import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.CouponRegistration;
 
 public interface CouponRepository {
 	List<Coupon> findCouponsByIssueId(Long issueId);
@@ -39,4 +40,6 @@ public interface CouponRepository {
 	Optional<Coupon> findWithProductAndPartnerById(Long couponId);
 
 	List<MenuUsageStatsDTO> getMenuUsageStatsByPartnerId(Long partnerId);
+
+	List<CouponRegistration> findRegistrationsByIssueIdOnCoupon(Long issueId);
 }
