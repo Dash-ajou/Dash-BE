@@ -27,6 +27,7 @@ public class GeneralCouponService {
 				.couponId(coupon.getCouponId())
 				.couponName(coupon.getProduct().getProductName())
 				.paymentCode(log.getPaymentCode().getPaymentCode())
+				.paymentId(log.getPaymentId())
 				.partnerName(coupon.getIssue().getPartner().getPartnerName())
 				.usedAt(log.getUsedAt())
 				.build();
