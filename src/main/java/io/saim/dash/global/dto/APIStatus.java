@@ -5,6 +5,7 @@ import lombok.Getter;
 public enum APIStatus {
 	// 200
 	SUCCESS(200),
+	ACCEPTED(201),
 
 	// 400
 	BAD_REQUEST(400),

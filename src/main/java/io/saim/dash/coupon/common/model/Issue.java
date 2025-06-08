@@ -77,9 +77,15 @@ public class Issue {
 	@CreatedDate
 	private LocalDateTime decidedAt = LocalDateTime.now();
 
+	@Column(name = "coupon_image_key", nullable = true)
+	private String couponImageKey;
+
+	@Column(name = "coupon_csv_key", nullable = true) @Setter
+	private String couponCsvKey;
+
 	@Builder
 	public Issue(IssueActiveStatus issueActiveStatus, Request request, Long issueCnt, Long usedCnt, Long registerCnt, LocalDateTime paidAt,
-		Long paidPrice, Vendor vendor, PartnerUser partner) {
+		Long paidPrice, Vendor vendor, PartnerUser partner, String couponCsvKey, String couponImageKey) {
 		this.request = request;
 		this.paidAt = paidAt;
 		this.paidPrice = paidPrice;
@@ -90,6 +96,8 @@ public class Issue {
 		this.vendor = vendor;
 		this.partner = partner;
 		this.decidedAt = LocalDateTime.now();
+		this.couponCsvKey = couponCsvKey;
+		this.couponImageKey = couponImageKey;
 	}
 
 	public Long increaseUsedCnt() {

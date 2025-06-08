@@ -1,5 +1,12 @@
 package io.saim.dash.coupon.manage.service;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +26,7 @@ import io.saim.dash.account.push.model.PushSenderType;
 import io.saim.dash.account.push.model.PushTag;
 import io.saim.dash.account.push.model.PushType;
 import io.saim.dash.account.push.repository.PushRepository;
+import io.saim.dash.coupon.common.constant.CouponExportType;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
@@ -35,11 +43,22 @@ import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
 import io.saim.dash.coupon.common.util.ManageQueryHelper;
+import io.saim.dash.coupon.manage.dto.ExportResponseDTO;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ManageService {
@@ -50,6 +69,10 @@ public class ManageService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 	private final PushRepository pushRepository;
+
+	private final Region AWS_REGION = Region.AP_NORTHEAST_2;
+	private final String AWS_EXPORT_BUCKET = "dash-form-bucket";
+	private final String AWS_CSV_UPLOAD_DIR = "csv/";
 
 	public List<CouponIssueLogDTO> getIssuedRequests(
 		ServiceUser user,
@@ -247,5 +270,137 @@ public class ManageService {
 		else pushBuilder.receiver_general((GeneralUser)receiver);
 
 		return pushBuilder.build();
+	}
+
+	@Transactional
+	public ExportResponseDTO exportCouponList(ServiceUser loginUser, CouponExportType couponExportType, Long issueId) {
+		if (loginUser.isPartner())
+			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+
+		GeneralUser user = generalUserRepository.getById(((GeneralUser)loginUser).getId());
+		Issue issue = getIssue(user, issueId);
+
+		if (couponExportType == CouponExportType.image) return exportImageCouponList(issue);
+		return exportCSVCouponList(issue);
+
+	}
+
+	private ExportResponseDTO exportImageCouponList(Issue issue) {
+		String couponImageKey = issue.getCouponImageKey();
+		if (couponImageKey == null) {
+			throw new ServiceException(ServiceExceptionContent.IMAGE_NOT_READY);
+		}
+
+		System.out.println("[COUPON_IMAGE_KEY] " + couponImageKey);
+
+		try {
+			return ExportResponseDTO.builder()
+				.requestId(issue.getRequest().getRequestId())
+				.exportType(CouponExportType.image)
+				.downloadUrl(generatePresignedUrl(couponImageKey))
+				.build();
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+		}
+	}
+
+	@NotNull
+	private ExportResponseDTO exportCSVCouponList(Issue issue) {
+		String couponCsvKey = createCSVCouponList(issue);
+		System.out.println("[COUPON_CSV_KEY] " + couponCsvKey);
+
+		try {
+			return ExportResponseDTO.builder()
+				.requestId(issue.getRequest().getRequestId())
+				.exportType(CouponExportType.csv)
+				.downloadUrl(generatePresignedUrl(couponCsvKey))
+				.build();
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+		}
+	}
+
+	private String createCSVCouponList(Issue issue) {
+		String filename = getCSVFileName(issue);
+		try {
+			String csvContents = convertToCsv(issue.getIssueId());
+			File csvTempFile = writeCsvToFile(csvContents);
+			uploadToS3(csvTempFile, filename);
+			issue.setCouponCsvKey(filename);
+			return filename;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ServiceException(ServiceExceptionContent.FILE_SAVE_ERROR);
+		}
+	}
+
+	private String getCSVFileName(Issue issue) {
+		long time_ms = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		return AWS_CSV_UPLOAD_DIR + time_ms + "_coupon_list" + ".csv";
+	}
+
+	private String convertToCsv(Long issueId) {
+		List<CouponRegistration> registeredCouponInfo = couponRepository.findRegistrationsByIssueIdOnCoupon(issueId);
+
+		StringBuilder sb = new StringBuilder();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+		sb.append("연번,쿠폰상태,발행일,만료일,교환품명,교환품 정가,수령자 이름,수령자 연락처\n");
+		int cnt = 0;
+		for (CouponRegistration cr : registeredCouponInfo) {
+			Coupon coupon = cr.getCoupon();
+			String csvColumn = String.format("%d,%s,%s,%s,%s,%d",
+				cnt++,
+				coupon.getCouponStatus().getStringValue(),
+				coupon.getCreatedAt().format(formatter),
+				coupon.getExpiredAt().format(formatter),
+				coupon.getProduct().getProductName(),
+				coupon.getPrice()
+			);
+			if (cr.getIsValid()) {
+				csvColumn += String.format(",%s,%s\n",
+					cr.getRegisteredUser().getOwnerName(),
+					cr.getRegisteredUser().getOwnerPhone()
+				);
+			} else csvColumn += ",,\n";
+
+			sb.append(csvColumn);
+		}
+		return sb.toString();
+	}
+
+	private File writeCsvToFile(String csvContent) throws IOException {
+		File tempFile = File.createTempFile("coupons-", ".csv");
+		try (FileWriter writer = new FileWriter(tempFile)) {
+			writer.write(csvContent);
+		}
+		return tempFile;
+	}
+
+	private String generatePresignedUrl(String key) {
+		S3Presigner presigner = S3Presigner.create();
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+			.bucket(AWS_EXPORT_BUCKET)
+			.key(key)
+			.build();
+
+		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+			.signatureDuration(Duration.ofMinutes(15)) // 예: 15분간 유효
+			.getObjectRequest(getObjectRequest)
+			.build();
+
+		PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+		return presignedRequest.url().toString();
+	}
+
+	private void uploadToS3(File file, String key) {
+		S3Client s3 = S3Client.builder().region(AWS_REGION).build();
+		PutObjectRequest request = PutObjectRequest.builder()
+			.bucket(AWS_EXPORT_BUCKET)
+			.key(key)
+			.build();
+		s3.putObject(request, RequestBody.fromFile(file));
 	}
 }
