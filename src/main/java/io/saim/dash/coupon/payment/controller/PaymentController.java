@@ -83,7 +83,7 @@ public class PaymentController {
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 		CouponPaymentLog couponPaymentLog = paymentService.useCoupon(
-			loginUser, couponUseRequestDTO.getPaymentCode()
+			loginUser, couponUseRequestDTO
 		);
 
 		return new CouponUseResponseDTO(couponPaymentLog);

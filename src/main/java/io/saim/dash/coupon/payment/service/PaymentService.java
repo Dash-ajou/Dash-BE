@@ -1,5 +1,6 @@
 package io.saim.dash.coupon.payment.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.querydsl.core.BooleanBuilder;
 
@@ -35,6 +37,8 @@ import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponPaymentLogRepository;
+import io.saim.dash.coupon.common.util.ImageUtil;
+import io.saim.dash.coupon.payment.dto.CouponUseRequestDTO;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.common.util.PaymentQueryHelper;
@@ -109,16 +113,27 @@ public class PaymentService {
 	// }
 
 	@Transactional
-	public CouponPaymentLog useCoupon(ServiceUser loginUser, String requestedPaymentCode) {
+	public CouponPaymentLog useCoupon(ServiceUser loginUser, CouponUseRequestDTO couponUseRequestDTO) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 
-		CouponPaymentCode couponPaymentCode = getCouponPaymentCodeInfo(requestedPaymentCode);
-		checkCouponValidation(couponPaymentCode.getCoupon(), partnerUser);
-		CouponPaymentLog couponUseResult = applyPayment(partnerUser, couponPaymentCode);
+		System.out.println(couponUseRequestDTO.paymentCode());
 
+		CouponPaymentCode couponPaymentCode = getCouponPaymentCodeInfo(couponUseRequestDTO.paymentCode());
+		checkCouponValidation(couponPaymentCode.getCoupon(), partnerUser);
+
+		CouponPaymentLog couponUseResult = applyPayment(partnerUser, couponPaymentCode);
+		savePaymentScannedImage(couponUseRequestDTO.scanImg());
 		sendPaymentCompletePush(couponPaymentCode, partnerUser);
 
 		return couponUseResult;
+	}
+
+	private void savePaymentScannedImage(MultipartFile scanImage) {
+		try {
+			ImageUtil.saveImage(ImageUtil.AccessType.PAYMENT, scanImage);
+		} catch (IOException e) {
+			throw new ServiceException(ServiceExceptionContent.FILE_SAVE_ERROR);
+		}
 	}
 
 	private void sendPaymentCompletePush(CouponPaymentCode couponPaymentCode, PartnerUser partnerUser) {
