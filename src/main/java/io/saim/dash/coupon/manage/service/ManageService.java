@@ -173,6 +173,8 @@ public class ManageService {
 		IssueActiveStatus currentStatus = issue.getIssueActiveStatus();
 		if (currentStatus == status)
 			throw new ServiceException(ServiceExceptionContent.ACTIVE_STATUS_ALREADY_UPDATED);
+		if (status == IssueActiveStatus.CANCELLED)
+			throw new ServiceException(ServiceExceptionContent.INVALID_INPUT);
 
 		Long updatedCounts = issue.getIssueCnt() - issue.getUsedCnt();
 		issue.setIssueActiveStatus(status);
@@ -236,6 +238,7 @@ public class ManageService {
 			issue.getIssueId()
 		);
 		Long expiredCnt = couponRepository.cancelCoupons(couponFilterBuilder);
+		issue.setIssueActiveStatus(IssueActiveStatus.CANCELLED);
 
 		sendIssueCancelledPush(issue);
 

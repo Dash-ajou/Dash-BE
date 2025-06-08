@@ -58,6 +58,9 @@ public class ManageQueryHelper {
 		QIssue issueLog,
 		Boolean isCompletionIncluded
 	) {
+		// ADD: 취소된 issue도 기본적으로 안보이도록 설정
+		builder.and(issueLog.issueActiveStatus.ne(IssueActiveStatus.CANCELLED));
+
 		if (isCompletionIncluded.equals(true))
 			builder.and(issueLog.issueActiveStatus.eq(IssueActiveStatus.ENABLE));
 	}
