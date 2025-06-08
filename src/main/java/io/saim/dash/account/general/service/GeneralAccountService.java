@@ -54,7 +54,14 @@ public class GeneralAccountService {
 		}
 
 		user.setPhone(newPhone);
+		user.setOwnerPhone(newPhone);
 		signupNameRepository.save(user);
+
+		CustomUserDetails updatedDetails = new CustomUserDetails(user);
+		UsernamePasswordAuthenticationToken newAuth =
+			new UsernamePasswordAuthenticationToken(updatedDetails, null, updatedDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+
 		return true;
 	}
 
