@@ -90,6 +90,9 @@ public class LoginService {
 	}
 
 	private LoginResponseDTO createLoginResponse(Long userId, String name, String email, String phone, String userType, HttpSession session) {
+		if (email != null && email.endsWith("@dummy.com")) {
+			email = null;
+		}
 		LoginResponseDTO.User user = new LoginResponseDTO.User(userId, name, email, phone, userType);
 		return new LoginResponseDTO(user, session.getId());
 	}
