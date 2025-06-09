@@ -93,4 +93,9 @@ public class LoginService {
 		LoginResponseDTO.User user = new LoginResponseDTO.User(userId, name, email, phone, userType);
 		return new LoginResponseDTO(user, session.getId());
 	}
+
+	public GeneralUser getGeneralUserEntity(Long userId) {
+		return signupNameRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일반 사용자입니다."));
+	}
 }
