@@ -8,8 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record UploadSignImage(
 	MultipartFile sign,
-	String registerCode
-) {}
+	String register_code
+) {
+	public String registerCode() {
+		return register_code;
+	}
+}
