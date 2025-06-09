@@ -154,8 +154,7 @@ public class ManageService {
 			return new RegisteredCouponDTO(issue, coupon, registration);
 
 		try {
-			CouponPaymentCode paymentCodeInfo = couponPaymentLog.getPaymentCode();
-			String base64Img = qrCodeGeneratorUtil.generateQRCodeBase64(paymentCodeInfo.getPaymentCode());
+			String base64Img = qrCodeGeneratorUtil.generateQRCodeBase64(couponPaymentLog.getPaidPaymentCode());
 			return new RegisteredCouponDTO(issue, coupon, registration, base64Img);
 		} catch (Exception e) {
 			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);

@@ -34,6 +34,9 @@ public class CouponPaymentLog {
 	@Column(name = "payment_id")
 	private Long paymentId;
 
+	@Column(name = "paid_payment_code", nullable = false)
+	private String paidPaymentCode;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "payment_code", referencedColumnName = "payment_code_id", nullable = false)
 	private CouponPaymentCode paymentCode;
