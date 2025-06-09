@@ -197,12 +197,13 @@ public class PaymentService {
 	}
 
 	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, String paymentCode) {
-		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentCode);
+		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentCode, PaymentStatus.USED);
 		couponPaymentLog.setStatus(PaymentStatus.CANCELLED);
 		couponPaymentLog.setCanceledAt(LocalDateTime.now());
 
-		couponPaymentLog.getPaymentCode().getCoupon().setCouponStatus(CouponStatus.USABLE);
-		couponPaymentLog.getPaymentCode().getCoupon().getIssue().decreaseUsedCnt();
+		Coupon coupon = couponPaymentLog.getPaymentCode().getCoupon();
+		coupon.setCouponStatus(CouponStatus.USABLE);
+		coupon.getIssue().decreaseUsedCnt();
 
 		return couponPaymentLog;
 	}
@@ -307,8 +308,8 @@ public class PaymentService {
 		return couponPaymentLog;
 	}
 
-	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, String paymentCode) {
-		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCode(paymentCode);
+	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, String paymentCode, PaymentStatus paymentStatus) {
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCode(paymentCode, paymentStatus);
 		checkCouponPaymentLogValidity(partnerUser, couponPaymentLog);
 
 		return couponPaymentLog;

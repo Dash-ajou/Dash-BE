@@ -5,6 +5,7 @@ import java.util.List;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.constant.PaymentStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 
@@ -18,5 +19,5 @@ public interface CouponPaymentLogRepository {
 
 	CouponPaymentLog findByCoupon(Coupon coupon);
 
-	CouponPaymentLog findByPaymentCode(String paymentCode);
+	CouponPaymentLog findByPaymentCode(String paymentCode, PaymentStatus paymentStatus);
 }
