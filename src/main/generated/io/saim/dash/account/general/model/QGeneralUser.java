@@ -51,6 +51,8 @@ public class QGeneralUser extends EntityPathBase<GeneralUser> {
     //inherited
     public final StringPath phone = _super.phone;
 
+    public final NumberPath<Float> rate = createNumber("rate", Float.class);
+
     public final StringPath type = createString("type");
 
     public final ListPath<io.saim.dash.coupon.common.model.UserVendor, io.saim.dash.coupon.common.model.QUserVendor> userVendors = this.<io.saim.dash.coupon.common.model.UserVendor, io.saim.dash.coupon.common.model.QUserVendor>createList("userVendors", io.saim.dash.coupon.common.model.UserVendor.class, io.saim.dash.coupon.common.model.QUserVendor.class, PathInits.DIRECT2);

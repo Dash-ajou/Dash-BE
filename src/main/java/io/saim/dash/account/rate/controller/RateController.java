@@ -20,7 +20,7 @@ public class RateController {
 
 	private final RateService rateService;
 
-	@PostMapping("/")
+	@PostMapping("")
 	public void registerRate(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestBody RegisterRateDTO registerRateDTO
