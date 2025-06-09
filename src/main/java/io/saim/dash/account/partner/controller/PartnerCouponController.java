@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import io.saim.dash.account.general.coupon.dto.UsedCouponResponseDTO;
 import io.saim.dash.account.partner.model.PartnerUser;
-import io.saim.dash.account.partner.service.PartnerCouponService; // ✅ 서비스 import 누락 방지
+import io.saim.dash.account.partner.service.PartnerCouponService;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
@@ -23,7 +23,7 @@ public class PartnerCouponController {
 
 	private final PartnerCouponService partnerCouponService;
 
-	@GetMapping("/used")
+	@GetMapping("/list/used")
 	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(HttpSession session) {
 		PartnerUser partnerUser = (PartnerUser) session.getAttribute("partner_user");
 
