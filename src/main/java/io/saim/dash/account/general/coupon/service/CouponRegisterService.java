@@ -36,15 +36,15 @@ public class CouponRegisterService {
 			throw new ServiceException(ServiceExceptionContent.INVALID_COUPON_STATUS);
 		}
 
-		// 2. 이미 등록된 쿠폰인지 확인
-		if (couponRegistrationRepository.existsByCoupon(coupon)) {
-			throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED);
-		}
-
-		// 3. 등록 수행
+		// 2. 등록 유저 확인
 		GeneralUser registerUser = generalUserRepository.findById(userId)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.USER_NOT_FOUND));
 
+		if (couponRegistrationRepository.existsByRegisteredUserAndCoupon_Issue(registerUser, coupon.getIssue())) {
+			throw new ServiceException(ServiceExceptionContent.ALREADY_REGISTERED);
+		}
+
+		// 4. 쿠폰 등록 수행
 		CouponRegistration registration = CouponRegistration.builder()
 			.coupon(coupon)
 			.registeredUser(registerUser)
