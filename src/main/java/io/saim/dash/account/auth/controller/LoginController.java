@@ -34,7 +34,7 @@ public class LoginController {
 		);
 
 		if ("PARTNER".equalsIgnoreCase(requestDTO.getUserType())) {
-			session.setAttribute("partner_user", response.getUser());
+			session.setAttribute("LOGIN_PARTNER_USER", response.getUser());
 		} else {
 			session.setAttribute("LOGIN_GENERAL_USER", response.getUser());
 		}

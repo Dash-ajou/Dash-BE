@@ -35,7 +35,7 @@ public class CouponRegistration {
 	@JoinColumn(nullable = false, name = "register_id")
 	private GeneralUser registeredUser;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(nullable = false, name = "coupon_id")
 	private Coupon coupon;
 
