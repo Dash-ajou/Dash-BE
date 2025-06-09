@@ -9,8 +9,10 @@ import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
 import io.saim.dash.global.dto.APIStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import io.saim.dash.security.CustomUserDetails;
@@ -200,7 +202,8 @@ public class GeneralAccountController {
 
 	@DeleteMapping("/account/delete")
 	public ResponseEntity<CommonResponseDTO<?>> deleteAccount(
-		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		HttpServletRequest request) {
 
 		if (userDetails == null || !"GENERAL".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
@@ -214,18 +217,23 @@ public class GeneralAccountController {
 		GeneralUser generalUser = userDetails.getGeneralUser();
 		boolean isDeleted = generalAccountService.deleteAccount(generalUser);
 
-		return isDeleted
-			? ResponseEntity.ok(new CommonResponseDTO<>(
-			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.SUCCESS,
-			"회원 탈퇴가 완료되었습니다.",
-			null
-		))
-			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
-			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILED,
-			"회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다.",
-			null
-		));
+		if (isDeleted) {
+			SecurityContextHolder.clearContext();
+			request.getSession().invalidate();
+
+			return ResponseEntity.ok(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.SUCCESS,
+				"회원 탈퇴가 완료되었습니다.",
+				null
+			));
+		} else {
+			return ResponseEntity.status(403).body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILED,
+				"회원 탈퇴에 실패했습니다. 유효한 세션이 아닙니다.",
+				null
+			));
+		}
 	}
 }
