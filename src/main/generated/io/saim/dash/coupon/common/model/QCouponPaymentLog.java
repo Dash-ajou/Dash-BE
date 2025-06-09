@@ -26,6 +26,8 @@ public class QCouponPaymentLog extends EntityPathBase<CouponPaymentLog> {
 
     public final StringPath capturedImage = createString("capturedImage");
 
+    public final StringPath paidPaymentCode = createString("paidPaymentCode");
+
     public final io.saim.dash.account.partner.model.QPartnerUser partner;
 
     public final QCouponPaymentCode paymentCode;
