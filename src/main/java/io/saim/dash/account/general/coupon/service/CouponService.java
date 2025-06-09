@@ -3,6 +3,7 @@ package io.saim.dash.account.general.coupon.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+
 import io.saim.dash.account.general.coupon.dto.CouponResponseDTO;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
@@ -22,6 +23,7 @@ public class CouponService {
 			.findByRegisteredUserIdAndCoupon_CouponStatus(generalUserId, CouponStatus.USABLE);
 
 		return registrations.stream()
+			.filter(reg -> reg.getCoupon().getCouponStatus() != CouponStatus.DISABLED)
 			.map(reg -> {
 				Coupon coupon = reg.getCoupon();
 				return CouponResponseDTO.builder()
