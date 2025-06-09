@@ -21,7 +21,7 @@ public class CouponRegistrationSignUploadController {
 	private final CouponRegistrationSignUploadService couponRegistrationSignUploadService;
 
 	@PostMapping("/register/sign")
-	public String uploadSignImage(
+	public void uploadSignImage(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@ModelAttribute UploadSignImage uploadSignImage
 	) {
@@ -30,8 +30,6 @@ public class CouponRegistrationSignUploadController {
 			loginUser,
 			uploadSignImage.sign(), uploadSignImage.registerCode()
 		);
-
-		return "SUCCESS";
 	}
 
 	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {
