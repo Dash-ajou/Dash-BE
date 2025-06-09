@@ -9,12 +9,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
+import io.saim.dash.coupon.common.model.QCouponPaymentCode;
 import io.saim.dash.coupon.common.model.QCouponPaymentLog;
 import io.saim.dash.coupon.common.model.QCouponRegistration;
-import io.saim.dash.coupon.common.model.QRequest;
-import io.saim.dash.coupon.common.model.Request;
-import io.saim.dash.coupon.common.model.Vendor;
 import io.saim.dash.coupon.common.repository.jpa.CouponPaymentLogJpaRepository;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
@@ -46,6 +45,17 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 		JPAQuery<CouponPaymentLog> paymentRequestJPAQuery = getPaymentLogJPAQuery(filterBuilder);
 		addPaginateOptions(paymentRequestJPAQuery, page, size);
 		return paymentRequestJPAQuery.fetch();
+	}
+
+	@Override
+	public CouponPaymentLog findByCoupon(Coupon coupon) {
+		QCouponPaymentLog qCouponPaymentLog = QCouponPaymentLog.couponPaymentLog;
+		QCouponPaymentCode qCouponPaymentCode = QCouponPaymentCode.couponPaymentCode;
+
+		return jpaQueryFactory.selectFrom(qCouponPaymentLog)
+			.join(qCouponPaymentCode).on(qCouponPaymentLog.paymentCode.eq(qCouponPaymentCode))
+			.where(qCouponPaymentCode.coupon.eq(coupon))
+			.fetchOne();
 	}
 
 	private JPAQuery<CouponPaymentLog> getPaymentLogJPAQuery(BooleanBuilder filterBuilder) {

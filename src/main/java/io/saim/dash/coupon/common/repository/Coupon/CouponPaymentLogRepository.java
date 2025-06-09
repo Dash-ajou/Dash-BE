@@ -5,6 +5,7 @@ import java.util.List;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 
 public interface CouponPaymentLogRepository {
@@ -14,4 +15,6 @@ public interface CouponPaymentLogRepository {
 	CouponPaymentLog findById(Long id);
 
 	List<CouponPaymentLog> findByFilter(PartnerUser partnerUser, BooleanBuilder filterBuilder, int page, int size);
+
+	CouponPaymentLog findByCoupon(Coupon coupon);
 }
