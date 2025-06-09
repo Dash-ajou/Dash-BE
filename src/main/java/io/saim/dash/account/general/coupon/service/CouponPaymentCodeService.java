@@ -65,7 +65,7 @@ public class CouponPaymentCodeService {
 			.paymentCode(generatedCode)
 			.qrCodeImage(qrImageBase64)
 			.issuedAt(LocalDateTime.now())
-			.expiresAt(LocalDateTime.now().plusSeconds(30))
+			.expiresAt(LocalDateTime.now().plusSeconds(60))
 			.build();
 
 		return couponPaymentCodeJpaRepository.save(paymentCode);
