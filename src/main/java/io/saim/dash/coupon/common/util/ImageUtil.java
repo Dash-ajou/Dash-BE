@@ -35,8 +35,8 @@ public class ImageUtil {
     @Getter @AllArgsConstructor
     public enum AccessType {
         FORM("dash-form-bucket"), // 양식등록 관련
-        PAYMENT("dash-payment-bucket") // 결제시 QR촬영 관련
-
+        PAYMENT("dash-payment-bucket"), // 결제시 QR촬영 관련
+        SIGN("dash-sign-bucket") // 결제시 QR촬영 관련
         ;
 
         private String bucketName;
@@ -55,9 +55,14 @@ public class ImageUtil {
     }
 
     public static String saveImage(AccessType accessType, MultipartFile file) throws IOException {
-        BucketAccessInfo info = getImageAccessSettings(accessType);
         String fileExtension = getFileExtension(file.getOriginalFilename());
-        String key = info.getSavePath() + "/" + UUID.randomUUID() + "." + fileExtension;
+        String filename = UUID.randomUUID() + "." + fileExtension;
+        return saveImage(accessType, file, filename);
+    }
+
+    public static String saveImage(AccessType accessType, MultipartFile file, String filename) throws IOException {
+        BucketAccessInfo info = getImageAccessSettings(accessType);
+        String key = info.getSavePath() + "/" + filename;
 
         info.getS3Client().putObject(
             PutObjectRequest.builder()
