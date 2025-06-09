@@ -3,6 +3,8 @@ package io.saim.dash.coupon.common.repository.Coupon;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.partner.dto.CouponStatsDTO;
@@ -10,6 +12,7 @@ import io.saim.dash.account.partner.dto.CouponVendorDetailStatsDTO;
 import io.saim.dash.account.partner.dto.MenuUsageStatsDTO;
 import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.CouponRegistration;
 
 public interface CouponRepository {
