@@ -213,6 +213,7 @@ public class PaymentService {
 
 		CouponPaymentLog couponPayment = CouponPaymentLog.builder()
 				.paymentCode(paymentCode)
+				.paidPaymentCode(paymentCode.getPaymentCode())
 				.user(couponOwner)
 				.partner(partnerUser)
 				.usedAt(LocalDateTime.now())
