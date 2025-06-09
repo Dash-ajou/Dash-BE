@@ -68,6 +68,8 @@ public class CouponPaymentCodeService {
 			.expiresAt(LocalDateTime.now().plusSeconds(60))
 			.build();
 
+		coupon.setPaymentCode(paymentCode);
+
 		return couponPaymentCodeJpaRepository.save(paymentCode);
 	}
 }

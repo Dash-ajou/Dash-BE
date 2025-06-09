@@ -19,7 +19,7 @@ public class CouponPaymentCode {
 	private Long paymentCodeId;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "coupon_management_id", nullable = true, unique = true)
+	@JoinColumn(name = "coupon_management_id", nullable = false, unique = true)
 	private Coupon coupon;
 
 	@Column(name ="payment_code", unique = true, nullable = false)
