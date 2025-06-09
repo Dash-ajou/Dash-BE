@@ -22,6 +22,10 @@ public class QIssue extends EntityPathBase<Issue> {
 
     public static final QIssue issue = new QIssue("issue");
 
+    public final StringPath couponCsvKey = createString("couponCsvKey");
+
+    public final StringPath couponImageKey = createString("couponImageKey");
+
     public final ListPath<Coupon, QCoupon> coupons = this.<Coupon, QCoupon>createList("coupons", Coupon.class, QCoupon.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> decidedAt = createDateTime("decidedAt", java.time.LocalDateTime.class);

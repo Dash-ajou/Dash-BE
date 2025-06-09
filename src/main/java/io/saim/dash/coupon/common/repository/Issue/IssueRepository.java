@@ -7,6 +7,7 @@ import com.querydsl.core.BooleanBuilder;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.partner.model.PartnerUser;
 import io.saim.dash.coupon.common.model.Issue;
+import io.saim.dash.coupon.common.model.Request;
 
 public interface IssueRepository {
 
@@ -19,5 +20,7 @@ public interface IssueRepository {
 	void save(Issue issue);
 
 	Issue getReferenceById(Long issueId);
+
+	Issue getByRequest(Request request);
 }
 

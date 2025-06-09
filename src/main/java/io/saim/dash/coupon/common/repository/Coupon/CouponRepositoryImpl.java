@@ -2,6 +2,7 @@ package io.saim.dash.coupon.common.repository.Coupon;
 
 import static io.saim.dash.coupon.common.model.QVendor.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ import io.saim.dash.account.partner.dto.RequestDetailDTO;
 import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.model.QCoupon;
 import io.saim.dash.coupon.common.model.QCouponRegistration;
 import io.saim.dash.coupon.common.model.QIssue;
@@ -206,5 +208,39 @@ public class CouponRepositoryImpl implements CouponRepository {
 			.where(p.partner.id.eq(partnerId))
 			.groupBy(p.productName)
 			.fetch();
+	}
+
+	@Override
+	public List<CouponRegistration> findRegistrationsByIssueIdOnCoupon(Long issueId) {
+		QCoupon c = QCoupon.coupon;
+		QCouponRegistration cr = QCouponRegistration.couponRegistration;
+
+		List<Tuple> tuples = queryFactory
+			.select(c, cr)
+			.from(c)
+			.leftJoin(cr).on(cr.coupon.eq(c))
+			.where(c.issue.issueId.eq(issueId))
+			.fetch();
+
+		List<CouponRegistration> result = new ArrayList<>();
+
+		for (Tuple tuple : tuples) {
+			Coupon coupon = tuple.get(c);
+			CouponRegistration reg = tuple.get(cr);
+
+			if (reg != null) {
+				result.add(reg);
+			} else {
+				// 가상 객체 생성
+				CouponRegistration dummy = CouponRegistration.builder()
+					.coupon(coupon)
+					.registeredUser(null)
+					.build();
+				dummy.setIsValid(false);
+				result.add(dummy);
+			}
+		}
+
+		return result;
 	}
 }

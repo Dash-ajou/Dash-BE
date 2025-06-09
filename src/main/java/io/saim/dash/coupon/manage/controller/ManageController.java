@@ -16,6 +16,7 @@ import io.saim.dash.account.auth.service.PhoneVerificationService;
 import io.saim.dash.account.common.model.ServiceUser;
 import io.saim.dash.account.common.model.UserType;
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.constant.CouponExportType;
 import io.saim.dash.coupon.common.dto.Coupon.CouponBriefDTO;
 import io.saim.dash.coupon.common.dto.Issue.CancelIssueResultDTO;
 import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
@@ -26,6 +27,7 @@ import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.manage.dto.CancelIssueRequestDTO;
 import io.saim.dash.coupon.manage.dto.CancelIssueResponseDTO;
 import io.saim.dash.coupon.manage.dto.CancelRegistrationResponseDTO;
+import io.saim.dash.coupon.manage.dto.ExportResponseDTO;
 import io.saim.dash.coupon.manage.dto.IssuedRequestResponseDTO;
 import io.saim.dash.coupon.manage.dto.UpdateUsableStatusRequestDTO;
 import io.saim.dash.coupon.manage.dto.PauseCouponsResponseDTO;
@@ -165,6 +167,25 @@ public class ManageController {
 		CancelIssueResultDTO cancelResult = manageService.cancelIssue(loginUser, issue, verifyResult);
 
 		return new CancelIssueResponseDTO(cancelResult);
+	}
+
+	@GetMapping("/{issue_id}/export/list")
+	public ExportResponseDTO exportCouponList(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable(name = "issue_id") Long issueId
+	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		return manageService.exportCouponList(loginUser, CouponExportType.csv, issueId);
+	}
+
+
+	@GetMapping("/{issue_id}/export/image")
+	public ExportResponseDTO exportCouponImage(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@PathVariable(name = "issue_id") Long issueId
+	) {
+		ServiceUser loginUser = getLoginUser(customUserDetails);
+		return manageService.exportCouponList(loginUser, CouponExportType.image, issueId);
 	}
 
 	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {

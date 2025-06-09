@@ -1,12 +1,18 @@
 package io.saim.dash.coupon.payment.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.querydsl.core.BooleanBuilder;
 
@@ -35,6 +41,8 @@ import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.Request;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponPaymentLogRepository;
+import io.saim.dash.coupon.common.util.ImageUtil;
+import io.saim.dash.coupon.payment.dto.CouponUseRequestDTO;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import io.saim.dash.coupon.common.util.PaymentQueryHelper;
@@ -109,16 +117,29 @@ public class PaymentService {
 	// }
 
 	@Transactional
-	public CouponPaymentLog useCoupon(ServiceUser loginUser, String requestedPaymentCode) {
+	public CouponPaymentLog useCoupon(ServiceUser loginUser, CouponUseRequestDTO couponUseRequestDTO) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 
-		CouponPaymentCode couponPaymentCode = getCouponPaymentCodeInfo(requestedPaymentCode);
+		System.out.println(couponUseRequestDTO.paymentCode());
+
+		CouponPaymentCode couponPaymentCode = getCouponPaymentCodeInfo(couponUseRequestDTO.paymentCode());
 		checkCouponValidation(couponPaymentCode.getCoupon(), partnerUser);
+
 		CouponPaymentLog couponUseResult = applyPayment(partnerUser, couponPaymentCode);
+		String imageKey = savePaymentScannedImage(couponUseRequestDTO.scanImg());
+		couponUseResult.setCapturedImage(imageKey);
 
 		sendPaymentCompletePush(couponPaymentCode, partnerUser);
 
 		return couponUseResult;
+	}
+
+	private String savePaymentScannedImage(MultipartFile scanImage) {
+		try {
+			return ImageUtil.saveImage(ImageUtil.AccessType.PAYMENT, scanImage);
+		} catch (IOException e) {
+			throw new ServiceException(ServiceExceptionContent.FILE_SAVE_ERROR);
+		}
 	}
 
 	private void sendPaymentCompletePush(CouponPaymentCode couponPaymentCode, PartnerUser partnerUser) {
@@ -280,6 +301,9 @@ public class PaymentService {
 
 	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, Long paymentId) {
 		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findById(paymentId);
+		if (paymentId == null)
+			throw new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND);
+
 		if (!couponPaymentLog.getPartner().equals(partnerUser))
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
@@ -329,6 +353,26 @@ public class PaymentService {
 
 	public CouponPaymentLog getLog(ServiceUser loginUser, Long paymentId) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
-		return couponPaymentLogRepository.findById(paymentId);
+		return getCouponPaymentLog(partnerUser, paymentId);
+	}
+
+	public byte[] getCapturedUseImage(ServiceUser user, Long paymentId) {
+		PartnerUser partnerUser = getPartnerAPIAccessUser(user);
+		CouponPaymentLog paymentLog = getCouponPaymentLog(partnerUser, paymentId);
+
+		if (paymentLog.getCapturedImage() == null)
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			BufferedImage bufferedImage = ImageUtil.readImage(
+				ImageUtil.AccessType.PAYMENT,
+				paymentLog.getCapturedImage()
+			);
+			ImageIO.write(bufferedImage, "png", baos); // jpeg, gif 등으로 변경 가능
+			return baos.toByteArray();
+		} catch (IOException e) {
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+		}
 	}
 }

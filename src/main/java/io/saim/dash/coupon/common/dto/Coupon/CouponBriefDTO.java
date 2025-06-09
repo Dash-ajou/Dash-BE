@@ -3,31 +3,44 @@ package io.saim.dash.coupon.common.dto.Coupon;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import io.saim.dash.coupon.common.dto.PartnerSpecDTO;
+import io.saim.dash.coupon.common.dto.Product.ProductDTO;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.Issue;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import io.saim.dash.coupon.common.constant.CouponStatus;
+import lombok.Setter;
 
-@RequiredArgsConstructor
-@Getter
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponBriefDTO {
-	private final long coupon_id; // 쿠폰ID
-	private final long issue_id; // 쿠폰 발행ID
-	private final long product_id; // 상품ID
-	private final String register_code; // 쿠폰등록코드
-	private final CouponStatus status; // 쿠폰상태
+	private long couponId; // 쿠폰ID
+	private long issueId; // 쿠폰 발행ID
+	private ProductDTO product; // 상품ID
+	private PartnerSpecDTO partner;
+	private String registerCode; // 쿠폰등록코드
+	private CouponStatus status; // 쿠폰상태
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private final LocalDateTime expired_at; // 쿠폰 만료일자
+	private LocalDateTime expiredAt; // 쿠폰 만료일자
 
 	public CouponBriefDTO(Coupon coupon) {
-		this.coupon_id = coupon.getCouponId();
-		this.issue_id = coupon.getIssue().getIssueId();
-		this.product_id = coupon.getProduct().getProductId();
-		this.register_code = coupon.getRegistrationCode();
+		Issue issue = coupon.getIssue();
+
+		this.couponId = coupon.getCouponId();
+		this.issueId = issue.getIssueId();
+		this.product = new ProductDTO(coupon.getProduct());
+		this.partner = new PartnerSpecDTO(issue.getRequest().getPartner());
+		this.registerCode = coupon.getRegistrationCode();
 		this.status = coupon.getCouponStatus();
-		this.expired_at = coupon.getExpiredAt();
+		this.expiredAt = coupon.getExpiredAt();
 	}
 }

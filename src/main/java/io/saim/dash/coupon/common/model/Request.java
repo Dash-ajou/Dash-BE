@@ -56,7 +56,8 @@ public class Request {
 	private IssueStatus status = IssueStatus.REQUESTED;
 
 	@Column(nullable = true, name = "coupon_form")
-	private String couponForm;
+	@Builder.Default
+	private String couponForm = "static/Front_Template.png";
 
 	@OneToMany(
 		mappedBy = "request", fetch = FetchType.LAZY,

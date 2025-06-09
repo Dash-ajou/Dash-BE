@@ -6,6 +6,9 @@ import lombok.Getter;
 @Getter
 public enum ServiceExceptionContent {
 
+	// 200
+	IMAGE_NOT_READY(APIStatus.ACCEPTED, "이미지가 아직 처리중입니다. 잠시 후 다시 시도해주세요."),
+
 	// 400
 	DEFAULT_BAD_REQUEST(APIStatus.BAD_REQUEST, "잘못된 요청입니다. 확인 후 다시 시도해주세요."),
 	ISSUE_ALREADY_SIGNED(APIStatus.BAD_REQUEST, "이미 승인/반려여부가 결정된 발행요청입니다."),
@@ -27,6 +30,7 @@ public enum ServiceExceptionContent {
 
 	// 401
   	UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),
+	INVALID_VERIFICATION_NUMBER(APIStatus.UNAUTHORIZED, "올바르지 않은 인증번호입니다."),
 	// AUTHORIZATION_EXPIRED(APIStatus.UNAUTHORIZED, "인증이 만료되었습니다. 잠시 후 다시 시도해주세요"),
 
 	// 403
@@ -51,8 +55,9 @@ public enum ServiceExceptionContent {
 
 	// 500
 	INTERNAL_SERVER_ERROR(APIStatus.FAILED, "알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도헤주세요."),
-	IMAGE_SAVE_ERROR(APIStatus.FAILED, "이미지 저장 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요."),
-	IMAGE_GET_ERROR(APIStatus.FAILED, "이미지 조회 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요.")
+	FILE_SAVE_ERROR(APIStatus.FAILED, "파일 저장 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요."),
+	FILE_GET_ERROR(APIStatus.FAILED, "파일 조회 중 문제가 발생하였습니다. 잠시 후 다시 시도해주세요."),
+
 	;
 
 	// FORMAT
