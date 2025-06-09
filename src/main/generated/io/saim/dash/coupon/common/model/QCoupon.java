@@ -38,6 +38,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final QProduct product;
 
+    public final StringPath receiptSignImg = createString("receiptSignImg");
+
     public final StringPath registrationCode = createString("registrationCode");
 
     public QCoupon(String variable) {

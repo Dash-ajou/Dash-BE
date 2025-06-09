@@ -57,6 +57,9 @@ public class Coupon {
 	@Column(nullable = false)
 	private Long price;
 
+	@Column(name = "receipt_sign_img", nullable = true) @Setter
+	private String receiptSignImg;
+
 	@Builder.Default
 	@Column(nullable = false)
 	private LocalDateTime createdAt = LocalDateTime.now();
