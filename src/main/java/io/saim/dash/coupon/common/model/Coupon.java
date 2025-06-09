@@ -68,6 +68,10 @@ public class Coupon {
 	@JoinColumn(name = "general_user_id")
 	private GeneralUser generalUser;
 
+	@Getter
+	@OneToOne(mappedBy = "coupon", fetch = FetchType.LAZY)
+	private CouponRegistration couponRegistration;
+
 	// temp: 모든 발행쿠폰 유효기간 1개월로 설정
 	@Column(nullable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
