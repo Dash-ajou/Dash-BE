@@ -13,9 +13,11 @@ import io.saim.dash.coupon.common.dto.GeneralUserDTO;
 import io.saim.dash.coupon.common.dto.PartnerDTO;
 import io.saim.dash.coupon.common.dto.PartnerSpecDTO;
 import io.saim.dash.coupon.common.dto.Product.ProductDTO;
+import io.saim.dash.coupon.common.dto.VendorDTO;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.model.Request;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +32,8 @@ public class RegisteredCouponDTO {
 	private Long issueId;
 
 	private PartnerSpecDTO partner;
+
+	private VendorDTO vendor;
 
 	private ProductDTO product;
 
@@ -65,7 +69,11 @@ public class RegisteredCouponDTO {
 	public RegisteredCouponDTO(Issue issue, Coupon coupon, CouponRegistration couponRegistration) {
 		this.couponId = coupon.getCouponId();
 		this.issueId = issue.getIssueId();
-		this.partner = new PartnerSpecDTO(issue.getRequest().getPartner());
+
+		Request request = issue.getRequest();
+		this.vendor = new VendorDTO(request.getVendor());
+		this.partner = new PartnerSpecDTO(request.getPartner());
+
 		this.status = (issue.getIssueActiveStatus() == IssueActiveStatus.DISABLE)
 			? CouponStatus.DISABLED
 			: coupon.getCouponStatus()
