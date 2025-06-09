@@ -72,6 +72,7 @@ public class Coupon {
 	@OneToOne(mappedBy = "coupon", fetch = FetchType.LAZY)
 	private CouponRegistration couponRegistration;
 
+	@Setter
 	@OneToOne(mappedBy = "coupon", fetch = FetchType.LAZY)
 	private CouponPaymentCode paymentCode;
 
