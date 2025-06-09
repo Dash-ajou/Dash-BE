@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import io.saim.dash.account.general.coupon.dto.UsedCouponResponseDTO;
 import io.saim.dash.account.general.coupon.service.GeneralCouponService;
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.global.annotation.LoginPartnerUser;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
@@ -24,13 +25,10 @@ public class GeneralCouponController {
 	private final GeneralCouponService generalCouponService;
 
 	@GetMapping("/used")
-	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(HttpSession session) {
-		PartnerUser partnerUser = (PartnerUser) session.getAttribute("partner_user");
-		if (partnerUser == null) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "파트너 로그인 필요");
-		}
-
-		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByPartner(partnerUser.getId());
+	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(
+		@LoginPartnerUser PartnerUser loginPartnerUser
+	) {
+		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByPartner(loginPartnerUser.getId());
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),

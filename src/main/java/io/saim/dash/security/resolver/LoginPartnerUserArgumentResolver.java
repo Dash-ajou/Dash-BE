@@ -1,6 +1,7 @@
 package io.saim.dash.security.resolver;
 
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.global.annotation.LoginPartnerUser;
 import io.saim.dash.global.exception.ServiceException;
 import io.saim.dash.global.exception.ServiceExceptionContent;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class LoginPartnerUserArgumentResolver implements HandlerMethodArgumentRe
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		return parameter.getParameterType().equals(PartnerUser.class)
-			&& parameter.getParameterName().equals("loginPartnerUser");
+			&& parameter.hasParameterAnnotation(LoginPartnerUser.class);
 	}
 
 	@Override
