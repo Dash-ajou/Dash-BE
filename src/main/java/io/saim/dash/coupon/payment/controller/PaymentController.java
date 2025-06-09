@@ -81,7 +81,7 @@ public class PaymentController {
 	@PostMapping("/use")
 	public CouponUseResponseDTO useCoupon(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@ModelAttribute CouponUseRequestDTO couponUseRequestDTO
+		@RequestBody CouponUseRequestDTO couponUseRequestDTO
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 		CouponPaymentLog couponPaymentLog = paymentService.useCoupon(
