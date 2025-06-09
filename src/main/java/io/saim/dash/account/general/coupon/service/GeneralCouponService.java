@@ -18,8 +18,17 @@ public class GeneralCouponService {
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 
 	@Transactional(readOnly = true)
-	public List<UsedCouponResponseDTO> getUsedCoupons(GeneralUser user) {
+	public List<UsedCouponResponseDTO> getUsedCoupons(GeneralUser user, Long partnerId) {
 		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAllByUser(user);
+
+		if (partnerId != null) {
+			logs = logs.stream()
+				.filter(log -> {
+					Coupon coupon = log.getPaymentCode().getCoupon();
+					return coupon.getIssue().getPartner().getId().equals(partnerId);
+				})
+				.collect(Collectors.toList());
+		}
 
 		return logs.stream().map(log -> {
 			Coupon coupon = log.getPaymentCode().getCoupon();
