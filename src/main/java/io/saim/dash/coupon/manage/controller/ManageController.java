@@ -94,16 +94,16 @@ public class ManageController {
 	}
 
 	// @GetMapping("/{issue_id}/{coupon_id}")
-	@GetMapping("/coupon/{coupon_id}")
+	@GetMapping("/coupon/{couponId}")
 	public RegisteredCouponDTO getCouponSpec(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable Long coupon_id
+		@PathVariable Long couponId
 	) {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 
 		RegisteredCouponDTO specCoupon = manageService.getCouponByCouponId(
 			loginUser,
-			coupon_id
+			couponId
 		);
 
 		return specCoupon;
