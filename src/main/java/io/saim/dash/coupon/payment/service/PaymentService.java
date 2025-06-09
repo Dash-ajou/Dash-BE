@@ -196,8 +196,8 @@ public class PaymentService {
 		return couponPayment;
 	}
 
-	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, Long paymentId) {
-		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentId);
+	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, String paymentCode) {
+		CouponPaymentLog couponPaymentLog = getCouponPaymentLog(partnerUser, paymentCode);
 		couponPaymentLog.setStatus(PaymentStatus.CANCELLED);
 		couponPaymentLog.setCanceledAt(LocalDateTime.now());
 
@@ -272,10 +272,10 @@ public class PaymentService {
 	}
 
 	@Transactional
-	public CouponPaymentLog cancelCoupon(ServiceUser loginUser, Long paymentId) {
+	public CouponPaymentLog cancelCoupon(ServiceUser loginUser, String paymentCode) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 
-		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentId);
+		CouponPaymentLog paymentLog = cancelPayment(partnerUser, paymentCode);
 		sendPaymentCancelledPush(paymentLog.getPaymentCode().getCoupon(), partnerUser);
 
 		return paymentLog;
@@ -302,13 +302,24 @@ public class PaymentService {
 
 	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, Long paymentId) {
 		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findById(paymentId);
-		if (paymentId == null)
+		checkCouponPaymentLogValidity(partnerUser, couponPaymentLog);
+
+		return couponPaymentLog;
+	}
+
+	private CouponPaymentLog getCouponPaymentLog(PartnerUser partnerUser, String paymentCode) {
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCode(paymentCode);
+		checkCouponPaymentLogValidity(partnerUser, couponPaymentLog);
+
+		return couponPaymentLog;
+	}
+
+	private void checkCouponPaymentLogValidity(PartnerUser partnerUser, CouponPaymentLog couponPaymentLog) {
+		if (couponPaymentLog == null)
 			throw new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND);
 
 		if (!couponPaymentLog.getPartner().equals(partnerUser))
 			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
-
-		return couponPaymentLog;
 	}
 
 	@Transactional

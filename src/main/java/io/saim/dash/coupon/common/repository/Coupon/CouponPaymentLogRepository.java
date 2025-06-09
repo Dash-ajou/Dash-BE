@@ -17,4 +17,6 @@ public interface CouponPaymentLogRepository {
 	List<CouponPaymentLog> findByFilter(PartnerUser partnerUser, BooleanBuilder filterBuilder, int page, int size);
 
 	CouponPaymentLog findByCoupon(Coupon coupon);
+
+	CouponPaymentLog findByPaymentCode(String paymentCode);
 }
