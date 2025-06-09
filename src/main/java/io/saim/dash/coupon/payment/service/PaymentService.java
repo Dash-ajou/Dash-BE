@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.coupon.util.QrCodeGeneratorUtil;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.push.model.Push;
 import io.saim.dash.account.push.model.PushSenderType;
@@ -59,6 +60,7 @@ public class PaymentService {
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 	private final CouponPaymentCodeJpaRepository couponPaymentCodeJpaRepository;
 	private final PushRepository pushRepository;
+	private final QrCodeGeneratorUtil qrCodeGeneratorUtil;
 
 	private static final DateTimeFormatter FORMATTER =
 		DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -126,8 +128,6 @@ public class PaymentService {
 		checkCouponValidation(couponPaymentCode.getCoupon(), partnerUser);
 
 		CouponPaymentLog couponUseResult = applyPayment(partnerUser, couponPaymentCode);
-		String imageKey = savePaymentScannedImage(couponUseRequestDTO.scanImg());
-		couponUseResult.setCapturedImage(imageKey);
 
 		sendPaymentCompletePush(couponPaymentCode, partnerUser);
 
@@ -354,25 +354,5 @@ public class PaymentService {
 	public CouponPaymentLog getLog(ServiceUser loginUser, Long paymentId) {
 		PartnerUser partnerUser = getPartnerAPIAccessUser(loginUser);
 		return getCouponPaymentLog(partnerUser, paymentId);
-	}
-
-	public byte[] getCapturedUseImage(ServiceUser user, Long paymentId) {
-		PartnerUser partnerUser = getPartnerAPIAccessUser(user);
-		CouponPaymentLog paymentLog = getCouponPaymentLog(partnerUser, paymentId);
-
-		if (paymentLog.getCapturedImage() == null)
-			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			BufferedImage bufferedImage = ImageUtil.readImage(
-				ImageUtil.AccessType.PAYMENT,
-				paymentLog.getCapturedImage()
-			);
-			ImageIO.write(bufferedImage, "png", baos); // jpeg, gif 등으로 변경 가능
-			return baos.toByteArray();
-		} catch (IOException e) {
-			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
-		}
 	}
 }

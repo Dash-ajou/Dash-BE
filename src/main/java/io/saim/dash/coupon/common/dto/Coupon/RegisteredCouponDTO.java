@@ -39,6 +39,8 @@ public class RegisteredCouponDTO {
 
 	private GeneralUserDTO register; // 등록자
 
+	private String paidQRImage;
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime registered_at; // 등록일시
 
@@ -79,5 +81,10 @@ public class RegisteredCouponDTO {
 			this.register = new GeneralUserDTO(couponRegistration.getRegisteredUser());
 			this.registered_at = couponRegistration.getRegisteredAt();
 		}
+	}
+
+	public RegisteredCouponDTO(Issue issue, Coupon coupon, CouponRegistration couponRegistration, String paidQRImage) {
+		this(issue, coupon, couponRegistration);
+		this.setPaidQRImage(paidQRImage);
 	}
 }

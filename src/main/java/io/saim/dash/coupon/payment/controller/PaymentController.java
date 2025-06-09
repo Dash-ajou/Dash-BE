@@ -116,19 +116,6 @@ public class PaymentController {
 		return new CouponValidateResponseDTO(couponCodeInfo);
 	}
 
-	@GetMapping("/image/{payment_id}")
-	public ResponseEntity<byte[]> getRegisteredForm(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable(name = "payment_id") Long paymentId
-	) {
-		ServiceUser user = getLoginUser(customUserDetails);
-		byte[] capturedImage = paymentService.getCapturedUseImage(user, paymentId);
-
-		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_TYPE, "image/png")
-			.body(capturedImage);
-	}
-
 	private static ServiceUser getLoginUser(CustomUserDetails customUserDetails) {
 		ServiceUser user;
 		try {

@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 
 import io.saim.dash.account.common.model.ServiceUser;
+import io.saim.dash.account.general.coupon.util.QrCodeGeneratorUtil;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.repository.GeneralUserRepository;
 import io.saim.dash.account.partner.model.PartnerUser;
@@ -35,11 +37,14 @@ import io.saim.dash.coupon.common.dto.Issue.CouponIssueLogDTO;
 import io.saim.dash.coupon.common.dto.Coupon.RegisteredCouponDTO;
 import io.saim.dash.coupon.common.dto.Issue.PauseCouponsResultDTO;
 import io.saim.dash.coupon.common.model.Coupon;
+import io.saim.dash.coupon.common.model.CouponPaymentCode;
+import io.saim.dash.coupon.common.model.CouponPaymentLog;
 import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QIssue;
 import io.saim.dash.coupon.common.model.QRequest;
 import io.saim.dash.coupon.common.model.Request;
+import io.saim.dash.coupon.common.repository.Coupon.CouponPaymentLogRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.Issue.IssueRepository;
@@ -68,6 +73,7 @@ public class ManageService {
 	private final IssueRepository issueRepository;
 	private final CouponRepository couponRepository;
 	private final CouponRegistrationRepository couponRegistrationRepository;
+	private final CouponPaymentLogRepository couponPaymentLogRepository;
 	private final PartnerUserRepository partnerUserRepository;
 	private final GeneralUserRepository generalUserRepository;
 	private final PushRepository pushRepository;
@@ -76,6 +82,7 @@ public class ManageService {
 	private final Region AWS_REGION = Region.AP_NORTHEAST_2;
 	private final String AWS_EXPORT_BUCKET = "dash-form-bucket";
 	private final String AWS_CSV_UPLOAD_DIR = "csv/";
+	private final QrCodeGeneratorUtil qrCodeGeneratorUtil;
 
 	public List<CouponIssueLogDTO> getIssuedRequests(
 		ServiceUser user,
@@ -141,7 +148,18 @@ public class ManageService {
 
 		Issue issue = coupon.getIssue();
 		CouponRegistration registration = couponRegistrationRepository.findByCoupon(coupon);
-		return new RegisteredCouponDTO(issue, coupon, registration);
+
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByCoupon(coupon);
+		if (couponPaymentLog == null)
+			return new RegisteredCouponDTO(issue, coupon, registration);
+
+		try {
+			CouponPaymentCode paymentCodeInfo = couponPaymentLog.getPaymentCode();
+			String base64Img = qrCodeGeneratorUtil.generateQRCodeBase64(paymentCodeInfo.getPaymentCode());
+			return new RegisteredCouponDTO(issue, coupon, registration, base64Img);
+		} catch (Exception e) {
+			throw new ServiceException(ServiceExceptionContent.FILE_GET_ERROR);
+		}
 	}
 
 	private Coupon getCouponById(Long couponId, ServiceUser user) {
