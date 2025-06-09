@@ -21,13 +21,8 @@ public class PartnerCouponService {
 
 	@Transactional(readOnly = true)
 	public List<UsedCouponResponseDTO> getUsedCouponsByPartner(Long partnerId) {
-		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAll().stream()
-			.filter(log -> {
-				Coupon coupon = log.getPaymentCode().getCoupon();
-				return coupon.getCouponStatus() == CouponStatus.USED &&
-					coupon.getIssue().getPartner().getId().equals(partnerId);
-			})
-			.collect(Collectors.toList());
+		List<CouponPaymentLog> logs =
+			couponPaymentLogRepository.findUsedLogsByPartnerId(partnerId, CouponStatus.USED);
 
 		return logs.stream().map(log -> {
 			Coupon coupon = log.getPaymentCode().getCoupon();
@@ -42,3 +37,4 @@ public class PartnerCouponService {
 		}).collect(Collectors.toList());
 	}
 }
+
