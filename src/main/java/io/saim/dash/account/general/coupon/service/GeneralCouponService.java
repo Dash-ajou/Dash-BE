@@ -7,39 +7,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.saim.dash.account.general.coupon.dto.UsedCouponResponseDTO;
-import io.saim.dash.account.general.coupon.repository.CouponPaymentLogRepository;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
-import io.saim.dash.coupon.common.model.CouponPaymentLog;
+import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class GeneralCouponService {
 
-	private final CouponPaymentLogRepository couponPaymentLogRepository;
+	private final CouponRegistrationRepository couponRegistrationRepository;
 
 	@Transactional(readOnly = true)
 	public List<UsedCouponResponseDTO> getUsedCouponsByGeneralUser(Long generalUserId) {
-		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAll().stream()
-			.filter(log -> {
-				Coupon coupon = log.getPaymentCode().getCoupon();
-				return coupon.getCouponStatus() == CouponStatus.USED &&
-					coupon.getCouponRegistration() != null &&
-					coupon.getCouponRegistration().getRegisteredUser().getId().equals(generalUserId);
+		List<CouponRegistration> registrations =
+			couponRegistrationRepository.findUsedByUserId(generalUserId); // 쿠폰 상태가 USED이고 유저가 등록한 것만 조회
+
+		return registrations.stream()
+			.map(reg -> {
+				Coupon coupon = reg.getCoupon();
+				return UsedCouponResponseDTO.builder()
+					.couponId(coupon.getCouponId())
+					.couponName(coupon.getProduct().getProductName())
+					.paymentCode(coupon.getPaymentCode().getPaymentCode()) // null 가능성 주의
+					.paymentId(coupon.getPaymentCode().getPaymentLog().getPaymentId())
+					.partnerName(coupon.getIssue().getPartner().getPartnerName())
+					.usedAt(coupon.getPaymentCode().getPaymentLog().getUsedAt())
+					.build();
 			})
 			.collect(Collectors.toList());
-
-		return logs.stream().map(log -> {
-			Coupon coupon = log.getPaymentCode().getCoupon();
-			return UsedCouponResponseDTO.builder()
-				.couponId(coupon.getCouponId())
-				.couponName(coupon.getProduct().getProductName())
-				.paymentCode(log.getPaymentCode().getPaymentCode())
-				.paymentId(log.getPaymentId())
-				.partnerName(coupon.getIssue().getPartner().getPartnerName())
-				.usedAt(log.getUsedAt())
-				.build();
-		}).collect(Collectors.toList());
 	}
 }

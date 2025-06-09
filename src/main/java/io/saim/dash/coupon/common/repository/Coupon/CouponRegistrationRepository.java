@@ -16,6 +16,8 @@ public interface CouponRegistrationRepository {
 	@Deprecated
 	CouponRegistration findByCouponId(Long couponId);
 
+	List<CouponRegistration> findUsedByUserId(Long userId);
+
 	List<CouponRegistration> findByMemberId(Long memberId);
 
 	Optional<CouponRegistration> findByCouponIdAndMemberId(Long couponId, Long memberId);

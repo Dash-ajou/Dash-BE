@@ -25,6 +25,9 @@ public class CouponPaymentCode {
 	@Column(name ="payment_code", unique = true, nullable = false)
 	private String paymentCode;
 
+	@OneToOne(mappedBy = "paymentCode", fetch = FetchType.LAZY)
+	private CouponPaymentLog paymentLog;
+
 	@Column(name = "qr_code_image", nullable = false)
 	private String qrCodeImage;
 

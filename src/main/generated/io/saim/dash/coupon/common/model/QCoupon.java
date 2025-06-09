@@ -36,6 +36,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final QIssue issue;
 
+    public final QCouponPaymentCode paymentCode;
+
     public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final QProduct product;
@@ -65,6 +67,7 @@ public class QCoupon extends EntityPathBase<Coupon> {
         this.couponRegistration = inits.isInitialized("couponRegistration") ? new QCouponRegistration(forProperty("couponRegistration"), inits.get("couponRegistration")) : null;
         this.generalUser = inits.isInitialized("generalUser") ? new io.saim.dash.account.general.model.QGeneralUser(forProperty("generalUser"), inits.get("generalUser")) : null;
         this.issue = inits.isInitialized("issue") ? new QIssue(forProperty("issue"), inits.get("issue")) : null;
+        this.paymentCode = inits.isInitialized("paymentCode") ? new QCouponPaymentCode(forProperty("paymentCode"), inits.get("paymentCode")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
