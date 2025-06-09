@@ -10,9 +10,11 @@ import io.saim.dash.global.dto.CommonResponseDTO;
 import io.saim.dash.global.dto.APIStatus;
 import io.saim.dash.global.dto.CommonResponseDTO.VersionResponseDTO;
 import io.saim.dash.security.CustomUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -81,9 +83,9 @@ public class PartnerAccountController {
 	//파트너계정 회원 탈퇴
 	@DeleteMapping("/account/delete")
 	public ResponseEntity<CommonResponseDTO<?>> deletePartnerAccount(
-		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		HttpServletRequest request) {
 
-		// 인증 확인
 		if (userDetails == null || !"PARTNER".equals(userDetails.getUserType())) {
 			return ResponseEntity.status(401).body(new CommonResponseDTO<>(
 				new VersionResponseDTO("1.0", "1.0"),
@@ -96,18 +98,23 @@ public class PartnerAccountController {
 		PartnerUser partnerUser = userDetails.getPartnerUser();
 		boolean isDeleted = partnerAccountService.deleteAccount(partnerUser);
 
-		return isDeleted
-			? ResponseEntity.ok(new CommonResponseDTO<>(
-			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.SUCCESS,
-			"회원 탈퇴가 완료되었습니다.",
-			null
-		))
-			: ResponseEntity.status(403).body(new CommonResponseDTO<>(
-			new VersionResponseDTO("1.0", "1.0"),
-			APIStatus.FAILED,
-			"회원 탈퇴에 실패했습니다.",
-			null
-		));
+		if (isDeleted) {
+			SecurityContextHolder.clearContext();
+			request.getSession().invalidate();
+
+			return ResponseEntity.ok(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.SUCCESS,
+				"회원 탈퇴가 완료되었습니다.",
+				null
+			));
+		} else {
+			return ResponseEntity.status(403).body(new CommonResponseDTO<>(
+				new VersionResponseDTO("1.0", "1.0"),
+				APIStatus.FAILED,
+				"회원 탈퇴에 실패했습니다.",
+				null
+			));
+		}
 	}
 }
