@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.saim.dash.account.general.resolver.LoginGeneralUserArgumentResolver;
 import io.saim.dash.global.interceptor.VersionInterceptor;
+import io.saim.dash.security.resolver.LoginPartnerUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -35,9 +36,11 @@ public class WebConfig implements WebMvcConfigurer {
 	}
 
 	private final LoginGeneralUserArgumentResolver loginGeneralUserArgumentResolver;
+	private final LoginPartnerUserArgumentResolver loginPartnerUserArgumentResolver;
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(loginGeneralUserArgumentResolver);
+		resolvers.add(loginPartnerUserArgumentResolver);
 	}
 }
