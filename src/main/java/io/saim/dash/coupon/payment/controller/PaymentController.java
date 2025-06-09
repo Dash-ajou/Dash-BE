@@ -99,7 +99,7 @@ public class PaymentController {
 		ServiceUser loginUser = getLoginUser(customUserDetails);
 		CouponPaymentLog paymentLog = paymentService.cancelCoupon(
 			loginUser,
-			couponUseCancelRequestDTO.getPaymentId()
+			couponUseCancelRequestDTO.getPaymentCode()
 		);
 
 		return new CouponUseCancelResponseDTO(paymentLog);

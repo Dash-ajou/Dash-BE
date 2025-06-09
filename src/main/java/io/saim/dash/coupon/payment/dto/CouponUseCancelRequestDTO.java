@@ -13,5 +13,5 @@ import lombok.Setter;
 @NoArgsConstructor @AllArgsConstructor @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponUseCancelRequestDTO {
-	private Long paymentId;
+	private String paymentCode;
 }

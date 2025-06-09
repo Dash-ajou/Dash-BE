@@ -58,6 +58,12 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 			.fetchOne();
 	}
 
+	@Override
+	public CouponPaymentLog findByPaymentCode(String paymentCode) {
+		return couponPaymentLogJpaRepository.findByPaidPaymentCode(paymentCode)
+			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND));
+	}
+
 	private JPAQuery<CouponPaymentLog> getPaymentLogJPAQuery(BooleanBuilder filterBuilder) {
 		QCouponPaymentLog couponPaymentLog = QCouponPaymentLog.couponPaymentLog;
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
