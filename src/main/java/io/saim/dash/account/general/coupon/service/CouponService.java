@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import io.saim.dash.account.general.coupon.dto.CouponResponseDTO;
 import io.saim.dash.coupon.common.constant.CouponStatus;
+import io.saim.dash.coupon.common.constant.IssueActiveStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRegistrationRepository;
@@ -23,7 +24,10 @@ public class CouponService {
 			.findByRegisteredUserIdAndCoupon_CouponStatus(generalUserId, CouponStatus.USABLE);
 
 		return registrations.stream()
-			.filter(reg -> reg.getCoupon().getCouponStatus() != CouponStatus.DISABLED)
+			.filter(reg ->
+				reg.getCoupon().getCouponStatus() == CouponStatus.USABLE &&
+					reg.getCoupon().getIssue().getIssueActiveStatus() == IssueActiveStatus.ENABLE
+			)
 			.map(reg -> {
 				Coupon coupon = reg.getCoupon();
 				return CouponResponseDTO.builder()
