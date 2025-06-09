@@ -264,8 +264,8 @@ public class PaymentService {
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_CODE_NOT_FOUND));
 
 		// 만료여부 체크
-		if (couponPaymentCode.getExpiresAt().isBefore(LocalDateTime.now()))
-			throw new ServiceException(ServiceExceptionContent.PAYMENT_CODE_EXPIRED);
+		// if (couponPaymentCode.getExpiresAt().isBefore(LocalDateTime.now()))
+		// 	throw new ServiceException(ServiceExceptionContent.PAYMENT_CODE_EXPIRED);
 
 		return couponPaymentCode;
 	}
