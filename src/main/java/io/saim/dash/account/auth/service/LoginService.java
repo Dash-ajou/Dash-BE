@@ -53,6 +53,8 @@ public class LoginService {
 
 		setAuthentication(user);
 		session.setAttribute("user_id", user.getId());
+		session.setAttribute("LOGIN_GENERAL_USER", user);
+
 
 		return createLoginResponse(user.getId(), user.getName(), user.getEmail(), user.getPhone(), "GENERAL", session);
 	}
@@ -64,6 +66,7 @@ public class LoginService {
 
 		setAuthentication(user);
 		session.setAttribute("user_id", user.getId());
+		session.setAttribute("LOGIN_PARTNER_USER", user);
 
 		return createLoginResponse(user.getId(), user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}
