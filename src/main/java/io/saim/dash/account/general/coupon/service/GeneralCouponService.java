@@ -2,8 +2,10 @@ package io.saim.dash.account.general.coupon.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import io.saim.dash.account.general.coupon.repository.CouponPaymentLogRepository;
 import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.coupon.dto.UsedCouponResponseDTO;
@@ -18,30 +20,30 @@ public class GeneralCouponService {
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 
 	@Transactional(readOnly = true)
-	public List<UsedCouponResponseDTO> getUsedCoupons(GeneralUser user, Long partnerId) {
+	public List<UsedCouponResponseDTO> getUsedCoupons(GeneralUser user) {
 		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAllByUser(user);
 
-		return logs.stream()
-			.filter(log -> {
-				if (partnerId == null) return true;
+		if (!logs.isEmpty()) {
+			Long baseIssueId = logs.get(0).getPaymentCode().getCoupon().getIssue().getIssueId();
 
-				Coupon coupon = log.getPaymentCode().getCoupon();
-				return coupon != null &&
-					coupon.getIssue() != null &&
-					coupon.getIssue().getPartner() != null &&
-					partnerId.equals(coupon.getIssue().getPartner().getId());
-			})
-			.map(log -> {
-				Coupon coupon = log.getPaymentCode().getCoupon();
-				return UsedCouponResponseDTO.builder()
-					.couponId(coupon.getCouponId())
-					.couponName(coupon.getProduct().getProductName())
-					.paymentCode(log.getPaymentCode().getPaymentCode())
-					.paymentId(log.getPaymentId())
-					.partnerName(coupon.getIssue().getPartner().getPartnerName())
-					.usedAt(log.getUsedAt())
-					.build();
-			})
-			.collect(Collectors.toList());
+			logs = logs.stream()
+				.filter(log -> {
+					Long issueId = log.getPaymentCode().getCoupon().getIssue().getIssueId();
+					return issueId.equals(baseIssueId);
+				})
+				.collect(Collectors.toList());
+		}
+
+		return logs.stream().map(log -> {
+			Coupon coupon = log.getPaymentCode().getCoupon();
+			return UsedCouponResponseDTO.builder()
+				.couponId(coupon.getCouponId())
+				.couponName(coupon.getProduct().getProductName())
+				.paymentCode(log.getPaymentCode().getPaymentCode())
+				.paymentId(log.getPaymentId())
+				.partnerName(coupon.getIssue().getPartner().getPartnerName())
+				.usedAt(log.getUsedAt())
+				.build();
+		}).collect(Collectors.toList());
 	}
 }
