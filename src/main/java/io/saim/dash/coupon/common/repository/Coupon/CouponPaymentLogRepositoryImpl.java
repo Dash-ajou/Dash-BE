@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.saim.dash.account.partner.model.PartnerUser;
+import io.saim.dash.coupon.common.constant.PaymentStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponPaymentLog;
 import io.saim.dash.coupon.common.model.QCouponPaymentCode;
@@ -59,8 +60,8 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 	}
 
 	@Override
-	public CouponPaymentLog findByPaymentCode(String paymentCode) {
-		return couponPaymentLogJpaRepository.findByPaidPaymentCode(paymentCode)
+	public CouponPaymentLog findByPaymentCode(String paymentCode, PaymentStatus paymentStatus) {
+		return couponPaymentLogJpaRepository.findByPaidPaymentCodeAndStatus(paymentCode, paymentStatus)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND));
 	}
 
