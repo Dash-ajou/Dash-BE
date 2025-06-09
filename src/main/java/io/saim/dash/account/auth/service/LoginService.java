@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -31,17 +32,12 @@ public class LoginService {
 		Optional<PartnerUser> partnerUserOpt = partnerUserRepository.findByPhone(userPhone);
 		if (partnerUserOpt.isPresent()) {
 			session.setAttribute("user_type", "PARTNER");
-			PartnerUser partnerUser = partnerUserOpt.get();
-			session.setAttribute("user", partnerUser);
 			return authenticatePartnerUser(partnerUserOpt.get(), rawPassword, session);
 		}
-
 
 		Optional<GeneralUser> generalUserOpt = signupNameRepository.findByPhone(userPhone);
 		if (generalUserOpt.isPresent()) {
 			session.setAttribute("user_type", "GENERAL");
-			GeneralUser generalUser = generalUserOpt.get();
-			session.setAttribute("user", generalUser);
 			return authenticateGeneralUser(generalUserOpt.get(), rawPassword, session);
 		}
 
@@ -56,8 +52,7 @@ public class LoginService {
 		}
 
 		setAuthentication(user);
-		session.setAttribute("userType", "GENERAL");
-		session.setAttribute("userId", user.getId());
+		session.setAttribute("user_id", user.getId());
 
 		return createLoginResponse(user.getId(), user.getName(), user.getEmail(), user.getPhone(), "GENERAL", session);
 	}
@@ -68,8 +63,7 @@ public class LoginService {
 		}
 
 		setAuthentication(user);
-		session.setAttribute("userType", "PARTNER");
-		session.setAttribute("userId", user.getId());
+		session.setAttribute("user_id", user.getId());
 
 		return createLoginResponse(user.getId(), user.getOwnerName(), user.getEmail(), user.getPhone(), "PARTNER", session);
 	}
@@ -77,19 +71,22 @@ public class LoginService {
 	private void setAuthentication(Object user) {
 		CustomUserDetails userDetails;
 
-		if (user instanceof GeneralUser) {
-			userDetails = new CustomUserDetails((GeneralUser) user);
-		} else if (user instanceof PartnerUser) {
-			userDetails = new CustomUserDetails((PartnerUser) user);
+		if (user instanceof GeneralUser generalUser) {
+			userDetails = new CustomUserDetails(generalUser);
+		} else if (user instanceof PartnerUser partnerUser) {
+			userDetails = new CustomUserDetails(partnerUser);
 		} else {
 			throw new IllegalArgumentException("올바르지 않은 사용자 타입입니다.");
 		}
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			userDetails, null, userDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-	private LoginResponseDTO createLoginResponse(Long userId, String name, String email, String phone, String userType, HttpSession session) {
+	private LoginResponseDTO createLoginResponse(
+		Long userId, String name, String email, String phone, String userType, HttpSession session
+	) {
 		if (email != null && email.endsWith("@dummy.com")) {
 			email = null;
 		}
