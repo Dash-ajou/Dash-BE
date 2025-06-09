@@ -19,33 +19,25 @@ public class GeneralCouponService {
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 
 	@Transactional(readOnly = true)
-	public List<UsedCouponResponseDTO> getUsedCoupons(GeneralUser user, Long partnerId) {
-		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAllByUser(user);
-
-		return logs.stream()
+	public List<UsedCouponResponseDTO> getUsedCouponsByPartner(Long partnerId) {
+		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAll().stream()
 			.filter(log -> {
 				Coupon coupon = log.getPaymentCode().getCoupon();
-
-				if (coupon.getCouponStatus() != CouponStatus.USED) {
-					return false;
-				}
-
-				if (partnerId != null) {
-					return coupon.getIssue().getPartner().getId().equals(partnerId);
-				}
-				return true;
-			})
-			.map(log -> {
-				Coupon coupon = log.getPaymentCode().getCoupon();
-				return UsedCouponResponseDTO.builder()
-					.couponId(coupon.getCouponId())
-					.couponName(coupon.getProduct().getProductName())
-					.paymentCode(log.getPaymentCode().getPaymentCode())
-					.paymentId(log.getPaymentId())
-					.partnerName(coupon.getIssue().getPartner().getPartnerName())
-					.usedAt(log.getUsedAt())
-					.build();
+				return coupon.getCouponStatus() == CouponStatus.USED &&
+					coupon.getIssue().getPartner().getId().equals(partnerId);
 			})
 			.collect(Collectors.toList());
+
+		return logs.stream().map(log -> {
+			Coupon coupon = log.getPaymentCode().getCoupon();
+			return UsedCouponResponseDTO.builder()
+				.couponId(coupon.getCouponId())
+				.couponName(coupon.getProduct().getProductName())
+				.paymentCode(log.getPaymentCode().getPaymentCode())
+				.paymentId(log.getPaymentId())
+				.partnerName(coupon.getIssue().getPartner().getPartnerName())
+				.usedAt(log.getUsedAt())
+				.build();
+		}).collect(Collectors.toList());
 	}
 }
