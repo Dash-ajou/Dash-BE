@@ -33,7 +33,11 @@ public class LoginController {
 			session
 		);
 
-		session.setAttribute("LOGIN_GENERAL_USER", response.getUser());
+		if ("PARTNER".equalsIgnoreCase(requestDTO.getUserType())) {
+			session.setAttribute("partner_user", response.getUser());
+		} else {
+			session.setAttribute("LOGIN_GENERAL_USER", response.getUser());
+		}
 		session.setAttribute("user_id", response.getUserId());
 
 		return ResponseEntity.ok(
