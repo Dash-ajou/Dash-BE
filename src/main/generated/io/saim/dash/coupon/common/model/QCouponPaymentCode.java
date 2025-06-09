@@ -32,6 +32,8 @@ public class QCouponPaymentCode extends EntityPathBase<CouponPaymentCode> {
 
     public final NumberPath<Long> paymentCodeId = createNumber("paymentCodeId", Long.class);
 
+    public final QCouponPaymentLog paymentLog;
+
     public final StringPath qrCodeImage = createString("qrCodeImage");
 
     public QCouponPaymentCode(String variable) {
@@ -53,6 +55,7 @@ public class QCouponPaymentCode extends EntityPathBase<CouponPaymentCode> {
     public QCouponPaymentCode(Class<? extends CouponPaymentCode> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
+        this.paymentLog = inits.isInitialized("paymentLog") ? new QCouponPaymentLog(forProperty("paymentLog"), inits.get("paymentLog")) : null;
     }
 
 }
