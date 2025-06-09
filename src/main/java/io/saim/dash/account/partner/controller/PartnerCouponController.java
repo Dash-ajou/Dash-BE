@@ -25,7 +25,7 @@ public class PartnerCouponController {
 
 	@GetMapping("/list/used")
 	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(HttpSession session) {
-		PartnerUser partnerUser = (PartnerUser) session.getAttribute("partner_user");
+		PartnerUser partnerUser = (PartnerUser) session.getAttribute("LOGIN_PARTNER_USER"); // 🔧 일반과 동일하게 세션 키 통일
 
 		if (partnerUser == null) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "파트너 로그인 필요");
