@@ -25,10 +25,13 @@ public class GeneralCouponController {
 	private final GeneralCouponService generalCouponService;
 
 	@GetMapping("/used")
-	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(
-		@RequestParam Long issueId
-	) {
-		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByIssueId(issueId);
+	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(HttpSession session) {
+		PartnerUser partnerUser = (PartnerUser) session.getAttribute("partner_user");
+		if (partnerUser == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "파트너 로그인 필요");
+		}
+
+		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByPartner(partnerUser.getId());
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),

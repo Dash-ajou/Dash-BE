@@ -19,12 +19,12 @@ public class GeneralCouponService {
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
 
 	@Transactional(readOnly = true)
-	public List<UsedCouponResponseDTO> getUsedCouponsByIssueId(Long issueId) {
+	public List<UsedCouponResponseDTO> getUsedCouponsByPartner(Long partnerId) {
 		List<CouponPaymentLog> logs = couponPaymentLogRepository.findAll().stream()
 			.filter(log -> {
 				Coupon coupon = log.getPaymentCode().getCoupon();
 				return coupon.getCouponStatus() == CouponStatus.USED &&
-					coupon.getIssue().getIssueId().equals(issueId);
+					coupon.getIssue().getPartner().getId().equals(partnerId);
 			})
 			.collect(Collectors.toList());
 
