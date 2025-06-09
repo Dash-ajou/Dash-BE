@@ -20,6 +20,6 @@ public interface CouponPaymentCodeJpaRepository extends JpaRepository<CouponPaym
 
 	@Transactional
 	@Modifying(clearAutomatically = true)
-	@Query("UPDATE Coupon c SET c.paymentCode = null WHERE c.paymentCode.paymentCodeId = :paymentCodeId")
-	void clearPaymentCodeReference(@Param("paymentCodeId") Long paymentCodeId);
+	@Query("UPDATE CouponPaymentCode c SET c.coupon = null WHERE c.paymentCodeId = :paymentCodeId")
+	void clearCouponReference(@Param("paymentCodeId") Long paymentCodeId);
 }

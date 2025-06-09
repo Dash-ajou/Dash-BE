@@ -45,7 +45,7 @@ public class CouponPaymentCodeService {
 				return existing;
 			}
 
-			couponPaymentCodeJpaRepository.clearPaymentCodeReference(existing.getPaymentCodeId());
+			couponPaymentCodeJpaRepository.clearCouponReference(existing.getPaymentCodeId());
 
 			couponPaymentCodeJpaRepository.delete(existing);
 			couponPaymentCodeJpaRepository.flush();
@@ -67,8 +67,6 @@ public class CouponPaymentCodeService {
 			.issuedAt(LocalDateTime.now())
 			.expiresAt(LocalDateTime.now().plusSeconds(60))
 			.build();
-
-		coupon.setPaymentCode(paymentCode);
 
 		return couponPaymentCodeJpaRepository.save(paymentCode);
 	}
