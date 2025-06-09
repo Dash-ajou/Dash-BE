@@ -3,9 +3,11 @@ package io.saim.dash.coupon.common.repository.Coupon;
 import java.util.List;
 import java.util.Optional;
 
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.model.Issue;
 
 public interface CouponRegistrationRepository {
 
@@ -29,5 +31,7 @@ public interface CouponRegistrationRepository {
 	void save(CouponRegistration couponRegistration);
 
 	boolean existsByRegisteredUserId(Long userId);
+
+	boolean existsByRegisteredUserAndCoupon_Issue(GeneralUser registeredUser, Issue issue);
 }
 

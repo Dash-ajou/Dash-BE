@@ -7,11 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import io.saim.dash.account.general.model.GeneralUser;
 import io.saim.dash.account.general.model.QGeneralUser;
 import io.saim.dash.account.partner.model.QPartnerUser;
 import io.saim.dash.coupon.common.constant.CouponStatus;
 import io.saim.dash.coupon.common.model.Coupon;
 import io.saim.dash.coupon.common.model.CouponRegistration;
+import io.saim.dash.coupon.common.model.Issue;
 import io.saim.dash.coupon.common.model.QCoupon;
 import io.saim.dash.coupon.common.model.QCouponRegistration;
 import io.saim.dash.coupon.common.model.QIssue;
@@ -150,6 +152,23 @@ public class CouponRegistrationRepositoryImpl implements CouponRegistrationRepos
 			.where(
 				generalUser.id.eq(userId),
 				couponRegistration.isValid.eq(true)
+			)
+			.fetchFirst();
+
+		return result != null;
+	}
+
+	@Override
+	public boolean existsByRegisteredUserAndCoupon_Issue(GeneralUser registeredUser, Issue issue) {
+		QCouponRegistration qr = QCouponRegistration.couponRegistration;
+
+		Integer result = queryFactory
+			.selectOne()
+			.from(qr)
+			.where(
+				qr.registeredUser.eq(registeredUser),
+				qr.coupon.issue.eq(issue),
+				qr.isValid.eq(true)
 			)
 			.fetchFirst();
 
