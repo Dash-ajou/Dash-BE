@@ -26,9 +26,9 @@ public class GeneralCouponController {
 
 	@GetMapping("/used")
 	public ResponseEntity<CommonResponseDTO<List<UsedCouponResponseDTO>>> getUsedCoupons(
-		@LoginPartnerUser PartnerUser loginPartnerUser
+		@RequestParam Long issueId
 	) {
-		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByPartner(loginPartnerUser.getId());
+		List<UsedCouponResponseDTO> usedCoupons = generalCouponService.getUsedCouponsByIssueId(issueId);
 
 		return ResponseEntity.ok(new CommonResponseDTO<>(
 			new VersionResponseDTO("1.0", "1.0"),
