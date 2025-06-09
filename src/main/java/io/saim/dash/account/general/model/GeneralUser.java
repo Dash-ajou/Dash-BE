@@ -63,6 +63,9 @@ public class GeneralUser extends ServiceUser implements Serializable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Password> passwords;
 
+	@Column(name = "rate", nullable = true) @Setter
+	private Float rate;
+
 	public static boolean isGeneralUser(ServiceUser serviceUser) {
 		return serviceUser instanceof GeneralUser;
 	}
