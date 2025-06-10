@@ -202,7 +202,7 @@ public class PaymentService {
 	}
 
 	private Boolean isPaymentCodeUsed(String paymentCode) {
-		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCode(paymentCode, PaymentStatus.USED);
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCodeNormal(paymentCode, PaymentStatus.USED);
 		return couponPaymentLog != null;
 	}
 
