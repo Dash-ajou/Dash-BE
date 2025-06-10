@@ -39,8 +39,8 @@ public class CouponRegistrationSignUploadService {
 		Coupon coupon = couponRepository.findByRegistrationCode(couponRegistrationNumber);
 		Request request = coupon.getIssue().getRequest();
 
-		if (!request.getVendor().isMemberIncluded(user))
-			throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
+		// if (!request.getVendor().isMemberIncluded(user))
+		// 	throw new ServiceException(ServiceExceptionContent.NO_PERMISSION);
 
 		return coupon;
 	}
