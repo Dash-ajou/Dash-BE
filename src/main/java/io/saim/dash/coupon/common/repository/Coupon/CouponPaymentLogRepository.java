@@ -20,4 +20,6 @@ public interface CouponPaymentLogRepository {
 	CouponPaymentLog findByCoupon(Coupon coupon);
 
 	CouponPaymentLog findByPaymentCode(String paymentCode, PaymentStatus paymentStatus);
+
+	CouponPaymentLog findByPaymentCodeNormal(String paymentCode, PaymentStatus paymentStatus);
 }

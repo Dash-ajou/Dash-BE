@@ -65,6 +65,13 @@ public class CouponPaymentLogRepositoryImpl implements CouponPaymentLogRepositor
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_LOG_NOT_FOUND));
 	}
 
+
+	@Override
+	public CouponPaymentLog findByPaymentCodeNormal(String paymentCode, PaymentStatus paymentStatus) {
+		return couponPaymentLogJpaRepository.findByPaidPaymentCodeAndStatus(paymentCode, paymentStatus)
+			.orElse(null);
+	}
+
 	private JPAQuery<CouponPaymentLog> getPaymentLogJPAQuery(BooleanBuilder filterBuilder) {
 		QCouponPaymentLog couponPaymentLog = QCouponPaymentLog.couponPaymentLog;
 		QCouponRegistration couponRegistration = QCouponRegistration.couponRegistration;
