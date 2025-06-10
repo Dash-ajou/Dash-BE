@@ -26,6 +26,7 @@ import io.saim.dash.account.push.model.PushType;
 import io.saim.dash.account.push.repository.PushRepository;
 import io.saim.dash.coupon.common.constant.CodeType;
 import io.saim.dash.coupon.common.dto.Coupon.CouponCodeInfo;
+import io.saim.dash.coupon.common.repository.Coupon.CouponPaymentCodeRepository;
 import io.saim.dash.coupon.common.repository.Coupon.CouponRepository;
 import io.saim.dash.coupon.common.repository.jpa.CouponPaymentCodeJpaRepository;
 import io.saim.dash.account.general.model.GeneralUser;
@@ -58,7 +59,7 @@ public class PaymentService {
 	private final PartnerUserRepository partnerUserRepository;
 	private final CouponRegistrationRepository couponRegistrationRepository;
 	private final CouponPaymentLogRepository couponPaymentLogRepository;
-	private final CouponPaymentCodeJpaRepository couponPaymentCodeJpaRepository;
+	private final CouponPaymentCodeRepository couponPaymentCodeRepository;
 	private final PushRepository pushRepository;
 	private final QrCodeGeneratorUtil qrCodeGeneratorUtil;
 
@@ -189,11 +190,22 @@ public class PaymentService {
 	}
 
 	private CouponPaymentLog applyPayment(PartnerUser partnerUser, CouponPaymentCode payment) {
+		// 이미 결제된 경우 미처리
+		if (isPaymentCodeUsed(payment.getPaymentCode()))
+			throw new ServiceException(ServiceExceptionContent.PAYMENT_CODE_ALREADY_USED);
+
 		CouponPaymentLog couponPayment = createCouponPaymentLog(partnerUser, payment);
 		payment.getCoupon().setCouponStatus(CouponStatus.USED);
 		payment.getCoupon().getIssue().increaseUsedCnt();
 
 		return couponPayment;
+	}
+
+	private Boolean isPaymentCodeUsed(String paymentCode) {
+		CouponPaymentCode couponPaymentCode = couponPaymentCodeRepository.findByPaymentCode(paymentCode)
+			.orElse(null);
+
+		return couponPaymentCode != null;
 	}
 
 	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, String paymentCode) {
@@ -262,7 +274,7 @@ public class PaymentService {
 		if(!isPaymentCodeValid(requestedPaymentCode))
 			throw new ServiceException(ServiceExceptionContent.INVALID_PAYMENT_CODE);
 
-		CouponPaymentCode couponPaymentCode = couponPaymentCodeJpaRepository.findByPaymentCode(requestedPaymentCode)
+		CouponPaymentCode couponPaymentCode = couponPaymentCodeRepository.findByPaymentCode(requestedPaymentCode)
 			.orElseThrow(() -> new ServiceException(ServiceExceptionContent.PAYMENT_CODE_NOT_FOUND));
 
 		// 만료여부 체크
