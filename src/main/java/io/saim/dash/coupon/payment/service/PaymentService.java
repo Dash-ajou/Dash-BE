@@ -202,10 +202,8 @@ public class PaymentService {
 	}
 
 	private Boolean isPaymentCodeUsed(String paymentCode) {
-		CouponPaymentCode couponPaymentCode = couponPaymentCodeRepository.findByPaymentCode(paymentCode)
-			.orElse(null);
-
-		return couponPaymentCode != null;
+		CouponPaymentLog couponPaymentLog = couponPaymentLogRepository.findByPaymentCode(paymentCode, PaymentStatus.USED);
+		return couponPaymentLog != null;
 	}
 
 	private CouponPaymentLog cancelPayment(PartnerUser partnerUser, String paymentCode) {

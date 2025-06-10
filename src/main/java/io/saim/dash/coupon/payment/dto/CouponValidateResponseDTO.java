@@ -28,6 +28,7 @@ public class CouponValidateResponseDTO {
 	private PartnerDTO partner;
 	private ProductDTO product;
 	private CouponStatus status;
+	private RedeemDTO redeem;
 
 	public CouponValidateResponseDTO(CouponCodeInfo couponCodeInfo) {
 		this.type = couponCodeInfo.codeType();
