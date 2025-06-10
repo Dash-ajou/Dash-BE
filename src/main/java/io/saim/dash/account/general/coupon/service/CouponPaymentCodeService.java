@@ -68,6 +68,11 @@ public class CouponPaymentCodeService {
 			.expiresAt(LocalDateTime.now().plusSeconds(60))
 			.build();
 
-		return couponPaymentCodeJpaRepository.save(paymentCode);
+		CouponPaymentCode saved = couponPaymentCodeJpaRepository.save(paymentCode);
+
+		System.out.println("[쿠폰 발급 완료] coupon_id = " + saved.getCoupon().getCouponId()
+			+ ", payment_code = " + saved.getPaymentCode());
+
+		return saved;
 	}
 }
