@@ -27,6 +27,7 @@ public enum ServiceExceptionContent {
 	PAYMENT_CODE_EXPIRED(APIStatus.BAD_REQUEST, "결제코드가 만료되었습니다. 확인 후 다 시 시도해주세요."),
 	ALREADY_PROCESSED(APIStatus.BAD_REQUEST, "이미 처리된 쿠폰 요청입니다."),
 	USER_HAS_COUPONS(APIStatus.FORBIDDEN, "등록한 쿠폰이 있어 탈퇴할 수 없습니다."),
+	PAYMENT_CODE_ALREADY_USED(APIStatus.BAD_REQUEST, "이미 사용된 이력이 있는 결제코드입니다. 재발급 후 결제를 시도해주세요"),
 
 	// 401
   	UNAUTHORIZED(APIStatus.UNAUTHORIZED, "인증되지 않았습니다."),
