@@ -16,6 +16,7 @@ public class RateService {
 
 	private final GeneralUserRepository generalUserRepository;
 
+	@Transactional
 	public void registerRate(ServiceUser loginUser, Float rate) {
 		GeneralUser user = getGeneralAPIAccessUser(loginUser);
 
